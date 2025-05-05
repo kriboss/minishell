@@ -6,7 +6,7 @@
 /*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/03 09:48:20 by kbossio           #+#    #+#             */
-/*   Updated: 2025/05/03 12:04:29 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/05/06 00:38:16 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,8 @@ int	pwd(void)
 {
 	char	*pwd;
 
-	pwd = malloc(sizeof(char) * 1024);
-	if (getcwd(pwd, sizeof(pwd)) != NULL)
+	pwd = getcwd(NULL, 0);
+	if (pwd != NULL)
 	{
 		printf("%s\n", pwd);
 		return (0);
@@ -84,14 +84,15 @@ int	env(char **envp)
 	return (0);
 }
 
-int	export(char *str, char **env)
+char	**export(char **env, char *str)
 {
-	int	i;
-
-	i = 0;
 	if (str == NULL)
 		print_exp(env);
-	return (1);
+	else
+	{	
+		return (ins_exp(str, env));
+	}
+	return (NULL);
 }
 
 int	exit_shell(void)
@@ -122,12 +123,18 @@ int	execute_command(char *command)
 
 int	main(int argc, char *argv[], char *envp[])
 {
+	char **env;
 
+	env = dup_env(envp);
 	if (argc > 1)
 	{
 		fprintf(stderr, "Usage: %s\n", argv[0]);
-		return (1);
+		return (free_all(env, NULL), 1);
 	}
-	export(NULL, envp);
+	env = export(env, "hello=world");
+	export(env, NULL);
+	unset(env, "hello");
+	export(env, NULL);
+	free_all(env, NULL);
 	return (0);
 }

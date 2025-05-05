@@ -6,7 +6,7 @@
 /*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/03 09:49:05 by kbossio           #+#    #+#             */
-/*   Updated: 2025/05/03 11:53:12 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/05/06 00:13:11 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,13 @@ typedef struct env_s
 	char	*value;
 }	t_env;
 
-int	print_exp(char **str);
+int		print_exp(char **str);
+char	**ins_exp(char *str, char **envp);
+int		unset(char **envp, char *str);
+int		ft_strcmp(char *s1, const char *s2);
+char	**dup_env(char **envp);
+void	free_all(char **str, char **new);
+int		check_same(char *str, char **envp);
 
 #endif
 

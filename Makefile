@@ -6,7 +6,7 @@ INCLUDES = -Iinclude -Ilibft
 
 LIBFT = libft/libft.a
 
-FILES = execution/execute.c execution/utils.c
+FILES = execution/execute.c execution/utils.c execution/export.c execution/unset.c
 
 OBJS = ${FILES:.c=.o}
 

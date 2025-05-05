@@ -6,35 +6,36 @@
 /*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/03 11:38:14 by kbossio           #+#    #+#             */
-/*   Updated: 2025/05/03 12:34:48 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/05/06 00:16:55 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
-int	find_min(char **envp, int i)
+void	free_all(char **str, char **new)
 {
-	int		j;
-	int		min;
+	int	i;
 
-	min = i++;
-	if (envp[0] == NULL)
-		return (0);
-	while (envp[i])
+	i = 0;
+	if (str)
 	{
-		j = 0;
-		if (envp[min][j] > envp[i][j])
-			min = i;
-		else if (envp[min][j] == envp[i][j])
+		while (str[i] != NULL)
 		{
-			while (envp[min][j] == envp[i][j])
-				j++;
-			if (envp[min][j] > envp[i][j])
-				min = i;
+			free(str[i]);
+			i++;
 		}
-		i++;
+		free(str);
 	}
-	return (min);
+	if (new != NULL)
+	{
+		i = 0;
+		while (new[i] != NULL)
+		{
+			free(new[i]);
+			i++;
+		}
+		free(new);
+	}
 }
 
 char	**dup_env(char **envp)
@@ -51,33 +52,23 @@ char	**dup_env(char **envp)
 	i = 0;
 	while (envp[i] != NULL)
 	{
-		env[i] = ft_strdup(envp[find_min(envp, i)]);
+		env[i] = ft_strdup(envp[i]);
 		if (!env[i])
-			return (free(env), NULL);
+			return (free_all(env, NULL), NULL);
 		i++;
 	}
 	env[i] = NULL;
 	return (env);
 }
 
-int	print_exp(char **str)
+int	ft_strcmp(char *s1, const char *s2)
 {
-	int	i;
-	int	j;
-	char	**exp;
+	size_t	i;
 
 	i = 0;
-	exp = dup_env(str);
-	while (exp[i] != NULL)
+	while (s1[i] && s2[i] && s1[i] == s2[i])
 	{
-		j = 0;
-		printf("declare -x ");
-		while (exp[i][j] != '=' && exp[i][j] != '\0')
-			printf("%c", exp[i][j++]);
-		if (exp[i][j] == '=' && exp[i][j + 1] != '\0')
-			printf("\"%s\"\n", &exp[i][j + 1]);
 		i++;
 	}
-	free(exp);
-	return (0);
+	return ((unsigned char)s1[i] - (unsigned char )s2[i]);
 }
