@@ -6,7 +6,7 @@ INCLUDES = -Iinclude -Ilibft
 
 LIBFT = libft/libft.a
 
-FILES = execution/execute.c execution/utils.c execution/export.c execution/unset.c
+FILES = execution/start.c execution/execute.c execution/utils.c execution/export.c execution/unset.c execution/redirections.c execution/pipes.c execution/signals.c
 
 OBJS = ${FILES:.c=.o}
 
@@ -14,7 +14,7 @@ OBJS = ${FILES:.c=.o}
 	${CC} ${INCLUDES} -c $< -o $@
 
 ${NAME}: ${OBJS} | make_libft
-	${CC} ${OBJS} $(LIBFT) -o ${NAME}
+	${CC} ${OBJS} $(LIBFT) -lreadline -o ${NAME}
 
 make_libft:
 	@make -s -C libft

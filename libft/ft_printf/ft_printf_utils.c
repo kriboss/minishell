@@ -6,7 +6,7 @@
 /*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/01 17:36:14 by kbossio           #+#    #+#             */
-/*   Updated: 2025/01/09 17:54:27 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/05/06 12:19:42 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,15 +82,4 @@ size_t	ft_putchar_fd(const char c)
 {
 	write(1, &c, 1);
 	return (1);
-}
-
-char	*ft_strchr(const char *str, int c)
-{
-	while ((char)c != *str)
-	{
-		if (!*str)
-			return (0);
-		str++;
-	}
-	return ((char *)str);
 }

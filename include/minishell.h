@@ -6,7 +6,7 @@
 /*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/03 09:49:05 by kbossio           #+#    #+#             */
-/*   Updated: 2025/05/06 00:13:11 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/05/06 11:55:25 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,11 @@
 
 # include "../libft/libft.h"
 
+#define RESET   "\033[0m"
+#define BLUE    "\033[34m"
+#define CYAN    "\033[36m"
+#define BOLD    "\033[1m"
+
 typedef struct env_s
 {
 	char	*key;
@@ -43,6 +48,8 @@ int		ft_strcmp(char *s1, const char *s2);
 char	**dup_env(char **envp);
 void	free_all(char **str, char **new);
 int		check_same(char *str, char **envp);
+int		execute(char *cmd, char *envp[]);
+void		start_signals(void);
 
 #endif
 
