@@ -6,7 +6,7 @@
 /*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/05 14:29:48 by kbossio           #+#    #+#             */
-/*   Updated: 2025/05/06 00:36:01 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/05/06 16:08:15 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,8 @@ char	**dup_exp(char **envp)
 	if (!env)
 		return (NULL);
 	srt = find_min(envp, i);
+	if (!srt)
+		return (free(env), NULL);
 	i = 0;
 	while (envp[i] != NULL)
 	{
@@ -90,6 +92,8 @@ int	print_exp(char **str)
 
 	i = 0;
 	exp = dup_exp(str);
+	if (!exp)
+		return (1);
 	while (exp[i] != NULL)
 	{
 		j = 0;
@@ -98,6 +102,8 @@ int	print_exp(char **str)
 			printf("%c", exp[i][j++]);
 		if (exp[i][j] == '=')
 			printf("=\"%s\"\n", &exp[i][j + 1]);
+		else
+			printf("\n");
 		i++;
 	}
 	free_all(exp, NULL);

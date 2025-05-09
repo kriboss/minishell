@@ -6,7 +6,7 @@
 /*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:34:16 by kbossio           #+#    #+#             */
-/*   Updated: 2025/05/06 12:09:45 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/05/06 15:29:50 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,12 +29,15 @@ void	print_header(void)
 int	main(int argc, char **argv, char **envp)
 {
 	char	*input;
+	char	**str;
 
+	
 	if (argc != 1)
 	{
 		printf("Usage: %s\n", argv[0]);
 		return (1);
 	}
+	str = dup_env(envp);
 	start_signals();
 	print_header();
 	while (1)
@@ -46,7 +49,7 @@ int	main(int argc, char **argv, char **envp)
 			break;
 		}
 		add_history(input);
-		execute(input, envp);
+		str = execute(input, str);
 		free(input);
 	}
 	return (0);

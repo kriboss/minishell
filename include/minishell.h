@@ -6,7 +6,7 @@
 /*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/03 09:49:05 by kbossio           #+#    #+#             */
-/*   Updated: 2025/05/06 11:55:25 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/05/08 13:01:22 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,8 +48,10 @@ int		ft_strcmp(char *s1, const char *s2);
 char	**dup_env(char **envp);
 void	free_all(char **str, char **new);
 int		check_same(char *str, char **envp);
-int		execute(char *cmd, char *envp[]);
+char	**execute(char *cmd, char *envp[]);
 void		start_signals(void);
+int		exec_external(char **args, char **envp);
+int		pipex(char **cmds, char **envp);
 
 #endif
 

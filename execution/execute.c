@@ -6,7 +6,7 @@
 /*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/03 09:48:20 by kbossio           #+#    #+#             */
-/*   Updated: 2025/05/06 12:59:41 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/05/08 14:02:14 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,53 +97,56 @@ int	env(char **envp)
 char	**export(char **env, char *str)
 {
 	if (str == NULL)
+	{
 		print_exp(env);
+	}
 	else
-	{	
+	{
 		return (ins_exp(str + 1, env));
 	}
-	return (NULL);
+	return (env);
 }
 
-int	exit_shell(int status)
+int	exit_shell(int status, char **str)
 {
 	printf("Exiting shell...\n");
+	if (str != NULL)
+	{
+		free_all(str, NULL);
+		status = 0;
+	}
+	clear_history();
 	exit(status);
 }
 
-int	execute(char *cmd, char *envp[])
+char	**execute(char *cmd, char *envp[])
 {
-	char **str;
 	char es;
-	
-	str = dup_env(envp);
+	char **cmds;
+
 	es = 0;
-	export(str, NULL);
-	printf("----------------------------------------\n----------------------------------------\n----------------------------------------\n----------------------------------------\n");
-	export(str, "export");
-	printf("----------------------------------------\n----------------------------------------\n----------------------------------------\n----------------------------------------\n");
-	export(str, NULL);
-	(void)cmd;
-	/*
-	if (ft_strncmp(cmd, "cd", 2) == 0)
+	if (ft_strchr(cmd, '|'))
+	{
+		cmds = ft_split(cmd, '|');
+		if (cmds == NULL)
+			return (NULL);
+		es = pipex(cmds, envp);
+	}
+	else if (ft_strncmp(cmd, "cd", 2) == 0)
 		es = cd(ft_strchr(cmd, ' ') + 1);
 	else if (ft_strncmp(cmd, "pwd", 3) == 0)
 		es = pwd();
 	else if (ft_strncmp(cmd, "echo", 4) == 0)
 		es = echo(ft_strchr(cmd, ' ') + 1);
 	else if (ft_strncmp(cmd, "env", 3) == 0)
-		es = env(str);
+		es = env(envp);
 	else if (ft_strncmp(cmd, "export", 6) == 0)
-		export(str, ft_strchr(cmd, ' '));
+		envp = export(envp, ft_strchr(cmd, ' '));
 	else if (ft_strncmp(cmd, "unset", 5) == 0)
-		es = unset(str, ft_strchr(cmd, ' ') + 1);
+		es = unset(envp, ft_strchr(cmd, ' ') + 1);
 	else if (ft_strncmp(cmd, "exit", 4) == 0)
-		exit_shell(es);
+		exit_shell(es, envp);
 	else
-	{
-		printf("Command not found: %s\n", cmd);
-	}
-	*/
-	free_all(str, NULL);
-	return (0);
+		es = exec_external(ft_split(cmd, ' '), envp);
+	return (envp);
 }
