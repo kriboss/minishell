@@ -6,7 +6,7 @@
 /*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:25:53 by kbossio           #+#    #+#             */
-/*   Updated: 2025/05/06 19:30:57 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/05/12 13:02:52 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,11 @@ void	signal_handler(int sig)
 {
 	if (sig == SIGINT)
 	{
-		printf("\nminishell> ");
 		g_status = 130;
+		write(1, "\n", 1);
+		rl_on_new_line();
+		rl_replace_line("", 0);
+		rl_redisplay();
 	}
 	else if (sig == SIGQUIT)
 	{
@@ -35,16 +38,13 @@ void	start_signals(void)
 
 static char	**get_path_dirs(char *envp[])
 {
-	char	*path_line;
 	char	**dirs;
 
-	path_line = NULL;
-	while (*envp && !(path_line = ft_strnstr(*envp, "PATH=", 5)))
+	while (*envp && !ft_strnstr(*envp, "PATH=", 5))
 		envp++;
-	if (!path_line)
+	if (!ft_strnstr(*envp, "PATH=", 5))
 		return (NULL);
-	// salta "PATH="
-	dirs = ft_split(path_line + 5, ':');
+	dirs = ft_split(ft_strnstr(*envp, "PATH=", 5) + 5, ':');
 	return (dirs);
 }
 
@@ -77,8 +77,7 @@ static char	*find_executable(char *cmd, char *envp[])
 	return (full_path);
 }
 
-
-int exec_external(char **args, char **envp)
+int	exec_external(char **args, char **envp)
 {
 	pid_t	pid;
 	int		status;
@@ -104,5 +103,5 @@ int exec_external(char **args, char **envp)
 		;
 	free(exe_path);
 	free_all(args, NULL);
-	return (WIFEXITED(status) ? WEXITSTATUS(status) : 1);
+	return (0);
 }

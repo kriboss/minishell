@@ -6,7 +6,7 @@
 /*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/03 11:38:14 by kbossio           #+#    #+#             */
-/*   Updated: 2025/05/06 00:16:55 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/05/12 12:49:26 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,4 +71,32 @@ int	ft_strcmp(char *s1, const char *s2)
 		i++;
 	}
 	return ((unsigned char)s1[i] - (unsigned char )s2[i]);
+}
+
+char	*ft_rmchar(char *str, char c)
+{
+	int		i;
+	int		j;
+	char	*new;
+
+	i = 0;
+	j = 0;
+	while (str[j] != '\0')
+	{
+		if (str[j] != c)
+			i++;
+		j++;
+	}
+	new = malloc(sizeof(char) * (i + 1));
+	if (!new)
+		return (NULL);
+	i = 0;
+	j = 0;
+	while (str[i] != '\0')
+	{
+		if (str[i] != c)
+			new[j++] = str[i];
+		i++;
+	}
+	return (new[j] = '\0', new);
 }

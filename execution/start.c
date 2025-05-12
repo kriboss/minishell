@@ -6,7 +6,7 @@
 /*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:34:16 by kbossio           #+#    #+#             */
-/*   Updated: 2025/05/06 15:29:50 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/05/12 12:56:51 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,8 @@ void	print_header(void)
 	printf(" __  __ _____ _   _ _____  _____ _    _ ______ _      _      \n");
 	printf("|  \\/  |_   _| \\ | |_   _|/ ____| |  | |  ____| |    | |     \n");
 	printf("| \\  / | | | |  \\| | | | | (___ | |__| | |__  | |    | |     \n");
-	printf("| |\\/| | | | | . ` | | |  \\___ \\|  __  |  __| | |    | |     \n");
+	printf("| |\\/| | | | | . ` | | |  \\___ \\|  __  |  __| | |    | |     ");
+	printf("\n");
 	printf("| |  | |_| |_| |\\  |_| |_ ____) | |  | | |____| |____| |____ \n");
 	printf("|_|  |_|_____|_| \\_|_____|_____/|_|  |_|______|______|______|\n");
 	printf("                                                             \n");
@@ -31,7 +32,6 @@ int	main(int argc, char **argv, char **envp)
 	char	*input;
 	char	**str;
 
-	
 	if (argc != 1)
 	{
 		printf("Usage: %s\n", argv[0]);
@@ -46,7 +46,7 @@ int	main(int argc, char **argv, char **envp)
 		if (!input)
 		{
 			printf("exit\n");
-			break;
+			break ;
 		}
 		add_history(input);
 		str = execute(input, str);

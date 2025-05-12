@@ -6,7 +6,7 @@
 /*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 10:47:51 by kbossio           #+#    #+#             */
-/*   Updated: 2025/05/09 10:14:25 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/05/12 12:51:31 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ int	pipex(char **cmds, char **envp)
 		old = cmds[n];
 		cmds[n] = ft_strtrim(old, " \t\n");
 		free(old);
-		i++;
+		n++;
 	}
 	i = 0;
 	while (i < n)
@@ -65,14 +65,16 @@ int	pipex(char **cmds, char **envp)
 		if (i < n - 1)
 			if (pipe(pipe_fd) == -1)
 				return (perror("pipe"), 1);
-
 		if (connect(i, cmds, envp, pipe_fd) == -1)
 			return (1);
 		i++;
 	}
 	i = 0;
 	while (i < n)
-		wait(NULL), i++;
+	{
+		wait(NULL);
+		i++;
+	}
 	free_all(cmds, NULL);
 	return (0);
 }

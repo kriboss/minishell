@@ -6,7 +6,7 @@
 /*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/05 14:29:48 by kbossio           #+#    #+#             */
-/*   Updated: 2025/05/06 16:08:15 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/05/12 12:49:51 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ void	sorter(int n, char **envp, int *idx)
 	int	j;
 	int	min;
 	int	tmp;
-	
+
 	i = 0;
 	while (i < n)
 	{
@@ -86,8 +86,8 @@ char	**dup_exp(char **envp)
 
 int	print_exp(char **str)
 {
-	int	i;
-	int	j;
+	int		i;
+	int		j;
 	char	**exp;
 
 	i = 0;
@@ -108,32 +108,4 @@ int	print_exp(char **str)
 	}
 	free_all(exp, NULL);
 	return (0);
-}
-
-char	**ins_exp(char *str, char **envp)
-{
-	int	i;
-	int	j;
-	char **new;
-
-	i = 0;
-	while (envp[i])
-		i++;
-	j = check_same(str, envp);
-	if (j != -1)
-	{
-		unset(envp, str);
-		i--;
-	}
-	new = malloc(sizeof(char *) * (i + 2));
-	i = 0;
-	while (envp[i] != NULL)
-	{
-		new[i] = ft_strdup(envp[i]);
-		i++;
-	}
-	new[i] = ft_strdup(str);
-	new[i + 1] = NULL;
-	free_all(envp, NULL);
-	return (new);
 }

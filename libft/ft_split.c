@@ -6,7 +6,7 @@
 /*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/21 17:55:00 by kbossio           #+#    #+#             */
-/*   Updated: 2025/01/19 17:10:15 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/05/12 11:32:10 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,8 +74,10 @@ char	**ft_split(char const *s, char c)
 	char	**salva;
 
 	i = 0;
+	if (!s || !*s)
+		return (NULL);
 	salva = (char **)malloc(sizeof(char *) * (words(s, c) + 1));
-	if (!salva || !s)
+	if (!salva)
 		return (NULL);
 	while (*s)
 	{

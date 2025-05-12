@@ -6,7 +6,7 @@
 /*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/03 09:48:20 by kbossio           #+#    #+#             */
-/*   Updated: 2025/05/08 14:02:14 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/05/12 12:53:19 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,15 @@
 
 int	cd(char *path)
 {
-	if (!path)
+	if (!path || !*path)
 	{
 		if (chdir(getenv("HOME")) == -1)
 			return (1);
+		return (0);
 	}
-	else if (chdir(path) == -1)
+	while (*path == ' ')
+		path++;
+	if (chdir(path) == -1)
 	{
 		printf("bash: cd: %s: No such file or directory\n", path);
 		return (1);
@@ -49,30 +52,24 @@ int	echo(char *str)
 	int	i;
 	int	flag;
 
+	if (str == NULL)
+		return (printf("\n"), 0);
+	while (*str == ' ')
+		str++;
 	i = 0;
 	flag = 0;
-	while (str[i] != '\0')
+	if (str[i] == '-' && str[i + 1] == 'n'
+		&& (str[i + 2] == ' ' || str[i + 2] == '\0'))
 	{
-		if (str[i] == '-' && str[i + 1] == 'n' && str[i + 2] == ' ')
-		{
-			flag = 1;
-			i += 3;
-			break;
-		}
-		i++;
+		flag = 1;
+		i += 2;
+		while (str[i] == ' ')
+			i++;
 	}
-	if (str == NULL)
-	{
-		if (flag == 0)
-			printf("\n");
-	}
+	if (flag == 0)
+		printf("%s\n", str);
 	else
-	{
-		if (flag == 0)
-				printf("%s\n", str);
-		else
-			printf("%s", &str[i]);
-	}
+		printf("%s", &str[i]);
 	return (0);
 }
 
@@ -102,7 +99,7 @@ char	**export(char **env, char *str)
 	}
 	else
 	{
-		return (ins_exp(str + 1, env));
+		return (add_exp(str + 1, env));
 	}
 	return (env);
 }
@@ -121,8 +118,8 @@ int	exit_shell(int status, char **str)
 
 char	**execute(char *cmd, char *envp[])
 {
-	char es;
-	char **cmds;
+	char	es;
+	char	**cmds;
 
 	es = 0;
 	if (ft_strchr(cmd, '|'))
@@ -133,17 +130,17 @@ char	**execute(char *cmd, char *envp[])
 		es = pipex(cmds, envp);
 	}
 	else if (ft_strncmp(cmd, "cd", 2) == 0)
-		es = cd(ft_strchr(cmd, ' ') + 1);
+		es = cd(ft_strchr(cmd, ' '));
 	else if (ft_strncmp(cmd, "pwd", 3) == 0)
 		es = pwd();
 	else if (ft_strncmp(cmd, "echo", 4) == 0)
-		es = echo(ft_strchr(cmd, ' ') + 1);
+		es = echo(ft_strchr(cmd, ' '));
 	else if (ft_strncmp(cmd, "env", 3) == 0)
 		es = env(envp);
 	else if (ft_strncmp(cmd, "export", 6) == 0)
 		envp = export(envp, ft_strchr(cmd, ' '));
 	else if (ft_strncmp(cmd, "unset", 5) == 0)
-		es = unset(envp, ft_strchr(cmd, ' ') + 1);
+		es = unset(envp, ft_strchr(cmd, ' '));
 	else if (ft_strncmp(cmd, "exit", 4) == 0)
 		exit_shell(es, envp);
 	else
