@@ -6,7 +6,7 @@
 /*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/09 11:17:27 by kbossio           #+#    #+#             */
-/*   Updated: 2025/05/12 12:59:46 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/05/13 18:09:00 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,10 +19,10 @@ int	check_ins(char *str)
 	i = 0;
 	if (str[0] >= '0' && str[0] <= '9')
 		return (printf("bash: export: `%s': not a valid identifier\n", str), 1);
-	while (str[i] != '\0' && str[i] != '=' && str[i] != '+')
+	while (str[i] != '\0' && str[i] != '=')
 	{
 		if ((str[i] < '0' && str[i] > '9') || (str[i] < 'A' && str[i] > 'Z')
-			|| (str[i] < 'a' && str[i] > 'z'))
+			|| (str[i] < 'a' && str[i] > 'z') || (str[i] == '+' && str[i + 1] != '='))
 		{
 			printf("bash: export: `%s': not a valid identifier\n", str);
 			return (1);
@@ -32,38 +32,39 @@ int	check_ins(char *str)
 	return (0);
 }
 
+char	**rm_quotes(char **str)
+{
+	int		i;
+	char	*tmp;
+
+	i = 0;
+	while (str[i])
+	{
+		if (strchr(str[i], '\''))
+		{
+			tmp = str[i];
+			str[i] = ft_rmchar(tmp, '\'');
+			free(tmp);
+		}
+		else if (strchr(str[i], '\"'))
+		{
+			tmp = str[i];
+			str[i] = ft_rmchar(tmp, '\"');
+			free(tmp);
+		}
+		i++;
+	}
+	return (str);
+}
+
 char	**ins_exp(char *str, char **envp)
 {
 	int		i;
-	int		j;
 	char	**new;
-	char	*tmp;
-	int		c;
 
 	i = 0;
-	c = 0;
 	while (envp[i])
 		i++;
-	if (check_ins(str) == 1)
-		return (envp);
-	j = check_same(str, envp);
-	if (j != -1)
-	{
-		if (ft_strchr(str, '+'))
-		{
-			tmp = ft_rmchar(str, '+');
-			str = ft_strjoin(tmp, ft_strchr(str, '=') + 1);
-			unset(envp, str);
-			c = 1;
-		}
-		else
-		{
-			tmp = ft_rmchar(str, '=');
-			unset(envp, tmp);
-		}
-		free(tmp);
-		i--;
-	}
 	new = malloc(sizeof(char *) * (i + 2));
 	i = 0;
 	while (envp[i] != NULL)
@@ -72,25 +73,41 @@ char	**ins_exp(char *str, char **envp)
 		i++;
 	}
 	new[i] = ft_strdup(str);
-	if (c == 1)
-		free(str);
 	return (new[i + 1] = NULL, free_all(envp, NULL), new);
 }
 
-char	**add_exp(char *str, char **envp)
+char	**add_exp(char **str, char **envp)
 {
 	int		i;
-	char	**new;
+	int		j;
 
 	i = 0;
-	new = ft_split(str, ' ');
-	if (!new)
-		return (NULL);
-	while (new[i])
+	str = rm_quotes(str);
+	while (str[i])
 	{
-		if (check_ins(new[i]) == 0)
-			envp = ins_exp(new[i], envp);
+		if (check_ins(str[i]) == 0)
+		{
+			j = check_same(str[i], envp);
+			if (j != -1)
+			{
+				if (ft_strchr(str[i], '+'))
+				{
+					if (ft_strchr(envp[j], '='))
+						envp[j] = ft_strjoin(envp[j], ft_strchr(str[i], '=') + 1);
+					else
+						envp[j] = ft_strjoin(envp[j], ft_strchr(str[i], '='));
+					unset(&str[i], envp);
+				}
+				else if (ft_strchr(str[i], '='))
+				{
+					free(envp[j]);
+					envp[j] = ft_strdup(str[i]);
+				}
+			}
+			else
+				envp = ins_exp(str[i], envp);
+		}
 		i++;
 	}
-	return (free_all(new, NULL), envp);
+	return (envp);
 }

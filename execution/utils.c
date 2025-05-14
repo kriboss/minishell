@@ -6,7 +6,7 @@
 /*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/03 11:38:14 by kbossio           #+#    #+#             */
-/*   Updated: 2025/05/12 12:49:26 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/05/13 10:41:50 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,4 +99,39 @@ char	*ft_rmchar(char *str, char c)
 		i++;
 	}
 	return (new[j] = '\0', new);
+}
+
+char	**exec_split(char *str, char c)
+{
+	int		i;
+	int		j;
+	int		k;
+	char	**new;
+
+	i = 0;
+	j = 0;
+	k = 0;
+	while (str[i] != '\0')
+	{
+		if (str[i] == c)
+			j++;
+		i++;
+	}
+	new = malloc(sizeof(char *) * (j + 2));
+	if (!new)
+		return (NULL);
+	i = 0;
+	while (str[i] != '\0')
+	{
+		if (str[i] == c)
+			k++;
+		else
+			new[k] = ft_strjoin(str + i, " ");
+		while (str[i] != c && str[i] != '\0')
+			i++;
+		while (str[i] == c)
+			i++;
+	}
+	new[k + 1] = NULL;
+	return (new);
 }

@@ -6,7 +6,7 @@
 /*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:25:53 by kbossio           #+#    #+#             */
-/*   Updated: 2025/05/12 13:02:52 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/05/13 12:29:40 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,6 +102,5 @@ int	exec_external(char **args, char **envp)
 	while (waitpid(pid, &status, 0) == -1)
 		;
 	free(exe_path);
-	free_all(args, NULL);
 	return (0);
 }

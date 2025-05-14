@@ -6,7 +6,7 @@
 /*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/05 19:47:51 by kbossio           #+#    #+#             */
-/*   Updated: 2025/05/12 12:57:19 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/05/13 17:14:06 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,23 +50,19 @@ int	match_word(char *str, char **envp)
 	return (-1);
 }
 
-int	unset(char **envp, char *str)
+int	unset(char **str, char **envp)
 {
 	int		i;
 	int		n;
-	char	**tmp;
 
 	n = 0;
 	if (str == NULL)
 		return (1);
-	tmp = ft_split(str, ' ');
-	if (tmp == NULL)
-		return (1);
-	while (tmp[n])
+	while (str[n])
 	{
-		if (match_word(tmp[n], envp) != -1)
+		if (match_word(str[n], envp) != -1)
 		{
-			i = match_word(tmp[n], envp);
+			i = match_word(str[n], envp);
 			free(envp[i]);
 			while (envp[i] != NULL)
 			{
@@ -76,5 +72,5 @@ int	unset(char **envp, char *str)
 		}
 		n++;
 	}
-	return (free_all(tmp, NULL), 0);
+	return (0);
 }

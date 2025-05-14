@@ -6,7 +6,7 @@
 /*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 10:15:41 by kbossio           #+#    #+#             */
-/*   Updated: 2025/05/06 10:37:35 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/05/13 11:43:35 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,5 +51,37 @@ int	red_app(char *fname)
 		return (1);
 	}
 	dup2(fd, STDOUT_FILENO);
+	return (0);
+}
+
+int	handle_red(char **cmds, char **envp)
+{
+	int	i;
+
+	i = 0;
+	(void)envp;
+	while (cmds[i])
+	{
+		if (ft_strnstr(cmds[i], ">>", 2))
+		{
+			if (red_app(cmds[i + 1]) == 1)
+				return (1);
+			cmds[i] = NULL;
+		}
+		else if (ft_strnstr(cmds[i], ">", 1))
+		{
+			if (red_out(cmds[i + 1]) == 1)
+				return (1);
+			cmds[i] = NULL;
+		}
+		else if (ft_strnstr(cmds[i], "<", 1))
+		{
+			if (red_in(cmds[i + 1]) == 1)
+				return (1);
+			cmds[i] = NULL;
+		}
+		i++;
+	}
+	free_all(cmds, NULL);
 	return (0);
 }

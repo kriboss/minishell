@@ -6,7 +6,7 @@
 /*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/03 09:49:05 by kbossio           #+#    #+#             */
-/*   Updated: 2025/05/12 12:58:20 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/05/13 12:39:56 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,8 +42,8 @@ typedef struct env_s
 }	t_env;
 
 int		print_exp(char **str);
-char	**add_exp(char *str, char **envp);
-int		unset(char **envp, char *str);
+char	**add_exp(char **str, char **envp);
+int		unset(char **str, char **envp);
 int		ft_strcmp(char *s1, const char *s2);
 char	**dup_env(char **envp);
 void	free_all(char **str, char **new);
@@ -53,5 +53,6 @@ void	start_signals(void);
 int		exec_external(char **args, char **envp);
 int		pipex(char **cmds, char **envp);
 char	*ft_rmchar(char *str, char c);
+int		handle_red(char **cmds, char **envp);
 
 #endif
