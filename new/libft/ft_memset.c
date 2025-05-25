@@ -1,46 +1,43 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   lexer.c                                            :+:      :+:    :+:   */
+/*   ft_memset.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sel-khao <sel-khao <marvin@42.fr>>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/03 12:06:45 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/05/03 12:28:30 by sel-khao         ###   ########.fr       */
+/*   Created: 2024/11/21 11:46:07 by sel-khao          #+#    #+#             */
+/*   Updated: 2024/11/28 16:05:42 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
-#include <unistd.h>
+#include "libft.h"
 
-char	quoted(char *line)
+void	*ft_memset(void *s, int c, size_t n)
+{
+	unsigned char	*str;
+	unsigned char	a;
+
+	str = (unsigned char *)s;
+	a = (unsigned char)c;
+	while (n--)
+	{
+		*str = a;
+		str++;
+	}
+	return (s);
+}
+/*int main()
 {
 	int i;
-	char *arg;
-	//int len;
 
 	i = 0;
-	//arg = malloc(sizeof(char) * len);
-	while (line[i])
+    char str[10];
+    ft_memset(str, 'w', 10);
+    while (i < 10)
 	{
-		if (line[i] == "'")
-		{
-			i++;
-			arg = line[i];
-			while (line[i] != "'")
-			{
-				
-			}
-		}
-		i++;
-	}
-}
-
-int	main(int argc, char **argv)
-{
-	int i = 0;
-	
-	if (argc == 2)
-		quoted(argv);
+        printf("%c ", str[i]);
+        i++;
+    }
+    printf("\n");
 	return 0;
-}
+}*/
