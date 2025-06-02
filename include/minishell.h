@@ -6,7 +6,7 @@
 /*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/03 09:49:05 by kbossio           #+#    #+#             */
-/*   Updated: 2025/05/13 12:39:56 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/05/21 11:34:09 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,5 +54,9 @@ int		exec_external(char **args, char **envp);
 int		pipex(char **cmds, char **envp);
 char	*ft_rmchar(char *str, char c);
 int		handle_red(char **cmds, char **envp);
+
+int		red_out(char **cmds, char **envp);
+int		red_in(char **cmds, char **envp);
+int		red_app(char **cmds, char **envp);
 
 #endif

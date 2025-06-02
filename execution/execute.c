@@ -6,7 +6,7 @@
 /*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/03 09:48:20 by kbossio           #+#    #+#             */
-/*   Updated: 2025/05/13 12:38:38 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/05/21 18:44:35 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,22 +127,34 @@ int	exit_shell(int status, char **str)
 	exit(status);
 }
 
+int check_cmd(char **cmds, char **envp)
+{
+	int	i;
+
+	i = 0;
+	while (cmds[i])
+	{
+		if (ft_strncmp(cmds[i], "|", 1) == 0)
+			pipex(cmds, envp);
+		else if (ft_strncmp(cmds[i], ">>", 2) == 0)
+			red_app(cmds, envp);
+		else if (ft_strncmp(cmds[i], ">", 1) == 0)
+			red_out(cmds, envp);
+		else if (ft_strncmp(cmds[i], "<", 1) == 0)
+			red_in(cmds, envp);
+		i++;
+	}
+	return (-2);
+}
+
 char	**execute(char *cmd, char *envp[])
 {
 	char	es;
+	char	*cmds_test[] = {"ls", "|", "wc", NULL};
 	char	**cmds;
 
 	es = 0;
-	if (ft_strrchr(cmd, '|'))
-	{
-		cmds = ft_split(cmd, '|');
-		if (cmds == NULL)
-			return (NULL);
-		es = pipex(cmds, envp);
-	}
-	else if (ft_strrchr(cmd, '>') || ft_strrchr(cmd, '<'))
-		es = handle_red(ft_split(cmd, ' '), envp);
-	else
+	if (check_cmd(cmds_test, envp) == -2)
 	{
 		cmds = ft_split(cmd, ' ');
 		if (ft_strncmp(cmd, "cd", 2) == 0)

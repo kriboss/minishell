@@ -6,16 +6,17 @@
 /*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 10:47:51 by kbossio           #+#    #+#             */
-/*   Updated: 2025/05/12 12:51:31 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/05/21 11:14:24 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
-static int	connect(int i, char **cmds, char **envp, int pipe_fd[2])
+static int	connect(char **cmds, char **envp, int pipe_fd[2])
 {
 	static int	prev_fd = STDIN_FILENO;
 	pid_t		pid;
+	int i = 0;
 
 	pid = fork();
 	if (pid == -1)
@@ -59,22 +60,16 @@ int	pipex(char **cmds, char **envp)
 		free(old);
 		n++;
 	}
-	i = 0;
-	while (i < n)
-	{
-		if (i < n - 1)
-			if (pipe(pipe_fd) == -1)
-				return (perror("pipe"), 1);
-		if (connect(i, cmds, envp, pipe_fd) == -1)
-			return (1);
-		i++;
-	}
+	if (pipe(pipe_fd) == -1)
+		return (perror("pipe"), 1);
+	if (connect(cmds, envp, pipe_fd) == -1)
+		return (1);
 	i = 0;
 	while (i < n)
 	{
 		wait(NULL);
 		i++;
 	}
-	free_all(cmds, NULL);
+	// free_all(cmds, NULL);
 	return (0);
 }

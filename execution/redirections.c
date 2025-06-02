@@ -6,31 +6,48 @@
 /*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 10:15:41 by kbossio           #+#    #+#             */
-/*   Updated: 2025/05/13 11:43:35 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/05/21 11:29:53 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
-int	red_out(char *fname)
+int	red_out(char **cmds, char **envp)
 {
 	int	fd;
+	int	i;
+	char **tmp;
 
-	fd = open(fname, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	i = 0;
+	while (cmds[i])
+		i++;
+	fd = open(cmds[--i], O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (fd == -1)
 	{
 		perror("Error opening file");
 		return (1);
 	}
 	dup2(fd, STDOUT_FILENO);
+	tmp = malloc(sizeof(char *) * (--i));
+	tmp[i] = NULL;
+	while (--i >= 0)
+	{
+		tmp[i] = ft_strdup(cmds[i]);
+	}
+	execute(tmp, envp);
+	close(fd);
 	return (0);
 }
 
-int	red_in(char *fname)
+int	red_in(char **cmds, char **envp)
 {
 	int	fd;
-
-	fd = open(fname, O_RDONLY);
+	int	i;
+	
+	i = 0;
+	while (cmds[i])
+		i++;
+	fd = open(cmds[--i], O_RDONLY);
 	if (fd == -1)
 	{
 		perror("Error opening file");
@@ -40,11 +57,15 @@ int	red_in(char *fname)
 	return (0);
 }
 
-int	red_app(char *fname)
+int	red_app(char **cmds, char **envp)
 {
 	int	fd;
-
-	fd = open(fname, O_WRONLY | O_CREAT | O_APPEND, 0644);
+	int	i;
+	
+	i = 0;
+	while (cmds[i])
+		i++;
+	fd = open(cmds[--i], O_WRONLY | O_CREAT | O_APPEND, 0644);
 	if (fd == -1)
 	{
 		perror("Error opening file");
@@ -59,29 +80,26 @@ int	handle_red(char **cmds, char **envp)
 	int	i;
 
 	i = 0;
-	(void)envp;
-	while (cmds[i])
+	/*
+	if (ft_strrchr(cmds[i], ''))
 	{
-		if (ft_strnstr(cmds[i], ">>", 2))
-		{
-			if (red_app(cmds[i + 1]) == 1)
-				return (1);
-			cmds[i] = NULL;
-		}
-		else if (ft_strnstr(cmds[i], ">", 1))
-		{
-			if (red_out(cmds[i + 1]) == 1)
-				return (1);
-			cmds[i] = NULL;
-		}
-		else if (ft_strnstr(cmds[i], "<", 1))
-		{
-			if (red_in(cmds[i + 1]) == 1)
-				return (1);
-			cmds[i] = NULL;
-		}
-		i++;
+		if (red_app(cmds[i + 1]) == 1)
+			return (1);
+		cmds[i] = NULL;
 	}
-	free_all(cmds, NULL);
+	*/
+	if (ft_strrchr(cmds[i], '>'))
+	{
+		if (red_out(cmds, envp) == 1)
+			return (1);
+		cmds[i] = NULL;
+	}
+	else if (ft_strnstr(cmds[i], "<", 1))
+	{
+		if (red_in(cmds[i + 1], envp) == 1)
+			return (1);
+		cmds[i] = NULL;
+	}
+	// free_all(cmds, NULL);
 	return (0);
 }
