@@ -55,7 +55,7 @@ int	pwd(void)
 	}
 }
 
-int	echo(char **str)
+int	ft_echo(char **str)
 {
 	int	i;
 	int	n_flag;
@@ -120,7 +120,7 @@ int	exit_shell(int status, char **str)
 	printf("Exiting shell...\n");
 	if (str != NULL)
 	{
-		free_all(str, NULL);
+		free_arr(str, NULL);
 		status = 0;
 	}
 	clear_history();
@@ -137,43 +137,41 @@ int check_cmd(char **cmds, char **envp)
 		if (ft_strncmp(cmds[i], "|", 1) == 0)
 			pipex(cmds, envp);
 		else if (ft_strncmp(cmds[i], ">>", 2) == 0)
-			red_app(cmds, envp);
+			red_app(cmds);
 		else if (ft_strncmp(cmds[i], ">", 1) == 0)
 			red_out(cmds, envp);
 		else if (ft_strncmp(cmds[i], "<", 1) == 0)
-			red_in(cmds, envp);
+			red_in(cmds);
 		i++;
 	}
 	return (-2);
 }
 
-char	**execute(char *cmd, char *envp[])
+char	**execute(char **cmd, char *envp[])
 {
 	char	es;
 	char	*cmds_test[] = {"ls", "|", "wc", NULL};
-	char	**cmds;
 
 	es = 0;
 	if (check_cmd(cmds_test, envp) == -2)
 	{
-		cmds = ft_split(cmd, ' ');
-		if (ft_strncmp(cmd, "cd", 2) == 0)
-			es = cd(cmds + 1);
-		else if (ft_strncmp(cmd, "pwd", 3) == 0)
+		if (ft_strncmp(cmd[0], "cd", 2) == 0)
+			es = cd(cmd + 1);
+		else if (ft_strncmp(cmd[0], "pwd", 3) == 0)
 			es = pwd();
-		else if (ft_strncmp(cmd, "echo", 4) == 0)
-			es = echo(cmds + 1);
-		else if (ft_strncmp(cmd, "env", 3) == 0)
+		else if (ft_strncmp(cmd[0], "echo", 4) == 0)
+			es = ft_echo(cmd + 1);
+		else if (ft_strncmp(cmd[0], "env", 3) == 0)
 			es = env(envp);
-		else if (ft_strncmp(cmd, "export", 6) == 0)
-			envp = export(envp, cmds + 1);
-		else if (ft_strncmp(cmd, "unset", 5) == 0)
-			es = unset(cmds + 1, envp);
-		else if (ft_strncmp(cmd, "exit", 4) == 0)
+		else if (ft_strncmp(cmd[0], "export", 6) == 0)
+			envp = export(envp, cmd + 1);
+		else if (ft_strncmp(cmd[0], "unset", 5) == 0)
+			es = unset(cmd + 1, envp);
+		else if (ft_strncmp(cmd[0], "exit", 4) == 0)
 			exit_shell(es, envp);
 		else
-			es = exec_external(cmds, envp);
-		free_all(cmds, NULL);
+			es = exec_external(cmd, envp);
+		free_arr(cmd, NULL);
 	}
 	return (envp);
 }

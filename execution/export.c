@@ -76,7 +76,7 @@ char	**dup_exp(char **envp)
 	{
 		env[i] = ft_strdup(envp[srt[i]]);
 		if (!env[i])
-			return (free_all(env, NULL), free(srt), NULL);
+			return (free_arr(env, NULL), free(srt), NULL);
 		i++;
 	}
 	env[i] = NULL;
@@ -106,6 +106,6 @@ int	print_exp(char **str)
 			printf("\n");
 		i++;
 	}
-	free_all(exp, NULL);
+	free_arr(exp, NULL);
 	return (0);
 }

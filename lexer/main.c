@@ -10,7 +10,22 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-# include "minishell.h"
+# include "../include/minishell.h"
+
+void	print_header(void)
+{
+	printf(BOLD CYAN);
+	printf(" __  __ _____ _   _ _____  _____ _    _ ______ _      _      \n");
+	printf("|  \\/  |_   _| \\ | |_   _|/ ____| |  | |  ____| |    | |     \n");
+	printf("| \\  / | | | |  \\| | | | | (___ | |__| | |__  | |    | |     \n");
+	printf("| |\\/| | | | | . ` | | |  \\___ \\|  __  |  __| | |    | |     ");
+	printf("\n");
+	printf("| |  | |_| |_| |\\  |_| |_ ____) | |  | | |____| |____| |____ \n");
+	printf("|_|  |_|_____|_| \\_|_____|_____/|_|  |_|______|______|______|\n");
+	printf("                                                             \n");
+	printf("                                                             \n");
+	printf(RESET);
+}
 
 char **add_word(char **argv, char *word)
 {
@@ -90,21 +105,30 @@ void something(t_shell *shell)
 }
 
 
-int main(int ac, char **av)
+int main(int ac, char **av, char **envp)
 {
-    (void)ac;
-    (void)av;
     t_shell shell;
+    char	**str;
+
+	if (ac != 1)
+	{
+		printf("Usage: %s\n", av[0]);
+		return (1);
+	}
 
     shell.tokens = NULL;
     shell.input = NULL;
     shell.cmds = NULL;
+    str = dup_env(envp);
+	start_signals();
+	print_header();
     while (1)
     {
         ft_readline(&shell);
         if (!shell.input)
             free_all(&shell);
         something(&shell);
+        str = execute(shell.cmds->argv, str);
         shell.tokens = NULL;
         shell.cmds = NULL;
         free(shell.input);

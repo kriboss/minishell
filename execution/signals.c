@@ -88,16 +88,16 @@ int	exec_external(char **args, char **envp)
 	{
 		ft_putstr_fd(args[0], STDERR_FILENO);
 		ft_putendl_fd(": command not found", STDERR_FILENO);
-		free_all(args, NULL);
+		free_arr(args, NULL);
 		return (127);
 	}
 	pid = fork();
 	if (pid < 0)
-		return (perror("fork"), free(exe_path), free_all(args, NULL), 1);
+		return (perror("fork"), free(exe_path), free_arr(args, NULL), 1);
 	if (pid == 0)
 	{
 		execve(exe_path, args, envp);
-		return (perror("execve"), free(exe_path), free_all(args, NULL), 1);
+		return (perror("execve"), free(exe_path), free_arr(args, NULL), 1);
 	}
 	while (waitpid(pid, &status, 0) == -1)
 		;

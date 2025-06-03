@@ -73,7 +73,7 @@ char	**ins_exp(char *str, char **envp)
 		i++;
 	}
 	new[i] = ft_strdup(str);
-	return (new[i + 1] = NULL, free_all(envp, NULL), new);
+	return (new[i + 1] = NULL, free_arr(envp, NULL), new);
 }
 
 char	**add_exp(char **str, char **envp)

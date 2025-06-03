@@ -12,7 +12,7 @@
 
 #include "../include/minishell.h"
 
-void	free_all(char **str, char **new)
+void	free_arr(char **str, char **new)
 {
 	int	i;
 
@@ -54,7 +54,7 @@ char	**dup_env(char **envp)
 	{
 		env[i] = ft_strdup(envp[i]);
 		if (!env[i])
-			return (free_all(env, NULL), NULL);
+			return (free_arr(env, NULL), NULL);
 		i++;
 	}
 	env[i] = NULL;

@@ -1,4 +1,4 @@
-#include "minishell.h"
+#include "../include/minishell.h"
 
 void create_token(t_shell *shell, char *input, int *i)
 {

@@ -39,7 +39,7 @@ int	red_out(char **cmds, char **envp)
 	return (0);
 }
 
-int	red_in(char **cmds, char **envp)
+int	red_in(char **cmds)
 {
 	int	fd;
 	int	i;
@@ -57,7 +57,7 @@ int	red_in(char **cmds, char **envp)
 	return (0);
 }
 
-int	red_app(char **cmds, char **envp)
+int	red_app(char **cmds)
 {
 	int	fd;
 	int	i;
@@ -75,31 +75,3 @@ int	red_app(char **cmds, char **envp)
 	return (0);
 }
 
-int	handle_red(char **cmds, char **envp)
-{
-	int	i;
-
-	i = 0;
-	/*
-	if (ft_strrchr(cmds[i], ''))
-	{
-		if (red_app(cmds[i + 1]) == 1)
-			return (1);
-		cmds[i] = NULL;
-	}
-	*/
-	if (ft_strrchr(cmds[i], '>'))
-	{
-		if (red_out(cmds, envp) == 1)
-			return (1);
-		cmds[i] = NULL;
-	}
-	else if (ft_strnstr(cmds[i], "<", 1))
-	{
-		if (red_in(cmds[i + 1], envp) == 1)
-			return (1);
-		cmds[i] = NULL;
-	}
-	// free_all(cmds, NULL);
-	return (0);
-}

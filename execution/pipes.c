@@ -32,7 +32,7 @@ static int	connect(char **cmds, char **envp, int pipe_fd[2])
 			dup2(pipe_fd[1], STDOUT_FILENO);
 		close(pipe_fd[0]);
 		close(pipe_fd[1]);
-		execute(cmds[i], envp);
+		execute(cmds, envp);
 		exit(1);
 	}
 	if (cmds[i + 1])
