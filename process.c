@@ -32,9 +32,7 @@ void create_token(t_shell *shell, char *input, int *i)
 void add_token(t_shell *shell, char *value, int type)
 {
     t_token *new_token;
-    t_token *tmp;
-    
-    tmp = shell->tokens;
+
     new_token = malloc(sizeof(t_token));
     if (!new_token)
         return ;

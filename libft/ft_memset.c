@@ -3,37 +3,41 @@
 /*                                                        :::      ::::::::   */
 /*   ft_memset.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbossio <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: sel-khao <sel-khao <marvin@42.fr>>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/18 12:19:06 by kbossio           #+#    #+#             */
-/*   Updated: 2024/11/18 12:19:07 by kbossio          ###   ########.fr       */
+/*   Created: 2024/11/21 11:46:07 by sel-khao          #+#    #+#             */
+/*   Updated: 2024/11/28 16:05:42 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-void	*ft_memset(void *p, int c, size_t n)
+void	*ft_memset(void *s, int c, size_t n)
 {
 	unsigned char	*str;
-	size_t			i;
+	unsigned char	a;
 
-	str = (unsigned char *)p;
-	i = 0;
-	while (i < n)
+	str = (unsigned char *)s;
+	a = (unsigned char)c;
+	while (n--)
 	{
-		str[i] = c;
-		i++;
+		*str = a;
+		str++;
 	}
-	return (str);
+	return (s);
 }
-/*
-#include <stdio.h>
-
-int main()
+/*int main()
 {
-    char arr[] = "ciao";
-    ft_memset(arr, '.', sizeof(arr)-1);
-    printf("After memset:\n");
-    printf("%s", arr);
-    return 0;
+	int i;
+
+	i = 0;
+    char str[10];
+    ft_memset(str, 'w', 10);
+    while (i < 10)
+	{
+        printf("%c ", str[i]);
+        i++;
+    }
+    printf("\n");
+	return 0;
 }*/

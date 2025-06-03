@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_lstadd_front.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbossio <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: sel-khao <sel-khao <marvin@42.fr>>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/25 10:39:57 by kbossio           #+#    #+#             */
-/*   Updated: 2024/11/25 10:39:58 by kbossio          ###   ########.fr       */
+/*   Created: 2024/12/11 15:06:34 by sel-khao          #+#    #+#             */
+/*   Updated: 2024/12/15 18:40:52 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,36 +14,31 @@
 
 void	ft_lstadd_front(t_list **lst, t_list *new)
 {
-	if (!new)
+	if (!lst || !new)
 		return ;
-	if (!lst)
-	{
-		*lst = new;
-		return ;
-	}
 	new->next = *lst;
 	*lst = new;
 }
-/*
-#include <stdio.h>
-
-int main() {
-    t_list *head = ft_lstnew("Primo");
-    head->next = ft_lstnew("Secondo");
-    head->next->next = ft_lstnew("Terzo");
-
-    t_list *node1 = ft_lstnew("Node1");
-    t_list *node2 = ft_lstnew("Node2");
-
-    ft_lstadd_front(&head, node1);
-    ft_lstadd_front(&head, node2);
-
-    // Print the list
-    t_list *current = head;
-    while (current) {
-        printf("%s\n", (char *)current->content);
-        current = current->next;
-    }
-
-    return 0;
-}*/
+/* int main()
+{
+	t_list *head = NULL;
+	t_list *node1 = ft_lstnew("sara");
+	t_list *node2 = ft_lstnew("wassim");
+	head = node1;
+	t_list *tmp = head;
+	while(tmp)
+	{
+		printf("%s\n", (char *)tmp->content);
+		tmp = tmp->next;
+	}
+	printf("adding node:\n");
+	ft_lstadd_front(&head, node2);
+	t_list *tmpp = head;
+	while (tmpp)
+	{
+		printf("%s\n", (char *)tmpp->content);
+		tmpp = tmpp->next;
+	}
+	free(node1);
+	free(node2);
+} */

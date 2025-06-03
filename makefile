@@ -7,6 +7,7 @@ SRC = main.c\
 		validate.c\
 		free.c\
 		utils.c\
+		process.c\
 
 OBJ = $(SRC:.c=.o)
 

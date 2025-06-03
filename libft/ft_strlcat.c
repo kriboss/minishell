@@ -3,44 +3,40 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strlcat.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbossio <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: sel-khao <sel-khao <marvin@42.fr>>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/19 12:03:26 by kbossio           #+#    #+#             */
-/*   Updated: 2024/11/19 12:03:27 by kbossio          ###   ########.fr       */
+/*   Created: 2024/11/20 14:43:56 by sel-khao          #+#    #+#             */
+/*   Updated: 2024/12/01 18:17:01 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-size_t	ft_strlcat(char *dest, const char *src, size_t n)
+size_t	ft_strlcat(char *dst, const char *src, size_t size)
 {
 	size_t	i;
 	size_t	j;
 
 	i = 0;
-	j = 0;
-	while (dest[i] != '\0' && i < n)
+	while (dst[i] && i < size)
 		i++;
-	while (src[j] && i + j + 1 < n)
+	if (i == size)
+		return (i + ft_strlen(src));
+	j = 0;
+	while (src[j] && (i + j) < size - 1)
 	{
-		dest[i + j] = src[j];
+		dst[i + j] = src[j];
 		j++;
 	}
-	if (i < n)
-		dest[i + j] = '\0';
-	return (i + ft_strlen((char *)src));
+	dst[i + j] = '\0';
+	return (i + ft_strlen(src));
 }
-/*
-#include <stdio.h>
-
-int main()
+/*int main()
 {
-    	
-    	char dest[50] = "ciao io";
-    	const char src[] = "sono lollo";
+	char d[17] = "hey";
+	char s[9] = "sara";
 
-    	// Fill whole array with 0.
-    	int i = ft_strlcat(dest, src, 0);
-    	printf("length : %d \n dest : %s", i, dest);
-    	return 0;
+	printf("%zu\n", ft_strlcat(d, s, 18));
+	printf("%s\n", d);
+	return (0);
 }*/

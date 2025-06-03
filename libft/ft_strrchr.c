@@ -3,37 +3,38 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strrchr.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbossio <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: sel-khao <sel-khao <marvin@42.fr>>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/19 13:51:48 by kbossio           #+#    #+#             */
-/*   Updated: 2024/11/19 13:51:49 by kbossio          ###   ########.fr       */
+/*   Created: 2024/11/19 19:24:42 by sel-khao          #+#    #+#             */
+/*   Updated: 2024/11/25 19:37:24 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-char	*ft_strrchr(const char *str, int c)
+char	*ft_strrchr(const char *s, int c)
 {
 	int	i;
 
-	i = ft_strlen((char *)str);
+	i = ft_strlen(s);
 	while (i >= 0)
 	{
-		if (str[i] == (char)c)
-			return ((char *)str + i);
+		if (s[i] == (char)c)
+			return ((char *)(s + i));
 		i--;
 	}
 	return (NULL);
 }
-/*
-#include <stdio.h>
-
-int	main()
+/*int	main()
 {
-	int c = 122;
-	char str[] = "ciao io mi chziamo kristian";
-	char *res[50];
-	*res = ft_strrchr(str, c);
-	printf("%s", *res);
-	return 0;
+	char *result = ft_strrchr("wassimi", ' ');
+	if (result != NULL)
+	{
+		printf("%s\n", result);
+	}
+	else
+	{
+		printf("NULL\n");
+	}
+	return (0);
 }*/

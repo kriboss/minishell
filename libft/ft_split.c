@@ -3,115 +3,114 @@
 /*                                                        :::      ::::::::   */
 /*   ft_split.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
+/*   By: sel-khao <sel-khao <marvin@42.fr>>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/21 17:55:00 by kbossio           #+#    #+#             */
-/*   Updated: 2025/01/19 17:10:15 by kbossio          ###   ########.fr       */
+/*   Created: 2024/11/27 13:53:18 by sel-khao          #+#    #+#             */
+/*   Updated: 2024/12/01 20:41:42 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-static int	words(const char *s, char c)
+static int	count_words(char const *s, char c)
 {
-	size_t	n;
-	int		in;
+	size_t	wordcount;
+	size_t	flag;
 
-	n = 0;
-	in = 0;
+	if (!s)
+		return (0);
+	wordcount = 0;
+	flag = 0;
 	while (*s)
 	{
-		if (*s != c && in == 0)
+		if (*s != c && flag == 0)
 		{
-			in = 1;
-			n++;
+			wordcount++;
+			flag = 1;
 		}
 		else if (*s == c)
-			in = 0;
+			flag = 0;
 		s++;
 	}
-	return (n);
+	return (wordcount);
 }
 
-static char	*duping(const char *s, char c)
+static void	ft_freearr(char **words, size_t i)
 {
-	char	*str;
-	int		i;
-	int		len;
+	if (words)
+	{
+		while (i > 0)
+		{
+			i--;
+			free(words[i]);
+		}
+		free(words);
+	}
+}
+
+static void	sub_str(char **words, char const *s, char c, size_t n_words)
+{
+	size_t		i;
+	const char	*start;
 
 	i = 0;
-	len = 0;
-	while (s[len] && c != s[len])
-		len++;
-	str = (char *)malloc(sizeof(char) * (len + 1));
-	if (!str)
-		return (NULL);
-	while (i < len)
+	while (*s && i < n_words)
 	{
-		str[i] = s[i];
+		while (*s == c)
+			s++;
+		start = s;
+		while (*s != c && *s)
+			s++;
+		if (s > start)
+			words[i] = ft_substr(start, 0, s - start);
+		if (!words[i])
+		{
+			ft_freearr(words, i);
+			return ;
+		}
 		i++;
 	}
-	str[i] = '\0';
-	return (str);
+	words[i] = NULL;
 }
-
-static void	free_all(char **arr, int n)
-{
-	int	i;
-
-	i = 0;
-	while (i < n)
-	{
-		free(arr[i]);
-		i++;
-	}
-	free(arr);
-}
+/* the function sub_str split (s) into words and
+store them in the words array, splitting based on a delimiter,
+and storing up to n_words words.
+If any allocation fails, it'll free all the prev allocated words */
 
 char	**ft_split(char const *s, char c)
 {
-	size_t	i;
-	char	**salva;
+	char	**result;
+	size_t	word_count;
 
-	i = 0;
-	salva = (char **)malloc(sizeof(char *) * (words(s, c) + 1));
-	if (!salva || !s)
+	if (!s)
 		return (NULL);
-	while (*s)
-	{
-		while (*s && c == *s)
-			s++;
-		if (*s)
-		{
-			salva[i] = duping(s, c);
-			if (!salva[i])
-				return (free_all(salva, i - 1), NULL);
-			i++;
-			while (*s && c != *s)
-				s++;
-		}
-	}
-	salva[i] = NULL;
-	return (salva);
+	word_count = count_words(s, c);
+	result = (char **)malloc((word_count + 1) * sizeof(char *));
+	if (!result)
+		return (NULL);
+	sub_str(result, s, c, word_count);
+	if (!result[0] && word_count > 0)
+		return (NULL);
+	return (result);
 }
-/*
-#include <stdio.h>
 
-int main()
+/*int main()
 {
-    char str[] = "   ciao  mi chi   kri";
-    char delimiter = ' ';
-    char **result = ft_split(str, delimiter);
-    int i = 0;
+    char **result;
+    char *str = "buy me kinder bueno..";
+	size_t	i;
 
-    if (!result)
-        return (1);
-
-    while (result[i])
+    result = ft_split(str, ' ');
+	i = 0;
+    if (result)
     {
-        printf("Substring %d: %s\n", i, result[i]);
-        i++;
+        while (result[i])
+        {
+            printf("substr %zu: %s\n", i, result[i]);
+            free(result[i]); 
+			i++;
+        }
+        free(result);
     }
     return (0);
-}
-*/
+}*/

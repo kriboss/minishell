@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_memmove.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbossio <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: sel-khao <sel-khao <marvin@42.fr>>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/19 10:18:24 by kbossio           #+#    #+#             */
-/*   Updated: 2024/11/19 10:18:25 by kbossio          ###   ########.fr       */
+/*   Created: 2024/11/21 21:00:18 by sel-khao          #+#    #+#             */
+/*   Updated: 2024/12/15 18:55:01 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,39 +14,37 @@
 
 void	*ft_memmove(void *dest, const void *src, size_t n)
 {
-	unsigned char		*desti;
-	const unsigned char	*srci;
+	unsigned char	*destt;
+	unsigned char	*srcc;
+	size_t			i;
 
-	desti = (unsigned char *)dest;
-	srci = (const unsigned char *)src;
-	if (!dest && !src)
+	i = 0;
+	srcc = (unsigned char *)src;
+	destt = (unsigned char *)dest;
+	if (!src && !dest)
 		return (NULL);
-	if (desti < srci)
+	if (dest > src)
 	{
 		while (n--)
-			*desti++ = *srci++;
+		{
+			destt[n] = srcc[n];
+		}
 	}
 	else
 	{
-		desti += n - 1;
-		srci += n - 1;
-		while (n--)
-			*desti-- = *srci--;
+		while (i < n)
+		{
+			destt[i] = srcc[i];
+			i++;
+		}
 	}
 	return (dest);
 }
-/*
-#include <stdio.h>
-
-int main()
+/*int main()
 {
-    	char dest[50];
-
-    	// Fill whole array with 0.
-    	ft_memmove(dest, "ciao", 4);
-    	printf("After memset:\n");
-	printf("%s", dest);
-    
-
-    	return 0;
+	char dest[20] = "wassim";
+	char src[] = "sara";
+	ft_memmove(dest, src, 1);
+	printf("%s\n", dest);
+	return (0);
 }*/

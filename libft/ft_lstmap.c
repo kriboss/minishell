@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_lstmap.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbossio <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: sel-khao <sel-khao <marvin@42.fr>>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/25 13:21:13 by kbossio           #+#    #+#             */
-/*   Updated: 2024/11/25 13:21:14 by kbossio          ###   ########.fr       */
+/*   Created: 2024/12/10 18:09:45 by sel-khao          #+#    #+#             */
+/*   Updated: 2024/12/15 19:39:01 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,51 +14,64 @@
 
 t_list	*ft_lstmap(t_list *lst, void *(*f)(void *), void (*del)(void *))
 {
-	t_list	*new;
+	t_list	*node;
+	t_list	*new_lst;
 
-	if (!lst || !f)
-		return (NULL);
-	new = NULL;
+	new_lst = NULL;
 	while (lst)
 	{
-		ft_lstadd_back(&new, ft_lstnew(f(lst->content)));
-		if (!new)
+		node = ft_lstnew((*f)(lst->content));
+		if (node->content == NULL)
 		{
-			ft_lstclear(&new, *del);
+			(*del)(node->content);
+			free(node);
 			return (NULL);
 		}
+		ft_lstadd_back(&new_lst, node);
 		lst = lst->next;
 	}
-	return (new);
+	return (new_lst);
 }
-/*
-#include <stdio.h>
-#include <stdlib.h>
-
-void del(void *content) {
-    // Free the dynamically allocated content (assuming it's a string)
-    free(content);
+/* void	del(void *content)
+{
+	free(content);
 }
+void *ttoupper(void *content)
+{
+	char *str = (char *)content;
 
-int main() {
-	t_list *head = ft_lstnew(ft_strdup("Primo"));
-	head->next = ft_lstnew(ft_strdup("Secondo"));
-	head->next->next = ft_lstnew(ft_strdup("Terzo"));
-
-	printf("before:\n");
-	t_list *current = head;
-	while (current) {
-		printf("%s\n", (char *)current->content);
-		current = current->next;
+	while(*str)
+	{
+		*str = ft_toupper((unsigned char)*str);
+		str++;
 	}
-	printf("\nafter:\n");
+	return (content);
+}
+int main()
+{
+	t_list *node1 = ft_lstnew(ft_strdup("sara"));
+	t_list *node2 = ft_lstnew(ft_strdup("wassim"));
+	t_list *head = node1;
+
+	node1->next = node2;
+
+	t_list *temp = head;
+	while(temp)
+	{
+		printf("%s\n", (char *)temp->content);
+		temp = temp->next;
+	}
+	t_list	*new_list = ft_lstmap(head, ttoupper, del);
+	printf("new list:\n");
+	temp = new_list;
+	while(temp)
+	{
+		printf("%s\n", (char *)temp->content);
+		temp = temp->next;
+	}
 	ft_lstclear(&head, del);
-	current = head;
-	while (current) {
-		printf("%s\n", (char *)current->content);
-		current = current->next;
-	}
-	ft_lstdelone(head->next, del);
-	ft_lstdelone(head, del);
+    //ft_lstclear(&new_list, del);
+	free(new_list->next);
+	free(new_list);
 	return 0;
-}*/
+} */

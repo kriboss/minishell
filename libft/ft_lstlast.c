@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_lstlast.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbossio <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: sel-khao <sel-khao <marvin@42.fr>>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/25 11:31:14 by kbossio           #+#    #+#             */
-/*   Updated: 2024/11/25 11:31:15 by kbossio          ###   ########.fr       */
+/*   Created: 2024/12/09 16:30:46 by sel-khao          #+#    #+#             */
+/*   Updated: 2024/12/15 18:54:43 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,43 +14,27 @@
 
 t_list	*ft_lstlast(t_list *lst)
 {
+	t_list	*ptr;
+
+	ptr = lst;
 	if (!lst)
 		return (NULL);
-	while (lst->next)
-	{
-		lst = lst->next;
-	}
-	return (lst);
+	while (ptr->next != NULL)
+		ptr = ptr->next;
+	return (ptr);
 }
-/*
-#include <stdio.h>
+/* int main(void)
+{
+	t_list *node1 = ft_lstnew("sara");
+	t_list *node2 = ft_lstnew("wassim");
+	t_list *node3;
 
-int main() {
-
-    // Create nodes
-    t_list *node1 = ft_lstnew("First");
-    t_list *node2 = ft_lstnew("Second");
-    t_list *node3 = ft_lstnew("Third");
-    t_list *node4 = ft_lstnew("Fourth");
-
-    // Link nodes
-    node1->next = node2;
-    node2->next = node3;
-    node3->next = node4;
-
-    t_list *lst = ft_lstlast(node1);
-    printf("nodes content:\n");
-    while(node1)
-    {
-    	printf("%s\n", (char *)node1->content);
-    	node1 = node1->next;
-    }
-    printf("last node: %s", (char *)lst->content);
-
-    // Free allocated memory
-    free(node3);
-    free(node2);
-    free(node1);
-
-    return 0;
-}*/
+	ft_lstadd_back(&node1, node2);
+	t_list *temp = node1;
+	node3 = ft_lstlast(node1);
+	printf("%s\n", (char *)node3->content);
+	free(node1);
+ 	//free(node2);
+	//free(node3);
+	return 0;
+} */

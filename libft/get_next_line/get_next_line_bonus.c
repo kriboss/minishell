@@ -3,150 +3,125 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
+/*   By: sel-khao <sel-khao <marvin@42.fr>>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/01 16:04:29 by kbossio           #+#    #+#             */
-/*   Updated: 2025/01/09 17:56:24 by kbossio          ###   ########.fr       */
+/*   Created: 2025/01/02 19:50:33 by sel-khao          #+#    #+#             */
+/*   Updated: 2025/01/08 17:52:06 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line_bonus.h"
 
-#include <stdio.h> 
-#include <unistd.h>
-#include <stdlib.h>
-
-static char	*free_join(char *buffer, char *text)
+static char	*freed(char **str)
 {
-	char	*ris;
-
-	ris = ft_strjoin(buffer, text);
-	free(buffer);
-	return (ris);
+	free(*str);
+	*str = NULL;
+	return (NULL);
 }
 
-static char	*read_buffer(int fd, char *buffer)
+static char	*last_line(char **line)
 {
-	int		len;
-	char	*text;
+	char	*tmp;
 
-	len = 1;
-	if (!buffer)
-		buffer = ft_calloc(1, 1);
-	text = malloc(BUFFER_SIZE + 1);
-	if (!text)
-		return (NULL);
-	while (len > 0)
-	{
-		len = read(fd, text, BUFFER_SIZE);
-		if (len == -1)
-		{
-			free(buffer);
-			free(text);
-			return (NULL);
-		}
-		text[len] = '\0';
-		buffer = free_join(buffer, text);
-		if (ft_strchr(buffer, '\n'))
-			break ;
-	}
-	free(text);
-	return (buffer);
+	tmp = ft_strdup(*line);
+	freed(line);
+	return (tmp);
 }
 
-static char	*trim_buffer(char *buffer)
+static char	*trunc_line(char **line, int trunc)
 {
-	char	*str;
-	int		i;
-	int		j;
+	char	*next_line;
+	char	*temp;
 
-	i = 0;
-	j = 0;
-	while (buffer[i] && buffer[i] != '\n')
-		i++;
-	if (!buffer[i])
-	{
-		free(buffer);
-		return (NULL);
-	}
-	str = malloc(ft_strlen(buffer) - i);
-	if (!str)
-		return (NULL);
-	while (buffer[++i])
-		str[j++] = buffer[i];
-	str[j] = '\0';
-	free(buffer);
-	return (str);
+	next_line = ft_strdup(*line);
+	if (!next_line)
+		return (freed(line));
+	next_line[trunc + 1] = '\0';
+	temp = *line;
+	*line = ft_strdup((*line) + trunc + 1);
+	freed(&temp);
+	return (next_line);
 }
 
-static char	*read_the_line(char *buffer)
+static char	*final_part(char **line, t_utils *utils)
 {
-	int		i;
-	char	*res;
-
-	i = 0;
-	while (buffer[i] && buffer[i] != '\n')
-		i++;
-	res = malloc(i + 2);
-	if (!res)
-		return (NULL);
-	i = 0;
-	while (buffer[i] && buffer[i] != '\n')
+	freed(&utils->buffer);
+	if (utils->trunc == -1)
 	{
-		res[i] = buffer[i];
-		i++;
+		utils->left_over = last_line(line);
+		return (utils->left_over);
 	}
-	if (buffer[i] == '\n')
-		res[i++] = '\n';
-	res[i] = '\0';
-	return (res);
+	else
+		utils->next_line = trunc_line(line, utils->trunc);
+	return (utils->next_line);
 }
 
 char	*get_next_line(int fd)
 {
-	char		*res;
-	static char	*buffer[OPEN_MAX];
+	static char	*line[OPEN_MAX];
+	t_utils		utils;
 
-	res = NULL;
-	if (BUFFER_SIZE <= 0 || fd < 0 || fd > OPEN_MAX)
-		return (NULL);
-	buffer[fd] = read_buffer(fd, buffer[fd]);
-	if (!buffer[fd] || !*buffer[fd])
+	initial(&utils);
+	if (BUFFER_SIZE <= 0 || fd < 0 || fd >= OPEN_MAX)
+		return (freed(&line[fd]));
+	utils.buffer = malloc(BUFFER_SIZE + 1);
+	if (!utils.buffer)
+		return (freed(&line[fd]));
+	while (utils.readed == BUFFER_SIZE && utils.trunc == -1)
 	{
-		free(buffer[fd]);
-		buffer[fd] = NULL;
-		return (NULL);
+		utils.readed = read(fd, utils.buffer, BUFFER_SIZE);
+		if (utils.readed < 0)
+			return (freed(&utils.buffer), freed(&line[fd]));
+		utils.buffer[utils.readed] = '\0';
+		utils.left_over = line[fd];
+		line[fd] = ft_strjoin(line[fd], utils.buffer);
+		freed(&utils.left_over);
+		utils.trunc = ft_trunc(line[fd]);
 	}
-	res = read_the_line(buffer[fd]);
-	buffer[fd] = trim_buffer(buffer[fd]);
-	return (res);
+	return (final_part(&line[fd], &utils));
 }
 
-/*
-#include <fcntl.h>
+/* #include <fcntl.h>
+#include <stdio.h>
+int main (void)
+{
+	int	fd1;
+	int	fd2;
+	int	fd3;
+	char *line1;
+	char *line2;
+	char *line3;
 
-int main(){
-    
-	char* fileName = "text.txt";
-	char *buffer;
-	int fd = open(fileName, O_RDONLY);
-
-	if (fd < 0)
+	fd1 = open("hi.txt", O_RDONLY);
+	fd2 = open("hey.txt", O_RDONLY);
+	fd3 = open("hope.txt", O_RDONLY);
+	if (fd1 < 0 || fd2 < 0 || fd3 < 0)
 	{
-		printf("Error opening text.txt");
+		perror("errorino :c");
 		return (1);
 	}
-
-	// Read lines from the file using get_next_line
-	printf("Reading from text.txt:\n");
-	while ((buffer = get_next_line(fd)) != NULL)
+	while (1)
 	{
-		printf("%s", buffer); // Print the line
-		free(buffer);         // Free memory allocated by get_next_line
+		if (line1 = get_next_line(fd1))
+		{
+			printf ("line1: [%s]", line1);
+			free(line1);			
+		}
+		if (line2 = get_next_line(fd2))
+		{
+			printf ("line2: [%s]", line2);
+			free(line2);			
+		}
+		if (line3 = get_next_line(fd3))
+		{
+			printf ("line3: [%s]", line3);
+			free(line3);			
+		}
+		if (!line1 && !line2 && !line3)
+			break;
 	}
-
-	// Close the file descriptor
-	close(fd);
-	return (0);
-}
-*/
+	close(fd1);
+	close(fd2);
+	close(fd3);
+	return(0);
+} */

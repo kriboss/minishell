@@ -1,5 +1,13 @@
 #include "minishell.h"
 
+
+int is_word(char c)
+{
+    if (is_space(c) || is_special(c))
+        return 0;
+    return 1;
+}
+
 int is_space(char c)
 {
     if (c == ' ' || c == '\t' || c == '\b' || c == '\n' || c == '\v') 

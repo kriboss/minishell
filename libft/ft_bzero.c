@@ -3,32 +3,42 @@
 /*                                                        :::      ::::::::   */
 /*   ft_bzero.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbossio <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: sel-khao <sel-khao <marvin@42.fr>>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/19 09:54:09 by kbossio           #+#    #+#             */
-/*   Updated: 2024/11/19 09:54:12 by kbossio          ###   ########.fr       */
+/*   Created: 2024/11/20 19:15:34 by sel-khao          #+#    #+#             */
+/*   Updated: 2024/11/30 18:03:39 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-void	*ft_bzero(void *p, size_t n)
+void	ft_bzero(void *s, size_t n)
 {
-	ft_memset(p, '\0', n);
-	return (p);
+	unsigned char	*str;
+
+	str = (unsigned char *)s;
+	while (n--)
+	{
+		*str = 0;
+		str++;
+	}
 }
-/*
-#include <stdio.h>
-
-int main()
+/*int main()
 {
-    char arr[] = "ciao allora mela";
+    char str[] = "i'm sleepy";
+    printf("before bzero: %s\n", str);
+    ft_bzero(str, 5);
+    printf("after call: %s\n", str);
 
-    // Fill whole array with 0.
-    ft_bzero(arr, sizeof(arr));
-    printf("After memset:\n");
-        printf("%s ", arr);
-    
+    char str2[] = "chocolate";
+    ft_bzero(str2, 0);
+    printf("n is zero: %s\n", str2);
 
+    char *str3 = NULL;
+    ft_bzero(str3, 3);
+    if (str3 != NULL)
+        printf("%s\n", str3);
+    else
+        printf("NULL\n");
     return 0;
 }*/

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_memcpy.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbossio <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: sel-khao <sel-khao <marvin@42.fr>>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/19 10:04:01 by kbossio           #+#    #+#             */
-/*   Updated: 2024/11/19 10:04:04 by kbossio          ###   ########.fr       */
+/*   Created: 2024/11/21 18:25:35 by sel-khao          #+#    #+#             */
+/*   Updated: 2024/11/28 17:35:28 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,32 +14,28 @@
 
 void	*ft_memcpy(void *dest, const void *src, size_t n)
 {
-	size_t	i;
+	unsigned char	*destt;
+	unsigned char	*srcc;
+	size_t			i;
 
 	i = 0;
-	if (!dest && !src)
+	srcc = (unsigned char *)src;
+	destt = (unsigned char *)dest;
+	if (!src && !dest)
 		return (NULL);
 	while (i < n)
 	{
-		((unsigned char *)dest)[i] = ((unsigned char *)src)[i];
+		destt[i] = srcc[i];
 		i++;
 	}
 	return (dest);
 }
-/*
-#include <stdio.h>
-
-int main()
+/*int main()
 {
-	char arr[] = "test basic du memcpy !";
-	char dest[22];
+	char dest[] = "ily";
+	char src[] = "wassim";
 
-	// Fill whole array with 0.
-	char *r1 = ft_memcpy(dest, arr, 22);
-	printf("After memset:");
-	printf("%s ", dest);
-	printf("%s ", r1);
-
-
-	return 0;
+	ft_memcpy(dest, src, 6);
+	printf("%s\n", dest);
+	return (0);
 }*/

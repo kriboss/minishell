@@ -3,31 +3,24 @@
 /*                                                        :::      ::::::::   */
 /*   ft_isascii.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbossio <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: sel-khao <sel-khao <marvin@42.fr>>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/18 11:48:06 by kbossio           #+#    #+#             */
-/*   Updated: 2024/11/18 11:48:09 by kbossio          ###   ########.fr       */
+/*   Created: 2024/11/18 14:22:29 by sel-khao          #+#    #+#             */
+/*   Updated: 2024/11/26 22:02:33 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-int	ft_isascii(int a)
+int	ft_isascii(int c)
 {
-	if (a >= 0 && a <= 127)
-	{
+	if (c >= 0 && c <= 127)
 		return (1);
-	}
 	return (0);
 }
-/*
-#include <stdio.h>
-
-int	main()
+/*#include <stdio.h>
+int main()
 {
-	char c = '\n';
-	
-	printf("%d", ft_isascii(c));
-	return 0;
-}
-*/
+	printf("%d", ft_isascii(119));
+		return (0);
+}*/

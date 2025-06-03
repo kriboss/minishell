@@ -41,6 +41,8 @@
 # include <readline/readline.h>
 # include <readline/history.h>
 
+# include "libft.h"
+
 typedef struct s_cmd
 {
 	int				append; 
@@ -66,17 +68,19 @@ typedef struct s_shell
 	t_cmd	*cmds;
 }	t_shell;
 
+int	is_word(char c);
 int		is_space(char c);
 int		is_special(char c);
 int		mult_redir(char *input);
+
 int		validate_quote(char *str);
 int		validate_pipe(char *input);
 int		validate_input(char *input);
 int		validate_redirection(char *input);
 int		validate_redirection(char *input);
 
-void free_cmds(t_cmd *cmds);
-void free_tokens(t_token *tokens);
+void	free_cmds(t_cmd *cmds);
+void	free_tokens(t_token *tokens);
 void	check_type(t_token **tmp, t_cmd *cmd);
 void	init(t_cmd *cmd);
 void	create_token(t_shell *shell, char *input, int *i);
@@ -87,5 +91,6 @@ void	something(t_shell *shell);
 void	ft_readline(t_shell *shell);
 void    tokenadd_back(t_token **lst, t_token *new);
 void	add_token(t_shell *shell, char *value, int type);
+void	tokenize(t_shell *shell);
 
 #endif
