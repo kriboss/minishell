@@ -70,6 +70,5 @@ int	pipex(t_shell *shell, char **cmds, char **envp)
 		wait(NULL);
 		i++;
 	}
-	// free_all(cmds, NULL);
 	return (0);
 }

@@ -132,11 +132,15 @@ int	exit_shell(int status,t_shell *shell, char **str)
 	exit(status);
 }
 
-int check_cmd(char **cmds, char **envp)
+int check_cmd(t_shell *shell, char **cmds, char **envp)
 {
     int i = 0;
     (void)envp;
-
+	printf("Checking commands...\n");
+	for (int j = 0; cmds[j]; j++)
+	{
+		printf("cmds[%d]: %s\n", j, cmds[j]);
+	}
     while (cmds[i])
     {
         if (ft_strncmp(cmds[i], "|", 1) == 0)
@@ -149,7 +153,9 @@ int check_cmd(char **cmds, char **envp)
         }
         else if (ft_strncmp(cmds[i], ">", 1) == 0)
         {
-            printf("Found '>', skipping red_out for now\n");
+			printf("Found '>', skipping red_out for now\n");
+			printf("CIAOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO\n");
+			red_out(shell, cmds, envp);
         }
         else if (ft_strncmp(cmds[i], "<", 1) == 0)
         {
@@ -165,7 +171,7 @@ char	**execute(t_shell *shell, char **cmd, char *envp[])
 	char	es;
 
 	es = 0;
-	if (check_cmd(cmd, envp) == -2)
+	if (check_cmd(shell, cmd, envp) == -2)
 	{
 		if (ft_strncmp(cmd[0], "cd", 2) == 0)
 			es = cd(cmd + 1);

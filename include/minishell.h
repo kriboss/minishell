@@ -58,12 +58,14 @@ typedef struct s_cmd
 {
 	int				append; 
 	int				heredoc;
-	char			**argv;//for kri
+	char			*argv;//for kri
 	char			*infile;
-	char			*outfile;
-	char			*delim;
+	char			**outfile;
+	char			**delim;
 	struct s_cmd	*next; 
 }	t_cmd;
+
+//t_cmd deve essere a doppio puntatore (uno per ogni comando, perche se ci sono piu t_cmd ci sono le pipe), outfile deve essere a doppio puntatore uno per ogni file da reinderizzare
 
 typedef struct s_token
 {
