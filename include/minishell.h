@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sara <sara@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/20 07:47:00 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/05/25 20:09:02 by sara             ###   ########.fr       */
+/*   Updated: 2025/06/16 09:58:27 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,9 +24,9 @@
 # define BG			9
 # define VAR		10
 
-# include <stdio.h>        // printf, perror
-# include <stdlib.h>       // malloc, free, exit, getenv
-# include <unistd.h>       // write, access, fork, execve, chdir, getcwd, dup, dup2, pipe, isatty, ttyname, ttyslot, read, close
+# include <stdio.h>
+# include <stdlib.h>
+# include <unistd.h>       // access, fork, execve, chdir, getcwd, dup, dup2, pipe, isatty, ttyname, ttyslot, read, close
 # include <fcntl.h>        // open, unlink
 # include <string.h>       // strerror
 # include <sys/types.h>    // wait, waitpid, wait3, wait4, stat-related types
@@ -105,6 +105,7 @@ void	add_token(t_shell *shell, char *value, int type);
 void	tokenize(t_shell *shell);
 
 
+int		exit_shell(int status,t_shell *shell, char **str);
 int		print_exp(char **str);
 char	**add_exp(char **str, char **envp);
 int		unset(char **str, char **envp);
@@ -112,14 +113,14 @@ int		ft_strcmp(char *s1, const char *s2);
 char	**dup_env(char **envp);
 void	free_arr(char **str, char **new);
 int		check_same(char *str, char **envp);
-char	**execute(char **cmd, char *envp[]);
+char	**execute(t_shell *shell, char **cmd, char *envp[]);
 void	start_signals(void);
 int		exec_external(char **args, char **envp);
-int		pipex(char **cmds, char **envp);
+int		pipex(t_shell *shell, char **cmds, char **envp);
 char	*ft_rmchar(char *str, char c);
 int		handle_red(char **cmds, char **envp);
 
-int		red_out(char **cmds, char **envp);
+int	red_out(t_shell *shell, char **cmds, char **envp);
 int		red_in(char **cmds);
 int		red_app(char **cmds);
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sara <sara@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/20 07:47:10 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/05/25 20:07:06 by sara             ###   ########.fr       */
+/*   Updated: 2025/06/16 11:09:25 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,7 @@ void something(t_shell *shell)
     }
     tokenize(shell);
     tok_cmd(shell);
-    printf("Parsed commands from input: %s\n", shell->input);
+    printf("valid input: %s\n", shell->input);
 }
 
 
@@ -115,7 +115,6 @@ int main(int ac, char **av, char **envp)
 		printf("Usage: %s\n", av[0]);
 		return (1);
 	}
-
     shell.tokens = NULL;
     shell.input = NULL;
     shell.cmds = NULL;
@@ -128,7 +127,10 @@ int main(int ac, char **av, char **envp)
         if (!shell.input)
             free_all(&shell);
         something(&shell);
-        str = execute(shell.cmds->argv, str);
+        if (shell.cmds && shell.cmds->argv)
+	        str = execute(&shell, shell.cmds->argv, str);
+        else
+	        ft_putendl_fd("No command to execute", STDERR_FILENO);
         shell.tokens = NULL;
         shell.cmds = NULL;
         free(shell.input);

@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   redirections.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
+/*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 10:15:41 by kbossio           #+#    #+#             */
-/*   Updated: 2025/05/21 11:29:53 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/06/16 09:54:44 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
-int	red_out(char **cmds, char **envp)
+int	red_out(t_shell *shell, char **cmds, char **envp)
 {
 	int	fd;
 	int	i;
@@ -34,7 +34,7 @@ int	red_out(char **cmds, char **envp)
 	{
 		tmp[i] = ft_strdup(cmds[i]);
 	}
-	execute(tmp, envp);
+	execute(shell, tmp, envp);
 	close(fd);
 	return (0);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
+/*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/03 11:38:14 by kbossio           #+#    #+#             */
-/*   Updated: 2025/05/21 11:33:58 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/06/16 08:29:24 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ void	free_arr(char **str, char **new)
 	{
 		while (str[i] != NULL)
 		{
+			printf("free_arr: freeing str[%d]: %p -> %s\n", i, (void *)str[i], str[i]);
 			free(str[i]);
 			i++;
 		}

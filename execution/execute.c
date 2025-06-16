@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
+/*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/03 09:48:20 by kbossio           #+#    #+#             */
-/*   Updated: 2025/05/21 18:44:35 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/06/16 09:51:27 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,7 +115,7 @@ char	**export(char **env, char **str)
 	return (env);
 }
 
-int	exit_shell(int status, char **str)
+int	exit_shell(int status,t_shell *shell, char **str)
 {
 	printf("Exiting shell...\n");
 	if (str != NULL)
@@ -123,37 +123,49 @@ int	exit_shell(int status, char **str)
 		free_arr(str, NULL);
 		status = 0;
 	}
+	if (shell && shell->tokens)
+    {
+        free_tokens(shell->tokens);
+        shell->tokens = NULL;
+    }
 	clear_history();
 	exit(status);
 }
 
 int check_cmd(char **cmds, char **envp)
 {
-	int	i;
+    int i = 0;
+    (void)envp;
 
-	i = 0;
-	while (cmds[i])
-	{
-		if (ft_strncmp(cmds[i], "|", 1) == 0)
-			pipex(cmds, envp);
-		else if (ft_strncmp(cmds[i], ">>", 2) == 0)
-			red_app(cmds);
-		else if (ft_strncmp(cmds[i], ">", 1) == 0)
-			red_out(cmds, envp);
-		else if (ft_strncmp(cmds[i], "<", 1) == 0)
-			red_in(cmds);
-		i++;
-	}
-	return (-2);
+    while (cmds[i])
+    {
+        if (ft_strncmp(cmds[i], "|", 1) == 0)
+        {
+            printf("Found pipe symbol '|', skipping pipex for now\n");
+        }
+        else if (ft_strncmp(cmds[i], ">>", 2) == 0)
+        {
+            printf("Found '>>', skipping red_app for now\n");
+        }
+        else if (ft_strncmp(cmds[i], ">", 1) == 0)
+        {
+            printf("Found '>', skipping red_out for now\n");
+        }
+        else if (ft_strncmp(cmds[i], "<", 1) == 0)
+        {
+            printf("Found '<', skipping red_in for now\n");
+        }
+        i++;
+    }
+    return (-2);
 }
 
-char	**execute(char **cmd, char *envp[])
+char	**execute(t_shell *shell, char **cmd, char *envp[])
 {
 	char	es;
-	char	*cmds_test[] = {"ls", "|", "wc", NULL};
 
 	es = 0;
-	if (check_cmd(cmds_test, envp) == -2)
+	if (check_cmd(cmd, envp) == -2)
 	{
 		if (ft_strncmp(cmd[0], "cd", 2) == 0)
 			es = cd(cmd + 1);
@@ -168,10 +180,9 @@ char	**execute(char **cmd, char *envp[])
 		else if (ft_strncmp(cmd[0], "unset", 5) == 0)
 			es = unset(cmd + 1, envp);
 		else if (ft_strncmp(cmd[0], "exit", 4) == 0)
-			exit_shell(es, envp);
+			exit_shell(es, shell, envp);
 		else
 			es = exec_external(cmd, envp);
-		free_arr(cmd, NULL);
 	}
 	return (envp);
 }
