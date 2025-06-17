@@ -14,28 +14,24 @@
 
 int	red_out(t_shell *shell, char **cmds, char **envp)
 {
-	int	fd;
+	int	*fds;
 	int	i;
 	char **tmp;
 
 	i = 0;
-	while (cmds[i])
+	while (shell->cmds->outfile[i])
+	{
 		i++;
-	fd = open(cmds[--i], O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	if (fd == -1)
-	{
-		perror("Error opening file");
-		return (1);
+		fds[i] = open(shell->cmds->outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+		if (fds == -1)
+		{
+			perror("Error opening file");
+			return (1);
+		}
 	}
-	dup2(fd, STDOUT_FILENO);
-	tmp = malloc(sizeof(char *) * (--i));
-	tmp[i] = NULL;
-	while (--i >= 0)
-	{
-		tmp[i] = ft_strdup(cmds[i]);
-	}
-	execute(shell, tmp, envp);
-	close(fd);
+	dup2(fds[i], STDOUT_FILENO);
+	execute(shell, cmds, envp);
+	close(fds);
 	return (0);
 }
 
