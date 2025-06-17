@@ -6,7 +6,7 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/20 07:47:00 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/06/16 09:58:27 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/06/17 10:42:56 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,10 +19,9 @@
 # define PIPE       4
 # define HEREDOC    5
 # define DOLLAR		6
-# define SEMICOLON	7
-# define QUOTE		8
-# define BG			9
-# define VAR		10
+# define SQUOTE		7
+# define DQUOTE		8
+# define VAR		9
 
 # include <stdio.h>
 # include <stdlib.h>
@@ -36,7 +35,7 @@
 # include <dirent.h>       // opendir, readdir, closedir
 # include <termios.h>      // tcsetattr, tcgetattr
 # include <termcap.h>      // tgetent, tgetflag, tgetnum, tgetstr, tgoto, tputs
-# include <curses.h>       // May be needed for termcap on some systems
+# include <curses.h>       // for termcap on some systems
 # include <sys/ioctl.h>    // ioctl
 # include <readline/readline.h>
 # include <readline/history.h>
@@ -58,10 +57,10 @@ typedef struct s_cmd
 {
 	int				append; 
 	int				heredoc;
-	char			**argv;//for kri
+	char			*argv;//for kri
 	char			*infile;
-	char			*outfile;
-	char			*delim;
+	char			**outfile;
+	char			**delim;
 	struct s_cmd	*next; 
 }	t_cmd;
 
@@ -79,7 +78,7 @@ typedef struct s_shell
 	t_cmd	*cmds;
 }	t_shell;
 
-int	is_word(char c);
+int		is_word(char c);
 int		is_space(char c);
 int		is_special(char c);
 int		mult_redir(char *input);
@@ -92,36 +91,40 @@ int		validate_redirection(char *input);
 
 void	free_cmds(t_cmd *cmds);
 void	free_tokens(t_token *tokens);
-void	check_type(t_token **tmp, t_cmd *cmd);
+void	free_all(t_shell *shell);
 void	init(t_cmd *cmd);
+void	ft_readline(t_shell *shell);
+
+void	something(t_shell *shell);
 void	create_token(t_shell *shell, char *input, int *i);
 void	tok_cmd(t_shell *shell);
-char	**add_word(char **argv, char *word);
-void	free_all(t_shell *shell);
-void	something(t_shell *shell);
-void	ft_readline(t_shell *shell);
-void    tokenadd_back(t_token **lst, t_token *new);
+char	*add_word(char *argv, char *word);
 void	add_token(t_shell *shell, char *value, int type);
+void    tokenadd_back(t_token **lst, t_token *new);
 void	tokenize(t_shell *shell);
+void	check_type(t_token **tmp, t_cmd *cmd);
+void	check_type2(t_token **tmp, t_cmd **cmd);
 
 
 int		exit_shell(int status,t_shell *shell, char **str);
 int		print_exp(char **str);
-char	**add_exp(char **str, char **envp);
+int		check_same(char *str, char **envp);
 int		unset(char **str, char **envp);
 int		ft_strcmp(char *s1, const char *s2);
-char	**dup_env(char **envp);
-void	free_arr(char **str, char **new);
-int		check_same(char *str, char **envp);
-char	**execute(t_shell *shell, char **cmd, char *envp[]);
-void	start_signals(void);
-int		exec_external(char **args, char **envp);
 int		pipex(t_shell *shell, char **cmds, char **envp);
-char	*ft_rmchar(char *str, char c);
 int		handle_red(char **cmds, char **envp);
-
+int		exec_external(char **args, char **envp);
 int	red_out(t_shell *shell, char **cmds, char **envp);
 int		red_in(char **cmds);
 int		red_app(char **cmds);
+
+char	**add_exp(char **str, char **envp);
+char	**dup_env(char **envp);
+char	**execute(t_shell *shell, char **cmd, char *envp[]);
+char	*ft_rmchar(char *str, char c);
+
+void	free_arr(char **str, char **new);
+void	start_signals(void);
+
 
 #endif
