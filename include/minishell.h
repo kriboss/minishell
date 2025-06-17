@@ -57,7 +57,7 @@ typedef struct s_cmd
 {
 	int				append; 
 	int				heredoc;
-	char			*argv;//for kri
+	char			**argv;//for kri
 	char			*infile;
 	char			**outfile;
 	char			**delim;
@@ -65,7 +65,10 @@ typedef struct s_cmd
 }	t_cmd;
 
 //t_cmd deve essere a doppio puntatore (uno per ogni comando, perche se ci sono piu t_cmd ci sono le pipe), outfile deve essere a doppio puntatore uno per ogni file da reinderizzare
-
+//argv va bene a doppio puntatore come era prima, per risolvere problemi come "echo ciao" o "echo " ciao
+//infile va bene a singolo puntatore, perche c'e devo prendere in considerazione solo il file piu a destra nell'input
+//outfile deve essere a doppio puntatore, perche se ci sono piu file da reindirizzare, devo prendere in considerazione solo l'ultimo file nell'input
+//delim deve essere a doppio puntatore, perche se ci sono piu delimitatori, nel caso di << ciao << cane per far finire l'input dell'heredoc devo scrivere prima ciao e poi cane
 typedef struct s_token
 {
 	char			*value; 
