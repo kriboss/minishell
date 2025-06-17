@@ -6,7 +6,7 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 08:07:09 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/06/16 08:07:10 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/06/17 10:07:16 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ void free_cmds(t_cmd *cmds)
             i = 0;
             while (tmp->argv[i])
             {
-                free(tmp->argv[i]);
+                free(tmp->argv);
                 i++;
             }
             free(tmp->argv);

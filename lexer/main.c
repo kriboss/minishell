@@ -6,7 +6,7 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/20 07:47:10 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/06/16 11:09:25 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/06/17 10:51:04 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,69 +27,62 @@ void	print_header(void)
 	printf(RESET);
 }
 
-char **add_word(char **argv, char *word)
+char *add_word(char *argv, char *world)
 {
-    int i = 0;
-    int j = 0;
-    char **av;
-    
-    while (argv && argv[i])
-        i++;
-    av = malloc(sizeof(char *) * (i + 2));
-    if (!av)
-        return NULL;
-    while (j < i)
-    {
-        av[j] = argv[j];
-        j++;
-    }
-    av[i] = ft_strdup(word);
-    av[i + 1] = NULL;
-    free(argv);
-    return (av);
+	char *tmp;
+	char *joined;
+
+	if (!argv)
+		return ft_strdup(word);
+	tmp = ft_strjoin(argv, " ");
+	joined = 
+	
 }
+
+/* char	**add_word(char *argv, char *word)
+{
+	int i = 0;
+	int j = 0;
+	char *av;
+
+	while (argv && argv[i])
+		i++;
+	av = malloc(sizeof(char) * (i + 2));
+	if (!av)
+		return NULL;
+  	  while (j < i)
+	{
+		av[j] = argv[j];
+		j++;
+	}
+	av[i] = *ft_strdup(word);
+	av[i + 1] = NULL;
+	free(argv);
+	return (av);
+} */
 
 void tok_cmd(t_shell *shell)
 {
-    t_cmd *cmd;
-    t_token *tmp;
+	t_cmd *cmd;
+	t_token *tmp;
+	t_token *prev;
 
-    tmp = shell->tokens;
-    cmd = malloc(sizeof(t_cmd));
-    if (!cmd)
-        return ;
-    init(cmd);
-    shell->cmds = cmd;
-    while (tmp)
-        check_type(&tmp, cmd);
-}
-
-void check_type(t_token **tmp, t_cmd *cmd)
-{
-    if ((*tmp)->type == WORD || (*tmp)->type == EOF)
-    {
-        cmd->argv = add_word(cmd->argv, (*tmp)->value);
-        *tmp = (*tmp)->next;
-    }
-    else if ((*tmp)->type == REDIRECT && (*tmp)->next)
-    {
-        if (ft_strcmp((*tmp)->value, "<") == 0)
-            cmd->infile = ft_strdup((*tmp)->next->value);
-        else if (ft_strcmp((*tmp)->value, ">") == 0)
-            cmd->outfile = ft_strdup((*tmp)->next->value);
-        else if (ft_strcmp((*tmp)->value, ">>") == 0)
-        {
-            cmd->outfile = ft_strdup((*tmp)->next->value);
-            cmd->append = 1;
-        }
-        *tmp = (*tmp)->next->next;
-    }
-    else if ((*tmp)->type == HEREDOC && (*tmp)->next)
-    {
-        cmd->delim = ft_strdup((*tmp)->next->value);
-        cmd->heredoc = 1;
-        *tmp = (*tmp)->next->next;
-    }
+	tmp = shell->tokens;
+	cmd = malloc(sizeof(t_cmd));
+	if (!cmd)
+		return ;
+	init(cmd);
+	shell->cmds = cmd;
+	while (tmp)
+	{
+		prev = tmp;
+		if (tmp->type == PIPE)
+			check_type2(&tmp, &cmd);
+		else
+			check_type(&tmp, cmd);
+		if (tmp == prev)
+			tmp = tmp->next;
+	}
 }
 
 void something(t_shell *shell)
@@ -97,13 +90,31 @@ void something(t_shell *shell)
     if (validate_input(shell->input))
     {
         printf("Invalid input: %s\n", shell->input);
-        return ;
+        return;
     }
     tokenize(shell);
+    printf("Tokens:\n");
+    t_token *token = shell->tokens;
+    while (token)
+    {
+        printf("  type: %d, value: '%s'\n", token->type, token->value);
+        token = token->next;
+    }
     tok_cmd(shell);
-    printf("valid input: %s\n", shell->input);
+    t_cmd *cmd = shell->cmds;
+    int i;
+    while (cmd)
+    {
+        printf("Command:\n");
+        i = 0;
+        while (cmd->argv && cmd->argv[i])
+        {
+            printf("  argv[%d]: %c\n", i, cmd->argv[i]);
+            i++;
+        }
+        cmd = cmd->next;
+    }
 }
-
 
 int main(int ac, char **av, char **envp)
 {
@@ -128,7 +139,7 @@ int main(int ac, char **av, char **envp)
             free_all(&shell);
         something(&shell);
         if (shell.cmds && shell.cmds->argv)
-	        str = execute(&shell, shell.cmds->argv, str);
+	        str = execute(&shell, &shell.cmds->argv, str);
         else
 	        ft_putendl_fd("No command to execute", STDERR_FILENO);
         shell.tokens = NULL;
