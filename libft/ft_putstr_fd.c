@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_putstr_fd.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbossio <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: sel-khao <sel-khao <marvin@42.fr>>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/22 12:53:52 by kbossio           #+#    #+#             */
-/*   Updated: 2024/11/22 12:53:57 by kbossio          ###   ########.fr       */
+/*   Created: 2024/11/26 22:09:12 by sel-khao          #+#    #+#             */
+/*   Updated: 2024/11/29 13:41:09 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,14 @@
 
 void	ft_putstr_fd(char *s, int fd)
 {
-	int	i;
-
-	i = 0;
 	if (!s)
 		return ;
-	while (s[i])
-	{
-		ft_putchar_fd(s[i], fd);
-		i++;
-	}
+	write(fd, s, ft_strlen(s));
 }
+/*
+int	main(void)
+{
+	int fd = 1;
+	ft_putstr_fd("hey sara\n", 1);
+	return (0);
+}*/

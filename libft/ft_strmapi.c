@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strmapi.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbossio <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: sel-khao <sel-khao <marvin@42.fr>>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/22 12:34:37 by kbossio           #+#    #+#             */
-/*   Updated: 2024/11/22 12:34:38 by kbossio          ###   ########.fr       */
+/*   Created: 2024/11/26 16:16:52 by sel-khao          #+#    #+#             */
+/*   Updated: 2024/12/04 17:56:51 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,18 +14,44 @@
 
 char	*ft_strmapi(char const *s, char (*f)(unsigned int, char))
 {
-	char			*str;
-	unsigned int	i;
+	size_t	len;	
+	size_t	i;
+	char	*str;
 
-	str = ft_strdup(s);
-	i = 0;
-	if (!s || !f || !str)
+	if (!s)
 		return (NULL);
-	while (str[i])
+	len = ft_strlen(s);
+	str = malloc((len + 1) * sizeof(char));
+	while (!str)
+		return (NULL);
+	i = 0;
+	while (s[i])
 	{
-		str[i] = f(i, str[i]);
+		str[i] = f(i, s[i]);
 		i++;
 	}
 	str[i] = '\0';
 	return (str);
 }
+/* char to_lower(unsigned int i, char c)
+{
+	(void)i;
+	if (c >= 'A' && c <= 'Z')
+		return(c + 32);
+	return (c);
+}
+int main()
+{
+	const char *str = "WASSIM";
+	char	*result;
+
+	result = ft_strmapi(str, to_lower);
+	if (result)
+	{
+		printf("%s\n", result);
+		free(result);
+	}
+	else
+		printf("NULL\n");
+	return (0);
+} */

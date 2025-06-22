@@ -3,46 +3,46 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strnstr.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbossio <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: sel-khao <sel-khao <marvin@42.fr>>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/20 10:02:57 by kbossio           #+#    #+#             */
-/*   Updated: 2024/11/20 10:02:58 by kbossio          ###   ########.fr       */
+/*   Created: 2024/11/20 11:08:16 by sel-khao          #+#    #+#             */
+/*   Updated: 2024/12/10 19:00:21 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-char	*ft_strnstr(const char *s1, const char *s2, size_t n)
+char	*ft_strnstr(const char *big, const char *little, size_t len)
 {
-	size_t	i;
-	size_t	j;
+	size_t		i;
+	size_t		j;
 
+	if (*little == '\0')
+		return ((char *)big);
 	i = 0;
-	if (*s2 == '\0')
-		return ((char *)s1);
-	while (s1[i])
+	while (big[i] != '\0' && i < len)
 	{
 		j = 0;
-		while (s1[i + j] == s2[j] && i + j < n)
+		while (big[i + j] == little[j] && (i + j) < len)
 		{
-			if (s2[j + 1] == '\0')
-				return ((char *)s1 + i);
 			j++;
+			if (little[j] == '\0')
+				return ((char *)(big + i));
 		}
 		i++;
 	}
 	return (NULL);
 }
-/*
-#include <stdio.h>
-
-int main()
+/* int main()
 {
-    	char arr[] = "ciao allora mela";
-    	char dest[] = "allora mela";
+	const char *s1 = "wassimi";
+	const char *s2 = "imi";
+	size_t len = 2;
 
-    	// Fill whole array with 0.
-    	char *res = ft_strnstr(arr, dest, 5);
-    	printf("s1 : %s \n s2 : %s \n found : %s", arr, dest, res);
-    	return 0;
-}*/
+char *result = ft_strnstr(s1, s2, len);
+	if (result)
+		printf("%s\n", result);
+	else
+		printf("NULL\n");
+	return 0;
+} */

@@ -1,26 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_isascii.c                                       :+:      :+:    :+:   */
+/*   ft_strcmp.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sel-khao <sel-khao <marvin@42.fr>>         +#+  +:+       +#+        */
+/*   By: sara <sara@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/18 14:22:29 by sel-khao          #+#    #+#             */
-/*   Updated: 2024/11/26 22:02:33 by sel-khao         ###   ########.fr       */
+/*   Created: 2025/05/25 19:50:23 by sara              #+#    #+#             */
+/*   Updated: 2025/05/25 19:51:13 by sara             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-int	ft_isascii(int c)
+int ft_strcmp(const char *s1, const char *s2)
 {
-	if (c >= 0 && c <= 127)
-		return (1);
-	return (0);
+    while (*s1 && (*s1 == *s2))
+    {
+        s1++;
+        s2++;
+    }
+    return (*(unsigned char *)s1 - *(unsigned char *)s2);
 }
-/*#include <stdio.h>
-int main()
-{
-	printf("%d", ft_isascii(119));
-		return (0);
-}*/

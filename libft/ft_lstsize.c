@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_lstsize.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbossio <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: sel-khao <sel-khao <marvin@42.fr>>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/25 11:07:09 by kbossio           #+#    #+#             */
-/*   Updated: 2024/11/25 11:07:10 by kbossio          ###   ########.fr       */
+/*   Created: 2024/12/08 23:19:40 by sel-khao          #+#    #+#             */
+/*   Updated: 2024/12/14 16:26:25 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,47 +14,25 @@
 
 int	ft_lstsize(t_list *lst)
 {
-	int	i;
+	int		i;
+	t_list	*ptr;
 
 	i = 0;
-	while (lst)
+	ptr = lst;
+	while (ptr != NULL)
 	{
-		lst = lst->next;
+		ptr = ptr->next;
 		i++;
 	}
 	return (i);
 }
-/*
-#include <stdio.h>
+/* int main()
+{
+	t_list	*node1 = ft_lstnew("sara");
+	t_list	*node2 = ft_lstnew("wassimo");
 
-int main() {
-
-    // Create nodes
-    t_list *node1 = ft_lstnew("First");
-    t_list *node2 = ft_lstnew("Second");
-    t_list *node3 = ft_lstnew("Third");
-    t_list *node4 = ft_lstnew("Fourth");
-
-    // Link nodes
-    node1->next = node2;
-    node2->next = node3;
-    node3->next = node4;
-
-    // Test ft_lstsize
-    int size = ft_lstsize(node1);
-    printf("List size: %d\n", size);
-    printf("nodes content:\n");
-    while(node1)
-    {
-    	printf("%s\n", (char *)node1->content);
-    	node1 = node1->next;
-    }
-
-    // Free allocated memory
-    free(node4);
-    free(node3);
-    free(node2);
-    free(node1);
-
-    return 0;
-}*/
+	node1->next = node2;
+	printf("%d\n", ft_lstsize(node1));
+	free(node1);
+	free(node2);
+} */

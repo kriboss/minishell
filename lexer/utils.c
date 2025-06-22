@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sara <sara@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 08:07:38 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/06/16 10:48:29 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/06/18 13:21:14 by sara             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,11 +65,7 @@ void ft_readline(t_shell *shell)
 
 void init(t_cmd *cmd)
 {
-    cmd->append = 0;
-    cmd->heredoc = 0;
     cmd->argv = NULL;
-    cmd->infile = NULL;
-    cmd->outfile = NULL;
-    cmd->delim = NULL;
+    cmd->redir = NULL;
     cmd->next = NULL;
 }

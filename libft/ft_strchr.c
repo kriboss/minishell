@@ -3,33 +3,41 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strchr.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbossio <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: sel-khao <sel-khao <marvin@42.fr>>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/19 13:35:39 by kbossio           #+#    #+#             */
-/*   Updated: 2024/11/19 13:35:40 by kbossio          ###   ########.fr       */
+/*   Created: 2024/11/19 09:48:01 by sel-khao          #+#    #+#             */
+/*   Updated: 2024/11/29 22:06:19 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-char	*ft_strchr(const char *str, int c)
+char	*ft_strchr(const char *s, int c)
 {
-	while ((char)c != *str)
+	while (*s)
 	{
-		if (!*str)
-			return (0);
-		str++;
+		if (*s == (char)c)
+			return ((char *)s);
+		s++;
 	}
-	return ((char *)str);
+	if (*s == (char)c)
+		return ((char *)s);
+	return (NULL);
 }
-/*
-#include <stdio.h>
+/*applies a function f to each character in the string s,
+passing the index of the character and a pointer to
+the character itself to f
 
 int	main()
 {
-	char str[] = "tripouille";
-	char *res[50];
-	*res = ft_strchr(str, 't' + 256);
-	printf("character searched: %c\n string: %s", 't' + 256, *res);
-	return 0;
+	char *result = ft_strchr("wassim", 'a'); s 
+	if (result != NULL)
+	{
+		printf("%s\n", result);
+	}
+	else
+	{
+		printf("NULL\n");
+	}
+	return (0);
 }*/

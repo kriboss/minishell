@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   process.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sara <sara@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 08:07:27 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/06/17 10:10:10 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/06/18 13:55:52 by sara             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,26 +91,22 @@ void check_type(t_token **tmp, t_cmd *cmd)
 {
 	if ((*tmp)->type == WORD || (*tmp)->type == EOF)
 	{
-		cmd->argv = add_word(&cmd->argv, (*tmp)->value);
+		cmd->argv = add_word(cmd->argv, (*tmp)->value);
 		*tmp = (*tmp)->next;
 	}
 	else if ((*tmp)->type == REDIRECT && (*tmp)->next)
 	{
 		if (ft_strcmp((*tmp)->value, "<") == 0)
-			cmd->infile = ft_strdup((*tmp)->next->value);
+			add_redir(&cmd->redir, (*tmp)->next->value, INFILE);
 		else if (ft_strcmp((*tmp)->value, ">") == 0)
-			cmd->outfile = ft_strdup((*tmp)->next->value);
+			add_redir(&cmd->redir, (*tmp)->next->value, OUTFILE);
 		else if (ft_strcmp((*tmp)->value, ">>") == 0)
-		{
-			cmd->outfile = ft_strdup((*tmp)->next->value);
-			cmd->append = 1;
-		}
+			add_redir(&cmd->redir, (*tmp)->next->value, APPEND);
 		*tmp = (*tmp)->next->next;
 	}
 	else if ((*tmp)->type == HEREDOC && (*tmp)->next)
 	{
-		cmd->delim = ft_strdup((*tmp)->next->value);
-		cmd->heredoc = 1;
+		add_redir(&cmd->redir, (*tmp)->next->value, HDOC);
 		*tmp = (*tmp)->next->next;
 	}
 	else
@@ -125,6 +121,7 @@ void check_type2(t_token **tmp, t_cmd **cmd)
 	t_cmd *new_cmd;
 
 	if (!tmp || !*tmp || !cmd || !*cmd)
+		return ; //exit(EXIT_FAILURE);
 	if ((*tmp)->type == PIPE)
 	{
 		new_cmd = malloc(sizeof(t_cmd));
@@ -135,7 +132,29 @@ void check_type2(t_token **tmp, t_cmd **cmd)
 		}
 		init(new_cmd);
 		(*cmd)->next = new_cmd;
-		*cmd = new_cmd;
-		*tmp = (*tmp)->next;
+		*cmd = new_cmd;//move foward
+		*tmp = (*tmp)->next;//skip pipe
 	}
+}
+
+void add_redir(t_redir **redir_list, char *filename, int type)
+{
+    t_redir *new_redir = malloc(sizeof(t_redir));
+    if (!new_redir)
+	{
+        perror("malloc failed");
+		exit(EXIT_FAILURE);
+	}
+    new_redir->filename = strdup(filename);
+    new_redir->type = type;
+    new_redir->next = NULL;
+    if (!*redir_list)
+        *redir_list = new_redir;
+    else
+    {
+        t_redir *tmp = *redir_list;
+        while (tmp->next)
+            tmp = tmp->next;
+        tmp->next = new_redir;
+    }
 }

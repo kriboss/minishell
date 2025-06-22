@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_memchr.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbossio <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: sel-khao <sel-khao <marvin@42.fr>>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/19 14:53:16 by kbossio           #+#    #+#             */
-/*   Updated: 2024/11/19 14:53:17 by kbossio          ###   ########.fr       */
+/*   Created: 2024/11/21 22:48:10 by sel-khao          #+#    #+#             */
+/*   Updated: 2024/12/01 18:13:43 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,27 +15,30 @@
 void	*ft_memchr(const void *s, int c, size_t n)
 {
 	unsigned char	*str;
-	size_t			i;
 
 	str = (unsigned char *)s;
-	i = 0;
-	while (i < n)
+	while (n--)
 	{
-		if (str[i] == (unsigned char)c)
-			return ((unsigned char *)str + i);
-		i++;
+		if (*str == (unsigned char)c)
+			return (str);
+		str++;
 	}
 	return (NULL);
 }
-/*
-#include <stdio.h>
-
-int	main()
+/*function is designed to search first occurrence of a char
+within a block of memory (s), returns c pos.*/
+/* int main()
 {
-	int c = 122;
-	char str[] = "ciao io mi chziamo kristian";
-	char *res[50];
-	*res = ft_memchr(str, c, 20);
-	printf("%s", *res);
-	return 0;
-}*/
+	const char *str = "wassim";
+
+	char *result = ft_memchr(str, 'i', 5);  
+	if (result)
+	{
+		printf("pos: %ld\n", result - str);
+	}
+	else
+	{
+		printf("NULL\n");
+	}
+	return (0);
+} */

@@ -3,121 +3,101 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
+/*   By: sel-khao <sel-khao <marvin@42.fr>>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/27 11:49:33 by kbossio           #+#    #+#             */
-/*   Updated: 2025/01/09 17:53:43 by kbossio          ###   ########.fr       */
+/*   Created: 2024/12/16 14:51:24 by sel-khao          #+#    #+#             */
+/*   Updated: 2025/01/08 17:35:20 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-#include <stdio.h> 
-#include <unistd.h>
-#include <stdlib.h>
-
-static char	*free_join(char *buffer, char *text)
+static char	*freed(char **str)
 {
-	char	*ris;
-
-	ris = ft_strjoin(buffer, text);
-	free(buffer);
-	return (ris);
+	free(*str);
+	*str = NULL;
+	return (NULL);
 }
 
-static char	*read_buffer(int fd, char *buffer)
+static char	*last_line(char **line)
 {
-	int		len;
-	char	*text;
+	char	*temp;
 
-	len = 1;
-	if (!buffer)
-		buffer = ft_calloc(1, 1);
-	text = malloc(sizeof(char) * BUFFER_SIZE + 1);
-	if (!text)
-		return (NULL);
-	while (len > 0)
-	{
-		len = read(fd, text, BUFFER_SIZE);
-		if (len == -1)
-		{
-			free(buffer);
-			free(text);
-			return (NULL);
-		}
-		text[len] = '\0';
-		buffer = free_join(buffer, text);
-		if (ft_strchr(buffer, '\n'))
-			break ;
-	}
-	free(text);
-	return (buffer);
+	temp = ft_strdup(*line);
+	freed(line);
+	return (temp);
 }
 
-static char	*trim_buffer(char *buffer)
+static char	*trunc_line(char **line, int trunc)
 {
-	char	*str;
-	int		i;
-	int		j;
+	char	*next_line;
+	char	*temp;
 
-	i = 0;
-	j = 0;
-	while (buffer[i] && buffer[i] != '\n')
-		i++;
-	if (!buffer[i])
-	{
-		free(buffer);
-		return (NULL);
-	}
-	str = malloc(sizeof(char) * (ft_strlen(buffer) - i));
-	if (!str)
-		return (NULL);
-	while (buffer[++i])
-		str[j++] = buffer[i];
-	str[j] = '\0';
-	free(buffer);
-	return (str);
+	next_line = ft_strdup(*line);
+	if (!next_line)
+		return (freed(line));
+	next_line[trunc + 1] = '\0';
+	temp = *line;
+	*line = ft_strdup((*line) + trunc + 1);
+	freed(&temp);
+	return (next_line);
 }
 
-static char	*read_the_line(char *buffer)
+static char	*final_part(char **line, t_utils utils)
 {
-	int		i;
-	char	*res;
-
-	i = 0;
-	while (buffer[i] && buffer[i] != '\n')
-		i++;
-	res = malloc(sizeof(char) * i + 2);
-	if (!res)
-		return (NULL);
-	i = 0;
-	while (buffer[i] && buffer[i] != '\n')
+	freed(&utils.buffer);
+	if (utils.trunc == -1)
 	{
-		res[i] = buffer[i];
-		i++;
+		utils.left_over = last_line(line);
+		return (utils.left_over);
 	}
-	if (buffer[i] == '\n')
-		res[i++] = '\n';
-	res[i] = '\0';
-	return (res);
+	else
+		utils.next_line = trunc_line(line, utils.trunc);
+	return (utils.next_line);
 }
 
 char	*get_next_line(int fd)
 {
-	char		*res;
-	static char	*buffer;
+	static char	*line;
+	t_utils		utils;
 
-	res = NULL;
+	initial(&utils);
 	if (BUFFER_SIZE <= 0 || fd < 0)
-		return (NULL);
-	buffer = read_buffer(fd, buffer);
-	if (!buffer || !*buffer)
+		return (freed(&line));
+	utils.buffer = malloc(BUFFER_SIZE + 1);
+	if (!utils.buffer)
+		return (freed(&line));
+	while (utils.readed == BUFFER_SIZE && utils.trunc == -1)
 	{
-		free(buffer);
-		buffer = NULL;
-		return (NULL);
+		utils.readed = read(fd, utils.buffer, BUFFER_SIZE);
+		if (utils.readed < 0)
+			return (freed(&utils.buffer), freed(&line));
+		utils.buffer[utils.readed] = '\0';
+		utils.left_over = line;
+		line = ft_strjoin(line, utils.buffer);
+		freed(&utils.left_over);
+		utils.trunc = ft_trunc(line);
 	}
-	res = read_the_line(buffer);
-	buffer = trim_buffer(buffer);
-	return (res);
+	return (final_part(&line, utils));
 }
+/* #include <stdio.h>
+#include <fcntl.h>
+int main (void)
+{
+	int	fd;
+	char *line;
+
+	fd = open("hi.txt", O_RDONLY);
+	if (fd == -1)
+	{
+		printf("%s\n", "got unlucky :c");
+		return (1);
+	}
+	while ((line = get_next_line(fd)) != NULL)
+	{
+		printf("[%s]", line);
+		free(line);
+	}
+	close(fd);
+	return (0);
+} */

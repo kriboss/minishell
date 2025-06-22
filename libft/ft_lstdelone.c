@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_lstdelone.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbossio <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: sel-khao <sel-khao <marvin@42.fr>>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/25 11:58:53 by kbossio           #+#    #+#             */
-/*   Updated: 2024/11/25 11:58:54 by kbossio          ###   ########.fr       */
+/*   Created: 2024/12/09 17:25:55 by sel-khao          #+#    #+#             */
+/*   Updated: 2024/12/15 18:40:39 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,40 +14,37 @@
 
 void	ft_lstdelone(t_list *lst, void (*del)(void *))
 {
-	if (!lst || !del)
+	if (lst == NULL)
 		return ;
 	del(lst->content);
-	free (lst);
+	free(lst);
 }
-/*
-#include <stdio.h>
-#include <stdlib.h>
-
-void del(void *content) {
-    // Free the dynamically allocated content (assuming it's a string)
-    free(content);
+void	 del(void *content)
+{
+	free(content);
 }
-
-int main() {
-	t_list *head = ft_lstnew(ft_strdup("Primo"));
-	head->next = ft_lstnew(ft_strdup("Secondo"));
-	head->next->next = ft_lstnew(ft_strdup("Terzo"));
-
-	printf("before:\n");
-	t_list *current = head;
-	while (current) {
-		printf("%s\n", (char *)current->content);
-		current = current->next;
+/* int main(void)
+{
+	t_list *node1 = ft_lstnew(ft_strdup("sara"));
+	t_list *node2 = ft_lstnew(ft_strdup("wassimo"));
+	node1->next = node2;
+	
+	printf("before deleting:\n");
+	t_list *temp = node1;
+	while(temp)
+	{
+		printf("%s\n", (char *)temp->content);
+		temp = temp->next;
 	}
-	printf("\nafter:\n");
-	ft_lstdelone(head->next->next, del);
-	head->next->next = NULL;
-	current = head;
-	while (current) {
-		printf("%s\n", (char *)current->content);
-		current = current->next;
+	ft_lstdelone(node1, del);
+	node1 = node2;
+	printf("after deleting:\n");
+	t_list *tempp = node1;
+	while(tempp)
+	{
+		printf("%s\n", (char *)tempp->content);
+		tempp = tempp->next;
 	}
-	ft_lstdelone(head->next, del);
-	ft_lstdelone(head, del);
+	ft_lstdelone(node1, del);
 	return 0;
-}*/
+} */

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sara <sara@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/03 11:38:14 by kbossio           #+#    #+#             */
-/*   Updated: 2025/06/16 08:29:24 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/06/18 11:54:21 by sara             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,9 +68,7 @@ int	ft_strcmp(char *s1, const char *s2)
 
 	i = 0;
 	while (s1[i] && s2[i] && s1[i] == s2[i])
-	{
 		i++;
-	}
 	return ((unsigned char)s1[i] - (unsigned char )s2[i]);
 }
 

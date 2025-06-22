@@ -1,43 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_memset.c                                        :+:      :+:    :+:   */
+/*   ft_putchar.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sel-khao <sel-khao <marvin@42.fr>>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/21 11:46:07 by sel-khao          #+#    #+#             */
-/*   Updated: 2024/11/28 16:05:42 by sel-khao         ###   ########.fr       */
+/*   Created: 2024/12/05 20:48:37 by sel-khao          #+#    #+#             */
+/*   Updated: 2024/12/07 19:26:15 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-void	*ft_memset(void *s, int c, size_t n)
+int	ft_putchar(char c)
 {
-	unsigned char	*str;
-	unsigned char	a;
-
-	str = (unsigned char *)s;
-	a = (unsigned char)c;
-	while (n--)
-	{
-		*str = a;
-		str++;
-	}
-	return (s);
+	write(1, &c, 1);
+	return (1);
 }
-/*int main()
+/* int main()
 {
-	int i;
-
-	i = 0;
-    char str[10];
-    ft_memset(str, 'w', 10);
-    while (i < 10)
-	{
-        printf("%c ", str[i]);
-        i++;
-    }
-    printf("\n");
-	return 0;
-}*/
+	ft_putchar('A');
+	return (0);
+} */

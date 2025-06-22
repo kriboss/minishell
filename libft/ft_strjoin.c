@@ -3,44 +3,72 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strjoin.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbossio <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: sel-khao <sel-khao <marvin@42.fr>>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/21 16:31:16 by kbossio           #+#    #+#             */
-/*   Updated: 2024/11/21 16:31:17 by kbossio          ###   ########.fr       */
+/*   Created: 2024/11/24 22:26:57 by sel-khao          #+#    #+#             */
+/*   Updated: 2024/11/26 20:19:16 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-char	*ft_strjoin(char const *s1, char const *s2)
+static char	*ft_strcat(char *dest, const char *src)
 {
-	char	*ptr;
-	size_t	size;
+	size_t	i;
+	size_t	j;
+
+	i = 0;
+	while (dest[i])
+		i++;
+	j = 0;
+	while (src[j])
+	{
+		dest[i + j] = src[j];
+		j++;
+	}
+	dest[i + j] = '\0';
+	return (dest);
+}
+
+static char	*ft_strcpy(char *dest, const char *src)
+{
 	size_t	i;
 
-	size = ft_strlen(s1) + ft_strlen(s2);
 	i = 0;
-	ptr = (char *)malloc(sizeof(char) * (size + 1));
-	if (!ptr)
-		return (NULL);
-	while (*s1)
-		ptr[i++] = *s1++;
-	while (*s2)
-		ptr[i++] = *s2++;
-	ptr[i] = '\0';
-	return (ptr);
+	while (src[i])
+	{
+		dest[i] = src[i];
+		i++;
+	}
+	dest[i] = '\0';
+	return (dest);
 }
-/*
-#include <stdio.h>
 
-int main()
+char	*ft_strjoin(char const *s1, char const *s2)
 {
-    	char arr[] = "ciao ";
-    	char dest[] = "allora mele";
-    	char *ptr;
+	size_t	str_len;
+	char	*str;
 
-    	// Fill whole array with 0.
-    	ptr = ft_strjoin(arr, dest);
-    	printf("ptr : %s", ptr);
-    	return 0;
+	if (!s1 || !s2)
+		return (NULL);
+	str_len = ft_strlen(s1) + ft_strlen(s2);
+	str = (char *)malloc(str_len + 1);
+	if (!str)
+		return (NULL);
+	ft_strcpy(str, s1);
+	ft_strcat(str, s2);
+	return (str);
+}
+
+/*int main()
+{
+    char *result = ft_strjoin("i love", " you");
+	if (result != NULL)
+	{
+		printf("%s\n", result);
+    	free(result);
+	}
+	else
+		printf("NULL\n")
+	return 0;
 }*/

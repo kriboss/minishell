@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sara <sara@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/20 07:47:10 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/06/17 10:51:04 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/06/18 14:46:55 by sara             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,39 +27,30 @@ void	print_header(void)
 	printf(RESET);
 }
 
-char *add_word(char *argv, char *world)
-{
-	char *tmp;
-	char *joined;
-
-	if (!argv)
-		return ft_strdup(word);
-	tmp = ft_strjoin(argv, " ");
-	joined = 
-	
-}
-
-/* char	**add_word(char *argv, char *word)
+char	**add_word(char **argv, char *word)
 {
 	int i = 0;
 	int j = 0;
-	char *av;
+	char **av;
 
-	while (argv && argv[i])
-		i++;
-	av = malloc(sizeof(char) * (i + 2));
+	if (argv)
+	{
+		while (argv[i])
+			i++;
+	}
+	av = malloc(sizeof(char *) * (i + 2));
 	if (!av)
 		return NULL;
-  	  while (j < i)
+  	while (j < i)
 	{
 		av[j] = argv[j];
 		j++;
 	}
-	av[i] = *ft_strdup(word);
+	av[i] = ft_strdup(word);
 	av[i + 1] = NULL;
 	free(argv);
 	return (av);
-} */
+}
 
 void tok_cmd(t_shell *shell)
 {
@@ -85,7 +76,7 @@ void tok_cmd(t_shell *shell)
 	}
 }
 
-void something(t_shell *shell)
+void parsing(t_shell *shell)
 {
     if (validate_input(shell->input))
     {
@@ -93,27 +84,7 @@ void something(t_shell *shell)
         return;
     }
     tokenize(shell);
-    printf("Tokens:\n");
-    t_token *token = shell->tokens;
-    while (token)
-    {
-        printf("  type: %d, value: '%s'\n", token->type, token->value);
-        token = token->next;
-    }
     tok_cmd(shell);
-    t_cmd *cmd = shell->cmds;
-    int i;
-    while (cmd)
-    {
-        printf("Command:\n");
-        i = 0;
-        while (cmd->argv && cmd->argv[i])
-        {
-            printf("  argv[%d]: %c\n", i, cmd->argv[i]);
-            i++;
-        }
-        cmd = cmd->next;
-    }
 }
 
 int main(int ac, char **av, char **envp)
@@ -137,9 +108,9 @@ int main(int ac, char **av, char **envp)
         ft_readline(&shell);
         if (!shell.input)
             free_all(&shell);
-        something(&shell);
+        parsing(&shell);
         if (shell.cmds && shell.cmds->argv)
-	        str = execute(&shell, &shell.cmds->argv, str);
+	        str = execute(&shell, shell.cmds->argv, str);
         else
 	        ft_putendl_fd("No command to execute", STDERR_FILENO);
         shell.tokens = NULL;

@@ -3,14 +3,39 @@
 /*                                                        :::      ::::::::   */
 /*   free.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sara <sara@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 08:07:09 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/06/17 10:07:16 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/06/18 13:54:21 by sara             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
+
+void free_argv(char **argv)
+{
+    int i = 0;
+    if (!argv)
+        return;
+    while (argv[i])
+    {
+        free(argv[i]);
+        i++;
+    }
+    free(argv);
+}
+
+void free_redir(t_redir *redir)
+{
+    t_redir *tmp;
+    while (redir)
+    {
+        tmp = redir;
+        redir = redir->next;
+        free(tmp->filename);
+        free(tmp);
+    }
+}
 
 void free_all(t_shell *shell)
 {
@@ -35,7 +60,6 @@ void free_all(t_shell *shell)
 void free_tokens(t_token *tokens)
 {
     t_token *tmp;
-
     while (tokens)
     {
         tmp = tokens;
@@ -54,22 +78,18 @@ void free_cmds(t_cmd *cmds)
     {
         tmp = cmds;
         cmds = cmds->next;
+
         if (tmp->argv)
         {
             i = 0;
             while (tmp->argv[i])
-            {
-                free(tmp->argv);
-                i++;
-            }
+                free(tmp->argv[i++]);
             free(tmp->argv);
         }
-        if (tmp->infile)
-            free(tmp->infile);
-        if (tmp->outfile)
-            free(tmp->outfile);
-        if (tmp->delim)
-            free(tmp->delim);
+
+        if (tmp->redir)
+            free_redir(tmp->redir);
+
         free(tmp);
     }
 }

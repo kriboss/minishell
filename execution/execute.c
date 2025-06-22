@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sara <sara@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/03 09:48:20 by kbossio           #+#    #+#             */
-/*   Updated: 2025/06/16 09:51:27 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/06/18 15:06:57 by sara             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,13 +105,9 @@ int	env(char **envp)
 char	**export(char **env, char **str)
 {
 	if (str == NULL || *str == NULL)
-	{
 		print_exp(env);
-	}
 	else
-	{
 		return (add_exp(str, env));
-	}
 	return (env);
 }
 
@@ -136,41 +132,32 @@ int check_cmd(t_shell *shell, char **cmds, char **envp)
 {
     int i = 0;
     (void)envp;
-	printf("Checking commands...\n");
-	for (int j = 0; cmds[j]; j++)
-	{
-		printf("cmds[%d]: %s\n", j, cmds[j]);
-	}
     while (cmds[i])
     {
         if (ft_strncmp(cmds[i], "|", 1) == 0)
-        {
             printf("Found pipe symbol '|', skipping pipex for now\n");
-        }
         else if (ft_strncmp(cmds[i], ">>", 2) == 0)
-        {
             printf("Found '>>', skipping red_app for now\n");
-        }
         else if (ft_strncmp(cmds[i], ">", 1) == 0)
-        {
+		{
 			printf("Found '>', skipping red_out for now\n");
-			printf("CIAOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO\n");
 			red_out(shell, cmds, envp);
         }
         else if (ft_strncmp(cmds[i], "<", 1) == 0)
-        {
             printf("Found '<', skipping red_in for now\n");
-        }
         i++;
     }
     return (-2);
 }
 
-char	**execute(t_shell *shell, char **cmd, char *envp[])
+char **execute(t_shell *shell, char **cmd, char *envp[])
 {
-	char	es;
+	int		stdout_backup = dup(STDOUT_FILENO);
+	int		stdin_backup = dup(STDIN_FILENO);
+	char	es = 0;
 
-	es = 0;
+	if (handle_redirections(shell->cmds))
+		return (envp);
 	if (check_cmd(shell, cmd, envp) == -2)
 	{
 		if (ft_strncmp(cmd[0], "cd", 2) == 0)
@@ -190,5 +177,11 @@ char	**execute(t_shell *shell, char **cmd, char *envp[])
 		else
 			es = exec_external(cmd, envp);
 	}
+	dup2(stdout_backup, STDOUT_FILENO);
+	dup2(stdin_backup, STDIN_FILENO);
+	close(stdout_backup);
+	close(stdin_backup);
 	return (envp);
 }
+
+

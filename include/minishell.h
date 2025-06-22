@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sara <sara@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/20 07:47:00 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/06/17 10:42:56 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/06/18 14:39:56 by sara             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,10 @@
 # define SQUOTE		7
 # define DQUOTE		8
 # define VAR		9
+# define INFILE		10
+# define OUTFILE	11
+# define APPEND		12
+# define HDOC		13
 
 # include <stdio.h>
 # include <stdlib.h>
@@ -53,22 +57,20 @@ typedef struct env_s
 	char	*value;
 }	t_env;
 
+typedef struct s_redir
+{
+	char	*filename;
+	int		type;//infile or outfile
+	struct	s_redir *next;
+} t_redir;
+
 typedef struct s_cmd
 {
-	int				append; 
-	int				heredoc;
 	char			**argv;//for kri
-	char			*infile;
-	char			**outfile;
-	char			**delim;
+	t_redir			*redir;
 	struct s_cmd	*next; 
 }	t_cmd;
 
-//t_cmd deve essere a doppio puntatore (uno per ogni comando, perche se ci sono piu t_cmd ci sono le pipe), outfile deve essere a doppio puntatore uno per ogni file da reinderizzare
-//argv va bene a doppio puntatore come era prima, per risolvere problemi come "echo ciao" o "echo " ciao
-//infile va bene a singolo puntatore, perche c'e devo prendere in considerazione solo il file piu a destra nell'input
-//outfile deve essere a doppio puntatore, perche se ci sono piu file da reindirizzare, devo prendere in considerazione solo l'ultimo file nell'input
-//delim deve essere a doppio puntatore, perche se ci sono piu delimitatori, nel caso di << ciao << cane per far finire l'input dell'heredoc devo scrivere prima ciao e poi cane
 typedef struct s_token
 {
 	char			*value; 
@@ -96,19 +98,22 @@ int		validate_redirection(char *input);
 
 void	free_cmds(t_cmd *cmds);
 void	free_tokens(t_token *tokens);
+void	free_redir(t_redir *redir);
 void	free_all(t_shell *shell);
+
 void	init(t_cmd *cmd);
 void	ft_readline(t_shell *shell);
 
-void	something(t_shell *shell);
+void	parsing(t_shell *shell);
 void	create_token(t_shell *shell, char *input, int *i);
 void	tok_cmd(t_shell *shell);
-char	*add_word(char *argv, char *word);
+char	**add_word(char **argv, char *word);
 void	add_token(t_shell *shell, char *value, int type);
 void    tokenadd_back(t_token **lst, t_token *new);
 void	tokenize(t_shell *shell);
 void	check_type(t_token **tmp, t_cmd *cmd);
 void	check_type2(t_token **tmp, t_cmd **cmd);
+void	add_redir(t_redir **redir_list, char *filename, int type);
 
 
 int		exit_shell(int status,t_shell *shell, char **str);
@@ -117,11 +122,13 @@ int		check_same(char *str, char **envp);
 int		unset(char **str, char **envp);
 int		ft_strcmp(char *s1, const char *s2);
 int		pipex(t_shell *shell, char **cmds, char **envp);
-int		handle_red(char **cmds, char **envp);
+
+int handle_redirections(t_cmd *cmd);
+
 int		exec_external(char **args, char **envp);
-int	red_out(t_shell *shell, char **cmds, char **envp);
-int		red_in(char **cmds);
-int		red_app(char **cmds);
+int		red_out(t_shell *shell, char **cmds, char **envp);
+int		red_in(t_shell *shell);
+int		red_app(t_shell *shell);
 
 char	**add_exp(char **str, char **envp);
 char	**dup_env(char **envp);
