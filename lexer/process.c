@@ -3,45 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   process.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sara <sara@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 08:07:27 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/06/18 13:55:52 by sara             ###   ########.fr       */
+/*   Updated: 2025/06/23 13:12:05 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
-void create_token(t_shell *shell, char *input, int *i)
-{
-	if (input[*i] == '|' )
-	{
-		add_token(shell, "|", PIPE);
-		(*i)++;
-	}
-	else if (input[*i] == '>' && input[*i + 1] == '>')
-	{
-		add_token(shell, ">>", REDIRECT);
-		(*i) += 2;
-	}
-	else if (input[*i] == '>')
-	{
-		add_token(shell, ">", REDIRECT);
-		(*i)++;
-	}
-	else if (input[*i] == '<' && input[*i + 1] == '<')
-	{
-		add_token(shell, "<<", HEREDOC);
-		(*i) += 2;
-	}
-	else if (input[*i] == '<')
-	{
-		add_token(shell, "<", REDIRECT);
-		(*i)++;
-	}
-}
-
-void add_token(t_shell *shell, char *value, int type)
+void	add_token(t_shell *shell, char *value, int type)
 {
 	t_token *new_token;
 
@@ -60,10 +31,66 @@ void add_token(t_shell *shell, char *value, int type)
 		tokenadd_back(&shell->tokens, new_token);
 }
 
-void tokenize(t_shell *shell)
+char	*extract_quoted(char *input, int *i)
+{
+	char	quote = input[*i];
+	int		j = *i + 1;
+	int		len = 0;
+	char	*buffer = malloc(ft_strlen(input) + 1); // worst-case alloc
+
+	if (!buffer)
+		return (NULL);
+	while (input[j] && input[j] != quote)
+	{
+		if (quote == '"' && input[j] == '\\' && input[j + 1])
+		{
+			if (input[j + 1] == '"' || input[j + 1] == '\\' ||
+				input[j + 1] == '$')
+				buffer[len++] = input[++j];
+			else
+				buffer[len++] = input[j];
+			j++;
+		}
+		else
+			buffer[len++] = input[j++];
+	}
+	if (!input[j] || input[j] != quote)
+	{
+		free(buffer);
+		printf("syntax error: unclosed quote\n");
+		return (NULL);
+	}
+	buffer[len] = '\0';
+	*i = j + 1;//sposto index dopo virgola di chiusura
+	return (buffer);
+}
+
+void	handle_special(t_shell *shell, char *input, int *i)
+{
+	char *quoted_str;
+
+	if (input[*i] == '\'' || input[*i] == '"')
+	{
+		quoted_str = extract_quoted(input, i);
+		if (!quoted_str)
+			return ;
+		add_token(shell, quoted_str, WORD);
+		free(quoted_str);
+	}
+	else if (input[*i] == '$')
+	{
+		add_token(shell, "$", DOLLAR);
+		(*i)++;
+	}
+	else
+		create_token(shell, input, i);
+}
+
+void	tokenize(t_shell *shell)
 {
 	int i;
 	char *input;
+	int start;
 
 	i = 0;
 	input = shell->input;
@@ -72,10 +99,10 @@ void tokenize(t_shell *shell)
 	while(input[i])
 	{
 		if (is_special(input[i]))
-			create_token(shell, input, &i);
+			handle_special(shell, input, &i);
 		else if (is_word(input[i]))
 		{
-			int start = i;
+			start = i;
 			while (input[i] && is_word(input[i]))
 				i++;
 			char *word = ft_substr(input, start, i - start);
@@ -87,11 +114,20 @@ void tokenize(t_shell *shell)
 	}
 }
 
-void check_type(t_token **tmp, t_cmd *cmd)
+char *expand_var(t_env *env_list, const char *input)
 {
+	
+}
+
+void	check_type(t_token **tmp, t_cmd *cmd, t_shell *shell)
+{
+	char *expand;
+	
 	if ((*tmp)->type == WORD || (*tmp)->type == EOF)
 	{
-		cmd->argv = add_word(cmd->argv, (*tmp)->value);
+		expand = expand_var(shell->envs, (*tmp)->value);
+		cmd->argv = add_word(cmd->argv, expand);
+		free(expand);
 		*tmp = (*tmp)->next;
 	}
 	else if ((*tmp)->type == REDIRECT && (*tmp)->next)
@@ -116,7 +152,7 @@ void check_type(t_token **tmp, t_cmd *cmd)
 // ls -l | grep txt | wc -l
 // linked list of t_cmd, cmd1 → cmd2 → cmd3
 
-void check_type2(t_token **tmp, t_cmd **cmd)
+void	check_type2(t_token **tmp, t_cmd **cmd)
 {
 	t_cmd *new_cmd;
 
@@ -137,24 +173,24 @@ void check_type2(t_token **tmp, t_cmd **cmd)
 	}
 }
 
-void add_redir(t_redir **redir_list, char *filename, int type)
+void	add_redir(t_redir **redir_list, char *filename, int type)
 {
-    t_redir *new_redir = malloc(sizeof(t_redir));
-    if (!new_redir)
+	t_redir *new_redir = malloc(sizeof(t_redir));
+	if (!new_redir)
 	{
-        perror("malloc failed");
+		perror("malloc failed");
 		exit(EXIT_FAILURE);
 	}
-    new_redir->filename = strdup(filename);
-    new_redir->type = type;
-    new_redir->next = NULL;
-    if (!*redir_list)
-        *redir_list = new_redir;
-    else
-    {
-        t_redir *tmp = *redir_list;
-        while (tmp->next)
-            tmp = tmp->next;
-        tmp->next = new_redir;
-    }
+	new_redir->filename = strdup(filename);
+	new_redir->type = type;
+	new_redir->next = NULL;
+	if (!*redir_list)
+		*redir_list = new_redir;
+	else
+	{
+		t_redir *tmp = *redir_list;
+		while (tmp->next)
+			tmp = tmp->next;
+		tmp->next = new_redir;
+	}
 }

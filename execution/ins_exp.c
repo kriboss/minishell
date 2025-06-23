@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ins_exp.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
+/*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/09 11:17:27 by kbossio           #+#    #+#             */
-/*   Updated: 2025/05/13 18:09:00 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/06/23 08:33:57 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,34 +80,46 @@ char	**add_exp(char **str, char **envp)
 {
 	int		i;
 	int		j;
+	char **new_env;
+	char *val;
+	char *tmp;
 
 	i = 0;
+	new_env = dup_env(envp);//duplico per non lavorare sull'originale
+	if(!new_env)
+		return NULL;
 	str = rm_quotes(str);
 	while (str[i])
 	{
-		if (check_ins(str[i]) == 0)
+		if (check_ins(str[i]) == 0)//se name valid
 		{
-			j = check_same(str[i], envp);
-			if (j != -1)
+			j = check_same(str[i], new_env);
+			if (j != -1)//se esiste gia'
 			{
-				if (ft_strchr(str[i], '+'))
+				if (ft_strchr(str[i], '+'))//if +=value
 				{
-					if (ft_strchr(envp[j], '='))
-						envp[j] = ft_strjoin(envp[j], ft_strchr(str[i], '=') + 1);
-					else
-						envp[j] = ft_strjoin(envp[j], ft_strchr(str[i], '='));
-					unset(&str[i], envp);
+					val = ft_strchr(str[i], '=');//se = e vai oltre
+					if (val)
+					{
+						val++;
+						tmp = ft_strjoin(new_env[j], val);
+						if (tmp)
+						{
+							free(new_env[j]);
+							new_env[j] = tmp;
+						}
+					}
 				}
-				else if (ft_strchr(str[i], '='))
+				else if (ft_strchr(str[i], '='))//se solo var=value
 				{
-					free(envp[j]);
-					envp[j] = ft_strdup(str[i]);
+					free(new_env[j]);
+					new_env[j] = ft_strdup(str[i]); // sostituisco
 				}
 			}
-			else
-				envp = ins_exp(str[i], envp);
+			else//se e' solo export VAR, do noting
+				new_env = ins_exp(str[i], new_env);
 		}
 		i++;
 	}
-	return (envp);
+	return (new_env);
 }

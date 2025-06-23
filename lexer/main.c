@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sara <sara@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/20 07:47:10 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/06/18 14:46:55 by sara             ###   ########.fr       */
+/*   Updated: 2025/06/23 13:09:06 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ void tok_cmd(t_shell *shell)
 		if (tmp->type == PIPE)
 			check_type2(&tmp, &cmd);
 		else
-			check_type(&tmp, cmd);
+			check_type(&tmp, cmd, shell);
 		if (tmp == prev)
 			tmp = tmp->next;
 	}

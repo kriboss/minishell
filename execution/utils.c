@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sara <sara@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/03 11:38:14 by kbossio           #+#    #+#             */
-/*   Updated: 2025/06/18 11:54:21 by sara             ###   ########.fr       */
+/*   Updated: 2025/06/23 08:28:58 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,6 @@ void	free_arr(char **str, char **new)
 	{
 		while (str[i] != NULL)
 		{
-			printf("free_arr: freeing str[%d]: %p -> %s\n", i, (void *)str[i], str[i]);
 			free(str[i]);
 			i++;
 		}
@@ -55,7 +54,10 @@ char	**dup_env(char **envp)
 	{
 		env[i] = ft_strdup(envp[i]);
 		if (!env[i])
-			return (free_arr(env, NULL), NULL);
+		{
+			free_arr(env, NULL);
+			return (NULL);
+		}
 		i++;
 	}
 	env[i] = NULL;

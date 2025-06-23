@@ -3,29 +3,29 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sara <sara@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/20 07:47:00 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/06/18 14:39:56 by sara             ###   ########.fr       */
+/*   Updated: 2025/06/23 13:12:22 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
-# define WORD       1
-# define EOF        2
-# define REDIRECT   3
-# define PIPE       4
-# define HEREDOC    5
+# define WORD       1//
+# define EOF        2//
+# define REDIRECT   3//
+# define PIPE       4//
+# define HEREDOC    5//
 # define DOLLAR		6
 # define SQUOTE		7
 # define DQUOTE		8
 # define VAR		9
-# define INFILE		10
-# define OUTFILE	11
-# define APPEND		12
-# define HDOC		13
+# define INFILE		10//n
+# define OUTFILE	11//n
+# define APPEND		12//n
+# define HDOC		13//n
 
 # include <stdio.h>
 # include <stdlib.h>
@@ -54,7 +54,8 @@
 typedef struct env_s
 {
 	char	*key;
-	char	*value;
+	char	*val;
+	struct env_s *next;
 }	t_env;
 
 typedef struct s_redir
@@ -83,6 +84,7 @@ typedef struct s_shell
 	char	*input;
 	t_token	*tokens;
 	t_cmd	*cmds;
+	t_env   *envs;
 }	t_shell;
 
 int		is_word(char c);
@@ -109,11 +111,14 @@ void	create_token(t_shell *shell, char *input, int *i);
 void	tok_cmd(t_shell *shell);
 char	**add_word(char **argv, char *word);
 void	add_token(t_shell *shell, char *value, int type);
-void    tokenadd_back(t_token **lst, t_token *new);
+void	tokenadd_back(t_token **lst, t_token *new);
 void	tokenize(t_shell *shell);
-void	check_type(t_token **tmp, t_cmd *cmd);
+void	check_type(t_token **tmp, t_cmd *cmd,  t_shell *shell);
 void	check_type2(t_token **tmp, t_cmd **cmd);
 void	add_redir(t_redir **redir_list, char *filename, int type);
+void	handle_special(t_shell *shell, char *input, int *i);
+char	*extract_quoted(char *input, int *i);
+
 
 
 int		exit_shell(int status,t_shell *shell, char **str);
