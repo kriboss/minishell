@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ins_exp.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/09 11:17:27 by kbossio           #+#    #+#             */
-/*   Updated: 2025/06/23 08:33:57 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/06/23 19:48:03 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ char	**rm_quotes(char **str)
 			str[i] = ft_rmchar(tmp, '\'');
 			free(tmp);
 		}
-		else if (strchr(str[i], '\"'))
+		if (strchr(str[i], '\"'))
 		{
 			tmp = str[i];
 			str[i] = ft_rmchar(tmp, '\"');
@@ -88,7 +88,9 @@ char	**add_exp(char **str, char **envp)
 	new_env = dup_env(envp);//duplico per non lavorare sull'originale
 	if(!new_env)
 		return NULL;
+	// printf("str before rm quotes :%s\n", str[0]);
 	str = rm_quotes(str);
+	// printf("str after :%s\n", str[0]);
 	while (str[i])
 	{
 		if (check_ins(str[i]) == 0)//se name valid
@@ -101,7 +103,8 @@ char	**add_exp(char **str, char **envp)
 					val = ft_strchr(str[i], '=');//se = e vai oltre
 					if (val)
 					{
-						val++;
+						if (ft_strchr(new_env[j], '='))
+							val++;
 						tmp = ft_strjoin(new_env[j], val);
 						if (tmp)
 						{

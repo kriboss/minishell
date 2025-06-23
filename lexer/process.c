@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   process.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 08:07:27 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/06/23 13:33:43 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/06/23 19:48:44 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,12 +115,54 @@ void	tokenize(t_shell *shell)
 }
 //da sistemare, idk how, non so come espandere la variabile. va fatto dentro this funzione
 //ho cambiato leggermente le strutture, check that
-char *expand_var(t_env *env_list, const char *input)
+char *subs_var(char *input, const char *value, int s, int f)
 {
-	(void)env_list;
-	if (!input)
-		return NULL;
-	return strdup(input);
+	int i;
+	char *new;
+
+	i = 0;
+	new = malloc(ft_strlen(input) - f + ft_strlen(value) + 1);
+	while (input[i])
+	{
+		if (i == s)
+		{
+			ft_strlcat(new, value, ft_strlen(input) - f + ft_strlen(value) + 1);
+			i += f;
+		}
+		else
+			new[i] = input[i];
+		i++;
+	}
+	return (new);
+}
+
+char *expand_var(t_token *tmp, t_env *env_list, char *input)
+{
+	int i;
+	int j;
+	char *var;
+
+	i = 0;
+	while (input[i])
+	{
+		j = 0;
+		while (input[i + j] && input[i] == '$' && input[i + j] != ' ')
+			j++;
+		// printf("%s: j:%d\n", input, j);
+		if (j > 0)
+		{
+			var = ft_substr(input, i, i + j);
+			while (env_list)
+			{
+				if (env_list->key == var || (var[0] == '$' && var[1] == '?' && var[2] == '\0'))
+					return (subs_var(input, env_list->val, i, j));
+				env_list = env_list->next;
+			}
+		}
+		else 
+		i++;	
+	}
+	return (input);
 }
 
 void	check_type(t_token **tmp, t_cmd *cmd, t_shell *shell)
@@ -131,7 +173,7 @@ void	check_type(t_token **tmp, t_cmd *cmd, t_shell *shell)
 		return;
 	if ((*tmp)->type == WORD || (*tmp)->type == EOF)
 	{
-		expand = expand_var(shell->envs, (*tmp)->value);
+		expand = expand_var((*tmp), shell->envs, (*tmp)->value);
 		cmd->argv = add_word(cmd->argv, expand);
 		free(expand);
 		*tmp = (*tmp)->next;

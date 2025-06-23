@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sara <sara@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/03 09:48:20 by kbossio           #+#    #+#             */
-/*   Updated: 2025/06/18 15:06:57 by sara             ###   ########.fr       */
+/*   Updated: 2025/06/23 18:46:57 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -155,7 +155,8 @@ char **execute(t_shell *shell, char **cmd, char *envp[])
 	int		stdout_backup = dup(STDOUT_FILENO);
 	int		stdin_backup = dup(STDIN_FILENO);
 	char	es = 0;
-
+	/*for (int i = 0; cmd[i]; i++)
+		printf("check quotes :%s\n", cmd[i]);*/
 	if (handle_redirections(shell->cmds))
 		return (envp);
 	if (check_cmd(shell, cmd, envp) == -2)
