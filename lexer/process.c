@@ -6,7 +6,7 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 08:07:27 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/06/23 13:12:05 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/06/23 13:33:43 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,16 +113,22 @@ void	tokenize(t_shell *shell)
 			i++;
 	}
 }
-
+//da sistemare, idk how, non so come espandere la variabile. va fatto dentro this funzione
+//ho cambiato leggermente le strutture, check that
 char *expand_var(t_env *env_list, const char *input)
 {
-	
+	(void)env_list;
+	if (!input)
+		return NULL;
+	return strdup(input);
 }
 
 void	check_type(t_token **tmp, t_cmd *cmd, t_shell *shell)
 {
 	char *expand;
 	
+	if (*tmp == NULL)
+		return;
 	if ((*tmp)->type == WORD || (*tmp)->type == EOF)
 	{
 		expand = expand_var(shell->envs, (*tmp)->value);
