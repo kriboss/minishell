@@ -6,7 +6,7 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/03 09:48:20 by kbossio           #+#    #+#             */
-/*   Updated: 2025/06/25 11:06:15 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/06/25 12:07:07 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,35 +128,36 @@ int	exit_shell(int status,t_shell *shell, char **str)
 	exit(status);
 }
 
-int check_cmd(t_shell *shell, char **cmds, char **envp)
+int	check_cmd(t_shell *shell, char **cmds, char **envp)
 {
-    int i = 0;
-    (void)envp;
-    while (cmds[i])
-    {
-        if (ft_strncmp(cmds[i], "|", 1) == 0)
-            printf("Found pipe symbol '|', skipping pipex for now\n");
-        else if (ft_strncmp(cmds[i], ">>", 2) == 0)
-            printf("Found '>>', skipping red_app for now\n");
-        else if (ft_strncmp(cmds[i], ">", 1) == 0)
+	int i = 0;
+	(void)envp;
+	while (cmds[i])
+	{
+		if (ft_strncmp(cmds[i], "|", 1) == 0)
+			printf("Found pipe symbol '|', skipping pipex for now\n");
+		else if (ft_strncmp(cmds[i], ">>", 2) == 0)
+			printf("Found '>>', skipping red_app for now\n");
+		else if (ft_strncmp(cmds[i], ">", 1) == 0)
 		{
 			printf("Found '>', skipping red_out for now\n");
 			red_out(shell, cmds, envp);
-        }
-        else if (ft_strncmp(cmds[i], "<", 1) == 0)
-            printf("Found '<', skipping red_in for now\n");
-        i++;
-    }
-    return (-2);
+		}
+		else if (ft_strncmp(cmds[i], "<", 1) == 0)
+			printf("Found '<', skipping red_in for now\n");
+		i++;
+	}
+	return (-2);
 }
 
-char **execute(t_shell *shell, char **cmd, char *envp[])
+char	**execute(t_shell *shell, char **cmd, char *envp[])
 {
 	int		stdout_backup = dup(STDOUT_FILENO);
 	int		stdin_backup = dup(STDIN_FILENO);
 	char	es = 0;
-	for (int i = 0; cmd[i]; i++)
-		printf("check quotes :%s\n", cmd[i]);
+
+	/* for (int i = 0; cmd[i]; i++)
+		printf("check quotes :%s\n", cmd[i]); */
 	if (handle_redirections(shell->cmds))
 		return (envp);
 	if (check_cmd(shell, cmd, envp) == -2)

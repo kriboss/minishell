@@ -6,131 +6,19 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 08:07:27 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/06/25 11:08:40 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/06/25 13:43:14 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
-char	*extract_quoted(char *input, int *i)
+void	check_type(t_token **tmp, t_cmd *cmd)
 {
-	char	quote = input[*i];
-	int		j = *i + 1;
-	int		len = 0;
-	char	*buffer = malloc(ft_strlen(input) + 1); // worst-case alloc
-
-	if (!buffer)
-		return (NULL);
-	while (input[j] && input[j] != quote)
-	{
-		if (quote == '"' && input[j] == '\\' && input[j + 1])
-		{
-			if (input[j + 1] == '"' || input[j + 1] == '\\' ||
-				input[j + 1] == '$')
-				buffer[len++] = input[j++];
-			else
-				buffer[len++] = input[j];
-			j++;
-		}
-		else
-			buffer[len++] = input[j++];
-	}
-	if (!input[j] || input[j] != quote)
-	{
-		free(buffer);
-		printf("syntax error: unclosed quote\n");
-		return (NULL);
-	}
-	buffer[len] = '\0';
-	*i = j + 1;//sposto index dopo virgola di chiusura
-	return (buffer);
-}
-
-void	handle_special(t_shell *shell, char *input, int *i)
-{
-	char *quoted_str;
-
-	if (input[*i] == '\'' || input[*i] == '"')
-	{
-		quoted_str = extract_quoted(input, i);
-		if (!quoted_str)
-			return ;
-		add_token(shell, quoted_str, WORD);
-		free(quoted_str);
-	}
-	else if (input[*i] == '$')
-	{
-		add_token(shell, "$", DOLLAR);
-		(*i)++;
-	}
-	else
-		create_token(shell, input, i);
-}
-
-//da sistemare, idk how, non so come espandere la variabile. va fatto dentro this funzione
-//ho cambiato leggermente le strutture, check that
-char *subs_var(char *input, const char *value, int s, int f)
-{
-	int i;
-	char *new;
-
-	i = 0;
-	new = malloc(ft_strlen(input) - f + ft_strlen(value) + 1);
-	while (input[i])
-	{
-		if (i == s)
-		{
-			ft_strlcat(new, value, ft_strlen(input) - f + ft_strlen(value) + 1);
-			i += f;
-		}
-		else
-			new[i] = input[i];
-		i++;
-	}
-	return (new);
-}
-
-char *expand_var(t_token *tmp, t_env *env_list, char *input)
-{
-	int i;
-	int j;
-	char *var;
-	(void)tmp;
-
-	i = 0;
-	while (input[i])
-	{
-		j = 0;
-		while (input[i + j] && input[i] == '$' && input[i + j] != ' ')
-			j++;
-		// printf("%s: j:%d\n", input, j);
-		if (j > 0)
-		{
-			var = ft_substr(input, i, i + j);
-			while (env_list)
-			{
-				if (env_list->key == var || (var[0] == '$' && var[1] == '?' && var[2] == '\0'))
-					return (subs_var(input, env_list->val, i, j));
-				env_list = env_list->next;
-			}
-		}
-		else 
-		i++;	
-	}
-	return (input);
-}
-
-void	check_type(t_token **tmp, t_cmd *cmd, t_shell *shell)
-{
-	char *expand;
-	
 	if (*tmp == NULL)
-		return;
+		return ;
 	if ((*tmp)->type == WORD || (*tmp)->type == EOF)
 	{
-		expand = expand_var((*tmp), shell->envs, (*tmp)->value);
-		cmd->argv = add_word(cmd->argv, expand);
-		free(expand);
+		cmd->argv = add_word(cmd->argv, (*tmp)->value);
 		*tmp = (*tmp)->next;
 	}
 	else if ((*tmp)->type == REDIRECT && (*tmp)->next)
@@ -178,7 +66,9 @@ void	check_type2(t_token **tmp, t_cmd **cmd)
 
 void	add_redir(t_redir **redir_list, char *filename, int type)
 {
-	t_redir *new_redir = malloc(sizeof(t_redir));
+	t_redir *new_redir;
+
+	new_redir = malloc(sizeof(t_redir));
 	if (!new_redir)
 	{
 		perror("malloc failed");

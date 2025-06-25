@@ -6,7 +6,7 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/25 10:15:24 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/06/25 10:17:49 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/06/25 14:46:14 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ void	tokenize(t_shell *shell)
 	while(input[i])
 	{
 		if (is_special(input[i]))
-			handle_special(shell, input, &i);
+			create_token(shell, input, &i);
 		else if (is_word(input[i]))
 		{
 			start = i;
@@ -59,6 +59,29 @@ void	add_token(t_shell *shell, char *value, int type)
 		tokenadd_back(&shell->tokens, new_token);
 }
 
+/* void mult_word(t_token **head)
+{
+	t_token *curr;
+	char *word;
+
+	if (!head || !(*head))
+		return ;
+	curr = *head;
+	while (curr != NULL && curr->next != NULL)
+	{
+    	if (curr->type == WORD && curr->next->type == WORD)
+    	{
+    	    word = ft_strjoin(curr->value, curr->next->value);
+    	    if (!word)
+				return ;
+			free(curr->value);
+    	    curr->value = word;
+    	}
+    	else
+        	curr = curr->next;
+	}
+} */
+
 void	tok_cmd(t_shell *shell)
 {
 	t_cmd	*cmd;
@@ -71,13 +94,15 @@ void	tok_cmd(t_shell *shell)
 		return ;
 	init(cmd);
 	shell->cmds = cmd;
+	// mult_word(&tmp);
+	// shell->tokens = tmp;
 	while (tmp)
 	{
 		prev = tmp;
 		if (tmp->type == PIPE)
 			check_type2(&tmp, &cmd);
 		else
-			check_type(&tmp, cmd, shell);
+			check_type(&tmp, cmd);
 		if (tmp == prev)
 			tmp = tmp->next;
 	}
@@ -114,16 +139,6 @@ void	create_more(t_shell *shell, char *input, int *i)
 	if (input[*i] == '<')
 	{
 		add_token(shell, "<", REDIRECT);
-		(*i)++;
-	}
-	else if (input[*i] == '\'')
-	{
-		add_token(shell, "'", SQUOTE);
-		(*i)++;
-	}
-	else if (input[*i] == '"')
-	{
-		add_token(shell, "\"", DQUOTE);
 		(*i)++;
 	}
 	else if (input[*i] == '$')

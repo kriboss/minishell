@@ -6,7 +6,7 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 08:07:46 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/06/25 10:07:28 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/06/25 12:34:25 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ int	validate_redirection(char *input)
 {
 	while (*input)
 	{
-		if (*input == '\'' || *input  == '"')
+		if (*input == '\'' || *input == '"')
 		{
 			input++;
 			while (*input && *input != '\'' && *input != '"')
@@ -48,22 +48,22 @@ int	validate_redirection(char *input)
 			while (*input == ' ')
 				input++;
 			if (!*input || *input == '<' || *input == '>')
-				return 1;
+				return (1);
 		}
 		input++;
 	}
-	return 0;
+	return (0);
 }
 
 int	mult_redir(char *input)
 {
-	int c;
-	char a;
+	int		c;
+	char	a;
 
 	c = 1;
 	a = *input;
 	if (*(input + 1) != a && (*(input + 1) == '<' || *(input + 1) == '>'))
-		return 1;
+		return (1);
 	while (*(input + c) == a)
 		c++;
 	if (c > 2)
@@ -73,9 +73,9 @@ int	mult_redir(char *input)
 
 int	validate_quote(char *str)
 {
-	int i;
-	int d;//outside it
-	int s;
+	int	i;
+	int	s;
+	int	d;
 
 	i = 0;
 	d = 0;
@@ -86,7 +86,7 @@ int	validate_quote(char *str)
 			i++;
 		else
 		{
-			if (str[i] == '\'' && d == 0)//
+			if (str[i] == '\'' && d == 0)
 				s = !s;//alterna s tra 1 e 0, on and off, in and out
 			else if (str[i] == '"' && s == 0)
 				d = !d;
@@ -100,8 +100,8 @@ int	validate_quote(char *str)
 
 int	validate_pipe(char *input)
 {
-	int s;
-	int d;
+	int	s;
+	int	d;
 
 	s = 0;
 	d = 0;
@@ -119,10 +119,10 @@ int	validate_pipe(char *input)
 			while (*input == ' ')
 				input++;
 			if (*input == '\0' || *input == '|')
-				return 1;
+				return (1);
 		}
 		else
 			input++;
 	}
-	return 0;
+	return (0);
 }

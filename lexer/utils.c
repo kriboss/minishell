@@ -6,7 +6,7 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 08:07:38 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/06/25 10:15:44 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/06/25 14:29:25 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,13 +15,13 @@
 int	is_word(char c)
 {
 	if (is_space(c) || is_special(c))
-		return 0;
-	return 1;
+		return (0);
+	return (1);
 }
 
 int	is_space(char c)
 {
-	if (c == ' ' || c == '\t' || c == '\b' || c == '\n' || c == '\v') 
+	if (c == ' ' || c == '\t' || c == '\b' || c == '\n' || c == '\v')
 		return (1);
 	return (0);
 }
@@ -43,7 +43,7 @@ void	tokenadd_back(t_token **lst, t_token *new)
 	if (!*lst)
 	{
 		*lst = new;
-		return;
+		return ;
 	}
 	ptr = *lst;
 	while (ptr->next)

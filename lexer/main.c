@@ -6,7 +6,7 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/20 07:47:10 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/06/25 10:15:58 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/06/25 14:31:01 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,37 @@ char	**add_word(char **argv, char *word)
 
 void parsing(t_shell *shell)
 {
+	if (validate_input(shell->input))
+    {
+        printf("Invalid input: %s\n", shell->input);
+        return;
+    }
+    tokenize(shell);
+    printf("Tokens:\n");
+    t_token *token = shell->tokens;
+    while (token)
+    {
+        printf("  type: %d, value: '%s'\n", token->type, token->value);
+        token = token->next;
+    }
+    tok_cmd(shell);
+    t_cmd *cmd = shell->cmds;
+    int i;
+    while (cmd)
+    {
+        printf("Command:\n");
+        i = 0;
+        while (cmd->argv && cmd->argv[i])
+        {
+            printf("argv[%d]: %s\n", i, cmd->argv[i]);
+            i++;
+        }
+        cmd = cmd->next;
+    }
+}
+
+/* void parsing(t_shell *shell)
+{
     if (validate_input(shell->input))
     {
         printf("Invalid input: %s\n", shell->input);
@@ -61,7 +92,7 @@ void parsing(t_shell *shell)
     }
     tokenize(shell);
     tok_cmd(shell);
-}
+} */
 
 int main(int ac, char **av, char **envp)
 {
