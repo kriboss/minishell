@@ -6,7 +6,7 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 08:07:38 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/06/23 12:45:29 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/06/25 10:15:44 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,48 +69,3 @@ void	init(t_cmd *cmd)
 	cmd->redir = NULL;
 	cmd->next = NULL;
 }
-
-void	create_token(t_shell *shell, char *input, int *i)
-{
-	if (input[*i] == '|' )
-	{
-		add_token(shell, "|", PIPE);
-		(*i)++;
-	}
-	else if (input[*i] == '>' && input[*i + 1] && input[*i + 1] == '>')
-	{
-		add_token(shell, ">>", REDIRECT);
-		(*i) += 2;
-	}
-	else if (input[*i] == '>')
-	{
-		add_token(shell, ">", REDIRECT);
-		(*i)++;
-	}
-	else if (input[*i] == '<' && input[*i + 1] == '<')
-	{
-		add_token(shell, "<<", HEREDOC);
-		(*i) += 2;
-	}
-	else if (input[*i] == '<')
-	{
-		add_token(shell, "<", REDIRECT);
-		(*i)++;
-	}
-	 else if (input[*i] == '\'')
-	{
-		add_token(shell, "'", SQUOTE);
-		(*i)++;
-	}
-	else if (input[*i] == '"')
-	{
-		add_token(shell, "\"", DQUOTE);
-		(*i)++;
-	}
-	else if (input[*i] == '$')
-	{
-		add_token(shell, "$", DOLLAR);
-		(*i)++;
-	}
-}
-

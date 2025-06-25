@@ -6,7 +6,7 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/20 07:47:00 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/06/23 13:12:22 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/06/25 10:13:54 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,9 +52,9 @@
 # define BOLD    "\033[1m"
 
 typedef struct env_s
-{
-	char	*key;
-	char	*val;
+{//key=val
+	char	*key;//name of variable
+	char	*val;//value of env var
 	struct env_s *next;
 }	t_env;
 
@@ -108,6 +108,7 @@ void	ft_readline(t_shell *shell);
 
 void	parsing(t_shell *shell);
 void	create_token(t_shell *shell, char *input, int *i);
+void	create_more(t_shell *shell, char *input, int *i);
 void	tok_cmd(t_shell *shell);
 char	**add_word(char **argv, char *word);
 void	add_token(t_shell *shell, char *value, int type);
@@ -128,7 +129,7 @@ int		unset(char **str, char **envp);
 int		ft_strcmp(char *s1, const char *s2);
 int		pipex(t_shell *shell, char **cmds, char **envp);
 
-int handle_redirections(t_cmd *cmd);
+int		handle_redirections(t_cmd *cmd);
 
 int		exec_external(char **args, char **envp);
 int		red_out(t_shell *shell, char **cmds, char **envp);

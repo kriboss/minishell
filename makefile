@@ -6,7 +6,7 @@ INCLUDES = -Iinclude -Ilibft
 
 LIBFT = libft/libft.a
 
-FILES = lexer/main.c lexer/free.c lexer/process.c lexer/utils.c lexer/validate.c execution/execute.c execution/utils.c execution/export.c execution/unset.c execution/redirections.c execution/pipes.c execution/signals.c execution/ins_exp.c
+FILES = lexer/token.c lexer/main.c lexer/free.c lexer/process.c lexer/utils.c lexer/validate.c execution/execute.c execution/utils.c execution/export.c execution/unset.c execution/redirections.c execution/pipes.c execution/signals.c execution/ins_exp.c
 
 OBJS = ${FILES:.c=.o}
 

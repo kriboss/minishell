@@ -6,7 +6,7 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/20 07:47:10 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/06/23 13:29:29 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/06/25 10:15:58 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,30 +50,6 @@ char	**add_word(char **argv, char *word)
 	av[i + 1] = NULL;
 	free(argv);
 	return (av);
-}
-
-void tok_cmd(t_shell *shell)
-{
-	t_cmd *cmd;
-	t_token *tmp;
-	t_token *prev;
-
-	tmp = shell->tokens;
-	cmd = malloc(sizeof(t_cmd));
-	if (!cmd)
-		return ;
-	init(cmd);
-	shell->cmds = cmd;
-	while (tmp)
-	{
-		prev = tmp;
-		if (tmp->type == PIPE)
-			check_type2(&tmp, &cmd);
-		else
-			check_type(&tmp, cmd, shell);
-		if (tmp == prev)
-			tmp = tmp->next;
-	}
 }
 
 void parsing(t_shell *shell)

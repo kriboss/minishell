@@ -8,6 +8,7 @@ SRC = main.c\
 		free.c\
 		utils.c\
 		process.c\
+		token.c\
 
 OBJ = $(SRC:.c=.o)
 

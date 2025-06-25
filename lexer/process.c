@@ -3,33 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   process.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
+/*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 08:07:27 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/06/23 19:48:44 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/06/25 11:08:40 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
-
-void	add_token(t_shell *shell, char *value, int type)
-{
-	t_token *new_token;
-
-	new_token = malloc(sizeof(t_token));
-	if (!new_token)
-		return ;
-	new_token->value = ft_strdup(value);
-	new_token->type = type;
-	new_token->next = NULL;
-	if (!shell->tokens)
-	{
-		shell->tokens = new_token;
-		return ;
-	}
-	else
-		tokenadd_back(&shell->tokens, new_token);
-}
 
 char	*extract_quoted(char *input, int *i)
 {
@@ -46,7 +27,7 @@ char	*extract_quoted(char *input, int *i)
 		{
 			if (input[j + 1] == '"' || input[j + 1] == '\\' ||
 				input[j + 1] == '$')
-				buffer[len++] = input[++j];
+				buffer[len++] = input[j++];
 			else
 				buffer[len++] = input[j];
 			j++;
@@ -86,33 +67,6 @@ void	handle_special(t_shell *shell, char *input, int *i)
 		create_token(shell, input, i);
 }
 
-void	tokenize(t_shell *shell)
-{
-	int i;
-	char *input;
-	int start;
-
-	i = 0;
-	input = shell->input;
-	while (input[i] && is_space(input[i]))
-		i++;
-	while(input[i])
-	{
-		if (is_special(input[i]))
-			handle_special(shell, input, &i);
-		else if (is_word(input[i]))
-		{
-			start = i;
-			while (input[i] && is_word(input[i]))
-				i++;
-			char *word = ft_substr(input, start, i - start);
-			add_token(shell, word, WORD);
-			free(word);
-		}
-		while (input[i] && is_space(input[i]))
-			i++;
-	}
-}
 //da sistemare, idk how, non so come espandere la variabile. va fatto dentro this funzione
 //ho cambiato leggermente le strutture, check that
 char *subs_var(char *input, const char *value, int s, int f)
@@ -141,6 +95,7 @@ char *expand_var(t_token *tmp, t_env *env_list, char *input)
 	int i;
 	int j;
 	char *var;
+	(void)tmp;
 
 	i = 0;
 	while (input[i])
