@@ -6,7 +6,7 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 08:07:27 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/06/25 13:43:14 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/06/26 10:05:04 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,10 +45,10 @@ void	check_type(t_token **tmp, t_cmd *cmd)
 
 void	check_type2(t_token **tmp, t_cmd **cmd)
 {
-	t_cmd *new_cmd;
+	t_cmd	*new_cmd;
 
 	if (!tmp || !*tmp || !cmd || !*cmd)
-		return ; //exit(EXIT_FAILURE);
+		return ;
 	if ((*tmp)->type == PIPE)
 	{
 		new_cmd = malloc(sizeof(t_cmd));
@@ -59,14 +59,15 @@ void	check_type2(t_token **tmp, t_cmd **cmd)
 		}
 		init(new_cmd);
 		(*cmd)->next = new_cmd;
-		*cmd = new_cmd;//move foward
-		*tmp = (*tmp)->next;//skip pipe
+		*cmd = new_cmd;
+		*tmp = (*tmp)->next;
 	}
 }
 
 void	add_redir(t_redir **redir_list, char *filename, int type)
 {
-	t_redir *new_redir;
+	t_redir	*new_redir;
+	t_redir	*tmp;
 
 	new_redir = malloc(sizeof(t_redir));
 	if (!new_redir)
@@ -81,7 +82,7 @@ void	add_redir(t_redir **redir_list, char *filename, int type)
 		*redir_list = new_redir;
 	else
 	{
-		t_redir *tmp = *redir_list;
+		tmp = *redir_list;
 		while (tmp->next)
 			tmp = tmp->next;
 		tmp->next = new_redir;

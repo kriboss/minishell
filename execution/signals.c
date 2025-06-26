@@ -6,7 +6,7 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:25:53 by kbossio           #+#    #+#             */
-/*   Updated: 2025/06/16 09:16:57 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/06/26 13:04:56 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ static char	*find_executable(char *cmd, char *envp[])
 	return (full_path);
 }
 
-int	exec_external(char **args, char **envp)
+int	exec_external(t_cmd *cmd, char **args, char **envp)
 {
 	pid_t	pid;
 	int		status;
@@ -95,6 +95,7 @@ int	exec_external(char **args, char **envp)
 		return (perror("fork"), free(exe_path), 1);
 	if (pid == 0)
 	{
+		handle_heredoc(cmd);
 		execve(exe_path, args, envp);
 		return (perror("execve"), free(exe_path), 1);
 	}
@@ -102,4 +103,24 @@ int	exec_external(char **args, char **envp)
 		;
 	free(exe_path);
 	return (0);
+}
+
+void	handle_heredoc(t_cmd *cmd)
+{
+	t_redir	*r;
+	int hdoc_fd;
+	
+	r = cmd->redir;
+	while (r)
+	{
+		if (r->type == HDOC)
+		{
+			hdoc_fd = heredoc_pipe(r->filename);
+			if (hdoc_fd < 0)
+				exit(1);
+			dup2(hdoc_fd, STDIN_FILENO);
+			close(hdoc_fd);
+		}
+		r = r->next;
+	}
 }

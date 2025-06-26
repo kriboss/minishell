@@ -6,7 +6,7 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 08:07:09 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/06/25 10:21:31 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/06/26 14:13:01 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,19 +76,13 @@ void	free_tokens(t_token *tokens)
 void	free_cmds(t_cmd *cmds)
 {
 	t_cmd	*tmp;
-	int		i;
 
 	while (cmds)
 	{
 		tmp = cmds;
 		cmds = cmds->next;
 		if (tmp->argv)
-		{
-			i = 0;
-			while (tmp->argv[i])
-				free(tmp->argv[i++]);
-			free(tmp->argv);
-		}
+    		free_argv(tmp->argv);
 		if (tmp->redir)
 			free_redir(tmp->redir);
 		free(tmp);

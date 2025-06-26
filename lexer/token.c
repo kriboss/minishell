@@ -6,13 +6,68 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/25 10:15:24 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/06/25 14:46:14 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/06/26 13:11:28 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
+char *extract_token(const char *input, int start, int end)
+{
+	char	*out;
+	int		i;
+	int		j;
+
+	i = start;
+	j = 0;
+	out = malloc(end - start + 1);
+	while (i < end)
+        out[j++] = input[i++];
+    out[j] = '\0';
+    return out;
+}
+
 void	tokenize(t_shell *shell)
+{
+	int		i = 0;
+	char	*input = shell->input;
+
+	while (input[i] && is_space(input[i]))
+		i++;
+	while (input[i])
+	{
+		if (is_space(input[i]))
+			while (input[i] && is_space(input[i])) i++;
+
+		else if (input[i] == '\'' || input[i] == '"')
+		{
+			char quote = input[i++];
+			int start = i;
+			while (input[i] && input[i] != quote)
+				i++;
+			char *word = ft_substr(input, start, i - start);
+			add_token(shell, word, WORD);
+			free(word);
+			if (input[i] == quote)
+				i++;
+		}
+		else if (is_special(input[i]))
+			create_token(shell, input, &i);
+		else if (is_word(input[i]))
+		{
+			int start = i;
+			while (input[i] && is_word(input[i]))
+				i++;
+			char *word = extract_token(input, start, i);
+			add_token(shell, word, WORD);
+			free(word);
+		}
+		else
+			i++;
+	}
+}
+
+/* void	tokenize(t_shell *shell)
 {
 	int		i;
 	char	*input;
@@ -31,14 +86,19 @@ void	tokenize(t_shell *shell)
 			start = i;
 			while (input[i] && is_word(input[i]))
 				i++;
-			char *word = ft_substr(input, start, i - start);
+			char *word = extract_token(input, start, i);
 			add_token(shell, word, WORD);
 			free(word);
 		}
-		while (input[i] && is_space(input[i]))
+		else if (is_space(input[i]))
+		{
+			while (input[i] && is_space(input[i]))
+				i++;
+		}
+		else
 			i++;
 	}
-}
+} */
 
 void	add_token(t_shell *shell, char *value, int type)
 {
@@ -59,29 +119,6 @@ void	add_token(t_shell *shell, char *value, int type)
 		tokenadd_back(&shell->tokens, new_token);
 }
 
-/* void mult_word(t_token **head)
-{
-	t_token *curr;
-	char *word;
-
-	if (!head || !(*head))
-		return ;
-	curr = *head;
-	while (curr != NULL && curr->next != NULL)
-	{
-    	if (curr->type == WORD && curr->next->type == WORD)
-    	{
-    	    word = ft_strjoin(curr->value, curr->next->value);
-    	    if (!word)
-				return ;
-			free(curr->value);
-    	    curr->value = word;
-    	}
-    	else
-        	curr = curr->next;
-	}
-} */
-
 void	tok_cmd(t_shell *shell)
 {
 	t_cmd	*cmd;
@@ -94,8 +131,6 @@ void	tok_cmd(t_shell *shell)
 		return ;
 	init(cmd);
 	shell->cmds = cmd;
-	// mult_word(&tmp);
-	// shell->tokens = tmp;
 	while (tmp)
 	{
 		prev = tmp;
@@ -147,4 +182,3 @@ void	create_more(t_shell *shell, char *input, int *i)
 		(*i)++;
 	}
 }
-

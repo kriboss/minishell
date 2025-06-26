@@ -6,7 +6,7 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/20 07:47:00 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/06/25 14:50:30 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/06/26 13:05:16 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,18 +27,18 @@
 
 # include <stdio.h>
 # include <stdlib.h>
-# include <unistd.h>       // access, fork, execve, chdir, getcwd, dup, dup2, pipe, isatty, ttyname, ttyslot, read, close
-# include <fcntl.h>        // open, unlink
-# include <string.h>       // strerror
-# include <sys/types.h>    // wait, waitpid, wait3, wait4, stat-related types
-# include <sys/wait.h>     // wait, waitpid, wait3, wait4
-# include <sys/stat.h>     // stat, lstat, fstat
-# include <signal.h>       // signal, sigaction, sigemptyset, sigaddset, kill
-# include <dirent.h>       // opendir, readdir, closedir
-# include <termios.h>      // tcsetattr, tcgetattr
-# include <termcap.h>      // tgetent, tgetflag, tgetnum, tgetstr, tgoto, tputs
-# include <curses.h>       // for termcap on some systems
-# include <sys/ioctl.h>    // ioctl
+# include <unistd.h>// access, fork, execve, chdir, dup, pipe, read, close
+# include <fcntl.h>// open, unlink
+# include <string.h>// strerror
+# include <sys/types.h>// wait, waitpid, wait3, wait4, stat-related types
+# include <sys/wait.h>// wait, waitpid, wait3, wait4
+# include <sys/stat.h>// stat, lstat, fstat
+# include <signal.h>// signal, sigaction, sigemptyset, sigaddset, kill
+# include <dirent.h>// opendir, readdir, closedir
+# include <termios.h>// tcsetattr, tcgetattr
+# include <termcap.h>// tgetent, tgetflag, tgetnum, tgetstr, tgoto, tputs
+# include <curses.h>// for termcap on some systems
+# include <sys/ioctl.h>// ioctl
 # include <readline/readline.h>
 # include <readline/history.h>
 
@@ -49,19 +49,19 @@
 # define CYAN    "\033[36m"
 # define BOLD    "\033[1m"
 
-typedef struct env_s
-{//key=val
-	char	*key;//name of variable
-	char	*val;//value of env var
-	struct env_s *next;
+typedef struct env_s//key=val
+{
+	char			*key;//name of variable
+	char			*val;//value of env var
+	struct env_s	*next;
 }	t_env;
 
 typedef struct s_redir
 {
-	char	*filename;
-	int		type;//infile or outfile
-	struct	s_redir *next;
-} t_redir;
+	char			*filename;
+	int				type;//infile or outfile
+	struct s_redir	*next;
+}	t_redir;
 
 typedef struct s_cmd
 {
@@ -72,8 +72,8 @@ typedef struct s_cmd
 
 typedef struct s_token
 {
-	char			*value; 
-	int				type; 
+	char			*value;
+	int				type;
 	struct s_token	*next;
 }	t_token;
 
@@ -96,6 +96,8 @@ int		validate_input(char *input);
 int		validate_redirection(char *input);
 int		validate_redirection(char *input);
 
+char	**add_word(char **argv, char *word);
+char	*extract_token(const char *input, int start, int end);
 void	free_cmds(t_cmd *cmds);
 void	free_tokens(t_token *tokens);
 void	free_redir(t_redir *redir);
@@ -108,18 +110,18 @@ void	parsing(t_shell *shell);
 void	create_token(t_shell *shell, char *input, int *i);
 void	create_more(t_shell *shell, char *input, int *i);
 void	tok_cmd(t_shell *shell);
-char	**add_word(char **argv, char *word);
+
 void	add_token(t_shell *shell, char *value, int type);
 void	tokenadd_back(t_token **lst, t_token *new);
 void	tokenize(t_shell *shell);
 void	check_type(t_token **tmp, t_cmd *cmd);
 void	check_type2(t_token **tmp, t_cmd **cmd);
 void	add_redir(t_redir **redir_list, char *filename, int type);
+void	handle_heredoc(t_cmd *cmd);
+int		heredoc_pipe(const char *delimiter);
+void	mult_word(t_token **head);//
 
-void mult_word(t_token **head);
-
-
-int		exit_shell(int status,t_shell *shell, char **str);
+int		exit_shell(int status, t_shell *shell, char **str);
 int		print_exp(char **str);
 int		check_same(char *str, char **envp);
 int		unset(char **str, char **envp);
@@ -128,7 +130,7 @@ int		pipex(t_shell *shell, char **cmds, char **envp);
 
 int		handle_redirections(t_cmd *cmd);
 
-int		exec_external(char **args, char **envp);
+int		exec_external(t_cmd *cmd, char **args, char **envp);
 int		red_out(t_shell *shell, char **cmds, char **envp);
 int		red_in(t_shell *shell);
 int		red_app(t_shell *shell);
@@ -140,6 +142,5 @@ char	*ft_rmchar(char *str, char c);
 
 void	free_arr(char **str, char **new);
 void	start_signals(void);
-
 
 #endif

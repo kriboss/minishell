@@ -6,7 +6,7 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 08:07:46 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/06/25 12:34:25 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/06/26 14:00:47 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,14 +29,17 @@ int	validate_input(char *input)
 
 int	validate_redirection(char *input)
 {
+	char	quote;
+
 	while (*input)
 	{
 		if (*input == '\'' || *input == '"')
 		{
+			quote = *input;
 			input++;
-			while (*input && *input != '\'' && *input != '"')
+			while (*input && *input != quote)
 				input++;
-			if (*input)
+			if (*input == quote)
 				input++;
 		}
 		else if (*input == '<' || *input == '>')
@@ -50,23 +53,24 @@ int	validate_redirection(char *input)
 			if (!*input || *input == '<' || *input == '>')
 				return (1);
 		}
-		input++;
+		else
+			input++;
 	}
 	return (0);
 }
 
 int	mult_redir(char *input)
 {
-	int		c;
+	int		count;
 	char	a;
 
-	c = 1;
+	count = 1;
 	a = *input;
-	if (*(input + 1) != a && (*(input + 1) == '<' || *(input + 1) == '>'))
+	if (input[1] && input[1] != a && (input[1] == '<' || input[1] == '>'))
 		return (1);
-	while (*(input + c) == a)
-		c++;
-	if (c > 2)
+	while (input[count] && input[count] == a)
+		count++;
+	if (count > 2)
 		return (1);
 	return (0);
 }

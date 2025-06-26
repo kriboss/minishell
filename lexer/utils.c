@@ -6,7 +6,7 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 08:07:38 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/06/25 14:29:25 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/06/26 12:17:30 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,18 +28,17 @@ int	is_space(char c)
 
 int	is_special(char c)
 {
-	if (c == '<' || c == '>' || c == '|' ||
-		c == '&' || c == '$' || c == '\'' || c == '\"')
+	if (c == '<' || c == '>' || c == '|' || c == '$')
 		return (1);
 	return (0);
 }
 
 void	tokenadd_back(t_token **lst, t_token *new)
 {
-	t_token *ptr;
+	t_token	*ptr;
 
 	if (!new)
-		return;
+		return ;
 	if (!*lst)
 	{
 		*lst = new;

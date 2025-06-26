@@ -6,7 +6,7 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/03 09:48:20 by kbossio           #+#    #+#             */
-/*   Updated: 2025/06/25 12:07:07 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/06/26 13:24:20 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 int	cd(char **path)
 {
-	char *dir;
+	char	*dir;
 
 	if (!path || !path[0])
 	{
@@ -22,7 +22,7 @@ int	cd(char **path)
 		if (!dir)
 			return (printf("bash: cd: HOME not set\n"), 1);
 		if (chdir(dir) == -1)
-			return (printf("bash: cd: %s: No such file or directory\n", dir), 1);
+			return (printf("bash: cd: %s: No such file or dir\n", dir), 1);
 		return (0);
 	}
 	if (path[1])
@@ -111,7 +111,7 @@ char	**export(char **env, char **str)
 	return (env);
 }
 
-int	exit_shell(int status,t_shell *shell, char **str)
+int	exit_shell(int status, t_shell *shell, char **str)
 {
 	printf("Exiting shell...\n");
 	if (str != NULL)
@@ -120,17 +120,19 @@ int	exit_shell(int status,t_shell *shell, char **str)
 		status = 0;
 	}
 	if (shell && shell->tokens)
-    {
-        free_tokens(shell->tokens);
-        shell->tokens = NULL;
-    }
+	{
+		free_tokens(shell->tokens);
+		shell->tokens = NULL;
+	}
 	clear_history();
 	exit(status);
 }
 
 int	check_cmd(t_shell *shell, char **cmds, char **envp)
 {
-	int i = 0;
+	int	i;
+
+	i = 0;
 	(void)envp;
 	while (cmds[i])
 	{
@@ -152,10 +154,13 @@ int	check_cmd(t_shell *shell, char **cmds, char **envp)
 
 char	**execute(t_shell *shell, char **cmd, char *envp[])
 {
-	int		stdout_backup = dup(STDOUT_FILENO);
-	int		stdin_backup = dup(STDIN_FILENO);
-	char	es = 0;
+	int		stdout_backup;
+	int		stdin_backup;
+	char	es;
 
+	es = 0;
+	stdin_backup = dup(STDIN_FILENO);
+	stdout_backup = dup(STDOUT_FILENO);
 	/* for (int i = 0; cmd[i]; i++)
 		printf("check quotes :%s\n", cmd[i]); */
 	if (handle_redirections(shell->cmds))
@@ -177,7 +182,7 @@ char	**execute(t_shell *shell, char **cmd, char *envp[])
 		else if (ft_strncmp(cmd[0], "exit", 4) == 0)
 			exit_shell(es, shell, envp);
 		else
-			es = exec_external(cmd, envp);
+			es = exec_external(shell->cmds, shell->cmds->argv, envp);
 	}
 	dup2(stdout_backup, STDOUT_FILENO);
 	dup2(stdin_backup, STDIN_FILENO);
@@ -185,5 +190,3 @@ char	**execute(t_shell *shell, char **cmd, char *envp[])
 	close(stdin_backup);
 	return (envp);
 }
-
-

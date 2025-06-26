@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_lstdelone.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sel-khao <sel-khao <marvin@42.fr>>         +#+  +:+       +#+        */
+/*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/09 17:25:55 by sel-khao          #+#    #+#             */
-/*   Updated: 2024/12/15 18:40:39 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/06/26 10:18:35 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,11 +19,11 @@ void	ft_lstdelone(t_list *lst, void (*del)(void *))
 	del(lst->content);
 	free(lst);
 }
-void	 del(void *content)
+/* void	 del(void *content)
 {
 	free(content);
 }
-/* int main(void)
+int main(void)
 {
 	t_list *node1 = ft_lstnew(ft_strdup("sara"));
 	t_list *node2 = ft_lstnew(ft_strdup("wassimo"));
