@@ -6,7 +6,7 @@
 /*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 08:07:27 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/06/26 16:39:14 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/06/27 18:22:31 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,6 @@ void	check_type2(t_token **tmp, t_cmd **cmd)
 			exit(EXIT_FAILURE);
 		}
 		init(new_cmd);
-		new_cmd->first = 1;
 		(*cmd)->next = new_cmd;
 		*cmd = new_cmd;
 		*tmp = (*tmp)->next;

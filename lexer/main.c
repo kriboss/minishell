@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/20 07:47:10 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/06/26 14:18:43 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/06/27 18:05:47 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -149,7 +149,9 @@ int	main(int ac, char **av, char **envp)
 		if (!shell.input)
 			break ;
 		parsing(&shell);
-		if (shell.cmds && shell.cmds->argv)
+		if (shell.cmds && shell.cmds->argv && shell.cmds->next)
+		    pipex(&shell, str);
+		else if (shell.cmds && shell.cmds->argv)
 			str = execute(&shell, shell.cmds->argv, str);
 		else
 			ft_putendl_fd("No command to execute", STDERR_FILENO);

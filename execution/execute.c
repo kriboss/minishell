@@ -6,7 +6,7 @@
 /*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/03 09:48:20 by kbossio           #+#    #+#             */
-/*   Updated: 2025/06/26 17:29:58 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/06/27 18:03:02 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -161,10 +161,6 @@ char	**execute(t_shell *shell, char **cmd, char *envp[])
 	es = 0;
 	stdin_backup = dup(STDIN_FILENO);
 	stdout_backup = dup(STDOUT_FILENO);
-	if (shell->cmds->next && shell->cmds->first == 0)
-		return (pipex(shell, shell->cmds->argv, envp), envp);
-	for (int i = 0; cmd[i]; i++)
-		fprintf(stderr, "did this command: %s\n", cmd[i]);
 	if (handle_redirections(shell->cmds))
 		return (envp);
 	if (ft_strncmp(cmd[0], "cd", 2) == 0)

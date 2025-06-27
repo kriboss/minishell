@@ -6,7 +6,7 @@
 /*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/20 07:47:00 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/06/26 14:40:30 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/06/27 18:23:02 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,6 @@ typedef struct s_redir
 typedef struct s_cmd
 {
 	char			**argv;//for kri
-	int				first;
 	t_redir			*redir;
 	struct s_cmd	*next;
 }	t_cmd;
@@ -127,7 +126,7 @@ int		print_exp(char **str);
 int		check_same(char *str, char **envp);
 int		unset(char **str, char **envp);
 int		ft_strcmp(char *s1, const char *s2);
-int		pipex(t_shell *shell, char **cmds, char **envp);
+int		pipex(t_shell *shell, char **envp);
 
 int		handle_redirections(t_cmd *cmd);
 
