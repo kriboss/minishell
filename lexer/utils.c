@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 08:07:38 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/06/26 12:17:30 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/06/26 16:36:33 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,7 @@ void	ft_readline(t_shell *shell)
 void	init(t_cmd *cmd)
 {
 	cmd->argv = NULL;
+	cmd->first = 0;
 	cmd->redir = NULL;
 	cmd->next = NULL;
 }

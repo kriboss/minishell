@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   process.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 08:07:27 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/06/26 10:05:04 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/06/26 16:39:14 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,7 @@ void	check_type2(t_token **tmp, t_cmd **cmd)
 			exit(EXIT_FAILURE);
 		}
 		init(new_cmd);
+		new_cmd->first = 1;
 		(*cmd)->next = new_cmd;
 		*cmd = new_cmd;
 		*tmp = (*tmp)->next;
