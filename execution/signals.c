@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   signals.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:25:53 by kbossio           #+#    #+#             */
-/*   Updated: 2025/06/26 13:04:56 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/07/02 15:33:12 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,8 @@ static char	*find_executable(char *cmd, char *envp[])
 	char	*tmp;
 	int		i;
 
+	if ((cmd[0] == '.' && cmd[1] == '/') || cmd[0] == '/')
+		return (ft_strdup(cmd));
 	dirs = get_path_dirs(envp);
 	if (!dirs)
 		return (NULL);
@@ -73,8 +75,7 @@ static char	*find_executable(char *cmd, char *envp[])
 	i = 0;
 	while (dirs[i])
 		free(dirs[i++]);
-	free(dirs);
-	return (full_path);
+	return (free(dirs), full_path);
 }
 
 int	exec_external(t_cmd *cmd, char **args, char **envp)
