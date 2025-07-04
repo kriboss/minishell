@@ -6,7 +6,7 @@
 /*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/09 11:17:27 by kbossio           #+#    #+#             */
-/*   Updated: 2025/06/23 19:48:03 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/07/04 16:34:23 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,9 +88,7 @@ char	**add_exp(char **str, char **envp)
 	new_env = dup_env(envp);//duplico per non lavorare sull'originale
 	if(!new_env)
 		return NULL;
-	// printf("str before rm quotes :%s\n", str[0]);
-	str = rm_quotes(str);
-	// printf("str after :%s\n", str[0]);
+	free_arr(envp, NULL);
 	while (str[i])
 	{
 		if (check_ins(str[i]) == 0)//se name valid

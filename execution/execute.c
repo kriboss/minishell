@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sara <sara@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/03 09:48:20 by kbossio           #+#    #+#             */
-/*   Updated: 2025/07/04 11:21:32 by sara             ###   ########.fr       */
+/*   Updated: 2025/07/04 16:55:26 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,7 +117,6 @@ int	exit_shell(int status, t_shell *shell, char **str)
 	if (str != NULL)
 	{
 		free_arr(str, NULL);
-		status = 0;
 	}
 	if (shell && shell->tokens)
 	{
@@ -128,29 +127,6 @@ int	exit_shell(int status, t_shell *shell, char **str)
 	exit(status);
 }
 
-/*int	check_cmd(t_shell *shell, char **cmds, char **envp)
-{
-	int	i;
-
-	i = 0;
-	(void)envp;
-	while (cmds[i])
-	{
-		if (ft_strncmp(cmds[i], "|", 1) == 0)
-			printf("Found pipe symbol '|', skipping pipex for now\n");
-		else if (ft_strncmp(cmds[i], ">>", 2) == 0)
-			printf("Found '>>', skipping red_app for now\n");
-		else if (ft_strncmp(cmds[i], ">", 1) == 0)
-		{
-			printf("Found '>', skipping red_out for now\n");
-			red_out(shell, cmds, envp);
-		}
-		else if (ft_strncmp(cmds[i], "<", 1) == 0)
-			printf("Found '<', skipping red_in for now\n");
-		i++;
-	}
-	return (-2);
-}*/
 
 char	**execute(t_shell *shell, char **cmd, char *envp[])
 {

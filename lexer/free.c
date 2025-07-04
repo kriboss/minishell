@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   free.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 08:07:09 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/06/26 14:13:01 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/07/04 16:46:54 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,6 @@ void	free_all(t_shell *shell)
 		free_cmds(shell->cmds);
 		shell->cmds = NULL;
 	}
-	clear_history();
 }
 
 void	free_tokens(t_token *tokens)
