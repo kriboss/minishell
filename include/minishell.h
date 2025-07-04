@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
+/*   By: sara <sara@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/20 07:47:00 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/06/27 18:23:02 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/07/04 13:15:47 by sara             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@
 # define REDIRECT   3//
 # define PIPE       4//
 # define HEREDOC    5//
-# define DOLLAR		6
 # define VAR		9
 # define INFILE		10//n
 # define OUTFILE	11//n
@@ -35,14 +34,13 @@
 # include <sys/stat.h>// stat, lstat, fstat
 # include <signal.h>// signal, sigaction, sigemptyset, sigaddset, kill
 # include <dirent.h>// opendir, readdir, closedir
-# include <termios.h>// tcsetattr, tcgetattr
-# include <termcap.h>// tgetent, tgetflag, tgetnum, tgetstr, tgoto, tputs
 # include <curses.h>// for termcap on some systems
 # include <sys/ioctl.h>// ioctl
 # include <readline/readline.h>
 # include <readline/history.h>
-
 # include "../libft/libft.h"
+
+extern int g_status;
 
 # define RESET   "\033[0m"
 # define BLUE    "\033[34m"
@@ -74,6 +72,7 @@ typedef struct s_token
 {
 	char			*value;
 	int				type;
+	char			quote;
 	struct s_token	*next;
 }	t_token;
 
@@ -101,6 +100,7 @@ char	*extract_token(const char *input, int start, int end);
 void	free_cmds(t_cmd *cmds);
 void	free_tokens(t_token *tokens);
 void	free_redir(t_redir *redir);
+void	free_argv(char **argv);
 void	free_all(t_shell *shell);
 
 void	init(t_cmd *cmd);
@@ -108,18 +108,26 @@ void	ft_readline(t_shell *shell);
 
 void	parsing(t_shell *shell);
 void	create_token(t_shell *shell, char *input, int *i);
-void	create_more(t_shell *shell, char *input, int *i);
 void	tok_cmd(t_shell *shell);
 
-void	add_token(t_shell *shell, char *value, int type);
+char	*extract_quoted(char *input, int *i);
+
+void	add_token(t_shell *shell, char *value, int type, char quote_type);
 void	tokenadd_back(t_token **lst, t_token *new);
+
+void	handle_special(t_shell *shell, char *input, int *i);
+
 void	tokenize(t_shell *shell);
-void	check_type(t_token **tmp, t_cmd *cmd);
+void	check_type(t_token **tmp, t_cmd *cmd,  t_shell *shell);
 void	check_type2(t_token **tmp, t_cmd **cmd);
 void	add_redir(t_redir **redir_list, char *filename, int type);
 void	handle_heredoc(t_cmd *cmd);
 int		heredoc_pipe(const char *delimiter);
-void	mult_word(t_token **head);//
+
+char *expand_var(t_env *envs, const char *input);
+char *env_value(t_env *envs, const char *key);
+char *append_char(char *base, char c);
+char *str_append(char *base, const char *to_add);
 
 int		exit_shell(int status, t_shell *shell, char **str);
 int		print_exp(char **str);
@@ -131,9 +139,6 @@ int		pipex(t_shell *shell, char **envp);
 int		handle_redirections(t_cmd *cmd);
 
 int		exec_external(t_cmd *cmd, char **args, char **envp);
-int		red_out(t_shell *shell, char **cmds, char **envp);
-int		red_in(t_shell *shell);
-int		red_app(t_shell *shell);
 
 char	**add_exp(char **str, char **envp);
 char	**dup_env(char **envp);
@@ -142,5 +147,7 @@ char	*ft_rmchar(char *str, char c);
 
 void	free_arr(char **str, char **new);
 void	start_signals(void);
+
+void	restore_fds(int in, int out);
 
 #endif
