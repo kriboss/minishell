@@ -3,42 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   process.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
+/*   By: sara <sara@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 08:07:27 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/06/27 18:22:31 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/07/04 11:02:50 by sara             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
-
-void	check_type(t_token **tmp, t_cmd *cmd)
-{
-	if (*tmp == NULL)
-		return ;
-	if ((*tmp)->type == WORD || (*tmp)->type == EOF)
-	{
-		cmd->argv = add_word(cmd->argv, (*tmp)->value);
-		*tmp = (*tmp)->next;
-	}
-	else if ((*tmp)->type == REDIRECT && (*tmp)->next)
-	{
-		if (ft_strcmp((*tmp)->value, "<") == 0)
-			add_redir(&cmd->redir, (*tmp)->next->value, INFILE);
-		else if (ft_strcmp((*tmp)->value, ">") == 0)
-			add_redir(&cmd->redir, (*tmp)->next->value, OUTFILE);
-		else if (ft_strcmp((*tmp)->value, ">>") == 0)
-			add_redir(&cmd->redir, (*tmp)->next->value, APPEND);
-		*tmp = (*tmp)->next->next;
-	}
-	else if ((*tmp)->type == HEREDOC && (*tmp)->next)
-	{
-		add_redir(&cmd->redir, (*tmp)->next->value, HDOC);
-		*tmp = (*tmp)->next->next;
-	}
-	else
-		*tmp = (*tmp)->next;
-}
 
 // ls -l | grep txt | wc -l
 // linked list of t_cmd, cmd1 → cmd2 → cmd3

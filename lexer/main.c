@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
+/*   By: sara <sara@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/20 07:47:10 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/06/27 18:05:47 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/07/04 14:15:41 by sara             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,42 +53,6 @@ char	**add_word(char **argv, char *word)
 	free(argv);
 	return (av);
 }
-
-/* void	parsing(t_shell *shell)
-{
-	int		i;
-	t_token	*token;
-	t_cmd	*cmd;
-
-	if (validate_input(shell->input))
-	{
-		printf("Invalid input: %s\n", shell->input);
-		return ;
-	}
-	//printf("2\n");
-	tokenize(shell);
-	//printf("3\n");
-	printf("Tokens:\n");
-	token = shell->tokens;
-	while (token)
-	{
-		printf("  type: %d, value: '%s'\n", token->type, token->value);
-		token = token->next;
-	}
-	tok_cmd(shell);
-	cmd = shell->cmds;
-	while (cmd)
-	{
-		printf("Command:\n");
-		i = 0;
-		while (cmd->argv && cmd->argv[i])
-		{
-			printf("argv[%d]: %s\n", i, cmd->argv[i]);
-			i++;
-		}
-		cmd = cmd->next;
-	}
-} */
 
 void parsing(t_shell *shell)
 {

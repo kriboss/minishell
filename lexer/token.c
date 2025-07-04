@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   token.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
+/*   By: sara <sara@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/25 10:15:24 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/06/26 16:39:18 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/07/04 09:58:15 by sara             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,49 +29,10 @@ char *extract_token(const char *input, int start, int end)
 
 void	tokenize(t_shell *shell)
 {
-	int		i = 0;
-	char	*input = shell->input;
-
-	while (input[i] && is_space(input[i]))
-		i++;
-	while (input[i])
-	{
-		if (is_space(input[i]))
-			while (input[i] && is_space(input[i])) i++;
-
-		else if (input[i] == '\'' || input[i] == '"')
-		{
-			char quote = input[i++];
-			int start = i;
-			while (input[i] && input[i] != quote)
-				i++;
-			char *word = ft_substr(input, start, i - start);
-			add_token(shell, word, WORD);
-			free(word);
-			if (input[i] == quote)
-				i++;
-		}
-		else if (is_special(input[i]))
-			create_token(shell, input, &i);
-		else if (is_word(input[i]))
-		{
-			int start = i;
-			while (input[i] && is_word(input[i]))
-				i++;
-			char *word = extract_token(input, start, i);
-			add_token(shell, word, WORD);
-			free(word);
-		}
-		else
-			i++;
-	}
-}
-
-/* void	tokenize(t_shell *shell)
-{
-	int		i;
-	char	*input;
-	int		start;
+	int i;
+	char *input;
+	int start;
+	char *word;
 
 	i = 0;
 	input = shell->input;
@@ -80,27 +41,22 @@ void	tokenize(t_shell *shell)
 	while(input[i])
 	{
 		if (is_special(input[i]))
-			create_token(shell, input, &i);
+			handle_special(shell, input, &i);
 		else if (is_word(input[i]))
 		{
 			start = i;
 			while (input[i] && is_word(input[i]))
 				i++;
-			char *word = extract_token(input, start, i);
-			add_token(shell, word, WORD);
+			word = ft_substr(input, start, i - start);
+			add_token(shell, word, WORD, 0);
 			free(word);
 		}
-		else if (is_space(input[i]))
-		{
-			while (input[i] && is_space(input[i]))
-				i++;
-		}
-		else
+		while (input[i] && is_space(input[i]))
 			i++;
 	}
-} */
+}
 
-void	add_token(t_shell *shell, char *value, int type)
+void	add_token(t_shell *shell, char *value, int type, char quote_type)
 {
 	t_token	*new_token;
 
@@ -108,6 +64,7 @@ void	add_token(t_shell *shell, char *value, int type)
 	if (!new_token)
 		return ;
 	new_token->value = ft_strdup(value);
+	new_token->quote = quote_type;
 	new_token->type = type;
 	new_token->next = NULL;
 	if (!shell->tokens)
@@ -119,17 +76,19 @@ void	add_token(t_shell *shell, char *value, int type)
 		tokenadd_back(&shell->tokens, new_token);
 }
 
-void	tok_cmd(t_shell *shell)
+void tok_cmd(t_shell *shell)
 {
-	t_cmd	*cmd;
-	t_token	*tmp;
-	t_token	*prev;
+	t_cmd *head;
+	t_cmd *cmd;
+	t_token *tmp;
+	t_token *prev;
 
 	tmp = shell->tokens;
 	cmd = malloc(sizeof(t_cmd));
 	if (!cmd)
 		return ;
 	init(cmd);
+	head = cmd;
 	shell->cmds = cmd;
 	while (tmp)
 	{
@@ -137,48 +96,38 @@ void	tok_cmd(t_shell *shell)
 		if (tmp->type == PIPE)
 			check_type2(&tmp, &cmd);
 		else
-			check_type(&tmp, cmd);
+			check_type(&tmp, cmd, shell);
 		if (tmp == prev)
 			tmp = tmp->next;
 	}
+	shell->cmds = head;
 }
 
 void	create_token(t_shell *shell, char *input, int *i)
 {
 	if (input[*i] == '|' )
 	{
-		add_token(shell, "|", PIPE);
+		add_token(shell, "|", PIPE, 0);
 		(*i)++;
 	}
 	else if (input[*i] == '>' && input[*i + 1] && input[*i + 1] == '>')
 	{
-		add_token(shell, ">>", REDIRECT);
+		add_token(shell, ">>", REDIRECT, 0);
 		(*i) += 2;
 	}
 	else if (input[*i] == '>')
 	{
-		add_token(shell, ">", REDIRECT);
+		add_token(shell, ">", REDIRECT, 0);
 		(*i)++;
 	}
 	else if (input[*i] == '<' && input[*i + 1] == '<')
 	{
-		add_token(shell, "<<", HEREDOC);
+		add_token(shell, "<<", HEREDOC, 0);
 		(*i) += 2;
 	}
-	else
-		create_more(shell, input, i);
-}
-
-void	create_more(t_shell *shell, char *input, int *i)
-{
-	if (input[*i] == '<')
+	else if (input[*i] == '<')
 	{
-		add_token(shell, "<", REDIRECT);
-		(*i)++;
-	}
-	else if (input[*i] == '$')
-	{
-		add_token(shell, "$", DOLLAR);
+		add_token(shell, "<", REDIRECT, 0);
 		(*i)++;
 	}
 }

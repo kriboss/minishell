@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
+/*   By: sara <sara@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 08:07:38 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/06/27 18:22:34 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/07/04 09:54:32 by sara             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ int	is_space(char c)
 
 int	is_special(char c)
 {
-	if (c == '<' || c == '>' || c == '|' || c == '$')
+	if (c == '<' || c == '>' || c == '|')
 		return (1);
 	return (0);
 }
@@ -67,4 +67,73 @@ void	init(t_cmd *cmd)
 	cmd->argv = NULL;
 	cmd->redir = NULL;
 	cmd->next = NULL;
+}
+
+char	*extract_quoted(char *input, int *i)
+{
+	char	quote = input[*i];
+	int		j = *i + 1;
+	int		len = 0;
+	char	*buffer = malloc(ft_strlen(input) + 1); // worst-case alloc
+
+	if (!buffer)
+		return (NULL);
+	while (input[j] && input[j] != quote)
+	{
+		if (quote == '"' && input[j] == '\\' && input[j + 1])
+		{
+			if (input[j + 1] == '"' || input[j + 1] == '\\' ||
+				input[j + 1] == '$')
+				buffer[len++] = input[++j];
+			else
+				buffer[len++] = input[j];
+			j++;
+		}
+		else
+			buffer[len++] = input[j++];
+	}
+	if (!input[j] || input[j] != quote)
+	{
+		free(buffer);
+		printf("syntax error: unclosed quote\n");
+		return (NULL);
+	}
+	buffer[len] = '\0';
+	*i = j + 1;//sposto index dopo virgola di chiusura
+	return (buffer);
+}
+
+void	handle_special(t_shell *shell, char *input, int *i)
+{
+	char *quoted_str;
+	char quote;
+	char *var_token;
+	int start;
+
+	quote = input[*i];
+	if (input[*i] == '\'' || input[*i] == '"')
+	{
+		quoted_str = extract_quoted(input, i);
+		if (!quoted_str)
+			return ;
+		add_token(shell, quoted_str, WORD, quote);
+		free(quoted_str);
+	}
+	else if (input[*i] == '$')
+	{
+		start = *i;
+		(*i)++;
+		while (input[*i] && (ft_isalnum(input[*i]) || input[*i] == '_'))
+			(*i)++;
+		if (start + 1 == *i)
+		{
+			add_token(shell, "$", WORD, 0);
+			return ;
+		}
+		var_token = ft_substr(input, start, *i - start);
+		add_token(shell, var_token, WORD, 0);
+		free(var_token);
+	}
+	else
+		create_token(shell, input, i);
 }
