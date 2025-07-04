@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sara <sara@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/20 07:47:00 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/07/04 13:15:47 by sara             ###   ########.fr       */
+/*   Updated: 2025/07/04 15:32:44 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,9 +106,9 @@ void	free_all(t_shell *shell);
 void	init(t_cmd *cmd);
 void	ft_readline(t_shell *shell);
 
-void	parsing(t_shell *shell);
+void	parsing(t_shell *shell, char **envp);
 void	create_token(t_shell *shell, char *input, int *i);
-void	tok_cmd(t_shell *shell);
+void	tok_cmd(t_shell *shell, char **envp);
 
 char	*extract_quoted(char *input, int *i);
 
@@ -118,20 +118,21 @@ void	tokenadd_back(t_token **lst, t_token *new);
 void	handle_special(t_shell *shell, char *input, int *i);
 
 void	tokenize(t_shell *shell);
-void	check_type(t_token **tmp, t_cmd *cmd,  t_shell *shell);
+void	check_type(t_token **tmp, t_cmd *cmd,  t_shell *shell, char **envp);
 void	check_type2(t_token **tmp, t_cmd **cmd);
 void	add_redir(t_redir **redir_list, char *filename, int type);
 void	handle_heredoc(t_cmd *cmd);
 int		heredoc_pipe(const char *delimiter);
 
-char *expand_var(t_env *envs, const char *input);
-char *env_value(t_env *envs, const char *key);
+char *expand_var(t_env *envs, const char *input, char **envp);
+char *env_value(char **envp, char *key);
 char *append_char(char *base, char c);
 char *str_append(char *base, const char *to_add);
 
 int		exit_shell(int status, t_shell *shell, char **str);
 int		print_exp(char **str);
 int		check_same(char *str, char **envp);
+int		match_word(char *str, char **envp);
 int		unset(char **str, char **envp);
 int		ft_strcmp(char *s1, const char *s2);
 int		pipex(t_shell *shell, char **envp);

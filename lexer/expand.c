@@ -39,27 +39,37 @@ char *append_char(char *base, char c)
 	return new_str;
 }
 
-char *env_value(t_env *envs, const char *key)
+char *env_value(char **envp, char *key)
 {
-	if (!key)
-		return NULL;
-	while (envs)
-	{
-		if (envs->key && ft_strcmp(envs->key, key) == 0)
-			return envs->val;
-		envs = envs->next;
-	}
-	return NULL;
+    int i;
+    int j;
+
+    i = 0;
+    j = 0;
+    if (!key || !envp)
+    {
+        write(1, "env error\n", 10);
+        return (NULL);
+    }
+    i = match_word(key, envp);
+	if (i != -1)
+    {
+        while (envp[i][j] != '=' && envp[i][j] != '\0')
+            j++;
+        if (envp[i][j] == '=')
+            return (envp[i] + j + 1);
+    }
+	return (NULL);
 }
 
-void	check_type(t_token **tmp, t_cmd *cmd, t_shell *shell)
+void	check_type(t_token **tmp, t_cmd *cmd, t_shell *shell, char **envp)
 {
 	char *expand;
 	
 	if ((*tmp)->type == WORD || (*tmp)->type == EOF)
 	{
 		if ((*tmp)->quote != '\'')
-			expand = expand_var(shell->envs, (*tmp)->value);
+			expand = expand_var(shell->envs, (*tmp)->value, envp);
         if (!expand)
             expand = ft_strdup("");
 		cmd->argv = add_word(cmd->argv, expand);
@@ -85,7 +95,7 @@ void	check_type(t_token **tmp, t_cmd *cmd, t_shell *shell)
 		*tmp = (*tmp)->next;
 }
 
-char *expand_var(t_env *envs, const char *input)
+char *expand_var(t_env *envs, const char *input, char **envp)
 {
     int i = 0;
     int start;
@@ -93,6 +103,7 @@ char *expand_var(t_env *envs, const char *input)
     char *val;
     char *res;
     
+    (void)envs;
     res = ft_strdup("");
     if (!res)
         return (NULL);
@@ -117,7 +128,7 @@ char *expand_var(t_env *envs, const char *input)
                 while (ft_isalnum(input[i]) || input[i] == '_')
                     i++;
                 key = ft_substr(input, start, i - start);
-                val = env_value(envs, key);
+                val = env_value(envp, key);
                 if (!val)
                     val = "";
                 res = str_append(res, val);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sara <sara@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/20 07:47:10 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/07/04 14:15:41 by sara             ###   ########.fr       */
+/*   Updated: 2025/07/04 15:27:21 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ char	**add_word(char **argv, char *word)
 	return (av);
 }
 
-void parsing(t_shell *shell)
+void parsing(t_shell *shell, char **envp)
 {
     if (validate_input(shell->input))
     {
@@ -62,7 +62,7 @@ void parsing(t_shell *shell)
         return;
     }
     tokenize(shell);
-    tok_cmd(shell);
+    tok_cmd(shell, envp);
 }
 
 int	heredoc_pipe(const char *delimiter)
@@ -112,7 +112,7 @@ int	main(int ac, char **av, char **envp)
 		ft_readline(&shell);
 		if (!shell.input)
 			break ;
-		parsing(&shell);
+		parsing(&shell, str);
 		if (shell.cmds && shell.cmds->argv && shell.cmds->next)
 		    pipex(&shell, str);
 		else if (shell.cmds && shell.cmds->argv)

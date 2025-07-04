@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   token.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sara <sara@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/25 10:15:24 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/07/04 09:58:15 by sara             ###   ########.fr       */
+/*   Updated: 2025/07/04 15:26:41 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ void	add_token(t_shell *shell, char *value, int type, char quote_type)
 		tokenadd_back(&shell->tokens, new_token);
 }
 
-void tok_cmd(t_shell *shell)
+void tok_cmd(t_shell *shell, char **envp)
 {
 	t_cmd *head;
 	t_cmd *cmd;
@@ -96,7 +96,7 @@ void tok_cmd(t_shell *shell)
 		if (tmp->type == PIPE)
 			check_type2(&tmp, &cmd);
 		else
-			check_type(&tmp, cmd, shell);
+			check_type(&tmp, cmd, shell, envp);
 		if (tmp == prev)
 			tmp = tmp->next;
 	}
