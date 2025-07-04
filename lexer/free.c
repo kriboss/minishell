@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   free.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
+/*   By: sara <sara@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 08:07:09 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/07/04 16:46:54 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/07/04 18:21:47 by sara             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ void	free_cmds(t_cmd *cmds)
 		tmp = cmds;
 		cmds = cmds->next;
 		if (tmp->argv)
-    		free_argv(tmp->argv);
+			free_argv(tmp->argv);
 		if (tmp->redir)
 			free_redir(tmp->redir);
 		free(tmp);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   validate.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sara <sara@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 08:07:46 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/06/26 14:00:47 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/07/04 18:31:02 by sara             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,15 +91,15 @@ int	validate_quote(char *str)
 		else
 		{
 			if (str[i] == '\'' && d == 0)
-				s = !s;//alterna s tra 1 e 0, on and off, in and out
+				s = !s;
 			else if (str[i] == '"' && s == 0)
 				d = !d;
 		}
 		i++;
 	}
 	if (s == 1 || d == 1)
-		return (1);//unclosed quotes
-	return (0);//success
+		return (1);
+	return (0);
 }
 
 int	validate_pipe(char *input)

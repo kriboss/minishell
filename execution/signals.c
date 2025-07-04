@@ -6,7 +6,7 @@
 /*   By: sara <sara@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:25:53 by kbossio           #+#    #+#             */
-/*   Updated: 2025/07/04 13:11:33 by sara             ###   ########.fr       */
+/*   Updated: 2025/07/04 18:52:16 by sara             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,13 +90,13 @@ int	exec_external(t_cmd *cmd, char **args, char **envp)
 		g_status = 127;
 		return (127);
 	}
-	if (access(exe_path, X_OK) != 0)//macro di unistd.h, è il permesso di eseguzione su un file
+	if (access(exe_path, X_OK) != 0)
 	{
-    	ft_putstr_fd(args[0], STDERR_FILENO);
-    	ft_putendl_fd(": permission denied", STDERR_FILENO);
-    	free(exe_path);
-    	g_status = 126;
-    	return 126;
+		ft_putstr_fd(args[0], STDERR_FILENO);
+		ft_putendl_fd(": permission denied", STDERR_FILENO);
+		free(exe_path);
+		g_status = 126;
+		return (126);
 	}
 	pid = fork();
 	if (pid < 0)
@@ -104,20 +104,20 @@ int	exec_external(t_cmd *cmd, char **args, char **envp)
 	if (pid == 0)
 	{
 		signal(SIGINT, SIG_DFL);
-    	signal(SIGQUIT, SIG_DFL);
-    	handle_heredoc(cmd);
-    	execve(exe_path, args, envp);
-    	perror("execve");
-    	exit(1);
+		signal(SIGQUIT, SIG_DFL);
+		handle_heredoc(cmd);
+		execve(exe_path, args, envp);
+		perror("execve");
+		exit(1);
 	}
 	else
 	{
 		while (waitpid(pid, &status, 0) == -1)
 			;
 		if (WIFEXITED(status))
-        	g_status = WEXITSTATUS(status);
-    	else if (WIFSIGNALED(status))
-        	g_status = 128 + WTERMSIG(status);
+			g_status = WEXITSTATUS(status);
+		else if (WIFSIGNALED(status))
+			g_status = 128 + WTERMSIG(status);
 	}
 	free(exe_path);
 	return (0);
@@ -126,8 +126,8 @@ int	exec_external(t_cmd *cmd, char **args, char **envp)
 void	handle_heredoc(t_cmd *cmd)
 {
 	t_redir	*r;
-	int hdoc_fd;
-	
+	int		hdoc_fd;
+
 	r = cmd->redir;
 	while (r)
 	{

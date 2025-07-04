@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
+/*   By: sara <sara@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/03 09:48:20 by kbossio           #+#    #+#             */
-/*   Updated: 2025/07/04 16:55:26 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/07/04 18:45:20 by sara             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,9 +115,7 @@ int	exit_shell(int status, t_shell *shell, char **str)
 {
 	printf("Exiting shell...\n");
 	if (str != NULL)
-	{
 		free_arr(str, NULL);
-	}
 	if (shell && shell->tokens)
 	{
 		free_tokens(shell->tokens);
@@ -126,7 +124,6 @@ int	exit_shell(int status, t_shell *shell, char **str)
 	clear_history();
 	exit(status);
 }
-
 
 char	**execute(t_shell *shell, char **cmd, char *envp[])
 {
@@ -165,10 +162,10 @@ char	**execute(t_shell *shell, char **cmd, char *envp[])
 	return (envp);
 }
 
-void restore_fds(int in, int out)
+void	restore_fds(int in, int out)
 {
-    dup2(out, STDOUT_FILENO);
-    dup2(in, STDIN_FILENO);
-    close(in);
-    close(out);
+	dup2(out, STDOUT_FILENO);
+	dup2(in, STDIN_FILENO);
+	close(in);
+	close(out);
 }

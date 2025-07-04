@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
+/*   By: sara <sara@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/20 07:47:00 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/07/04 15:32:44 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/07/04 18:54:23 by sara             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,19 +40,12 @@
 # include <readline/history.h>
 # include "../libft/libft.h"
 
-extern int g_status;
+extern int	g_status;
 
 # define RESET   "\033[0m"
 # define BLUE    "\033[34m"
 # define CYAN    "\033[36m"
 # define BOLD    "\033[1m"
-
-typedef struct env_s//key=val
-{
-	char			*key;//name of variable
-	char			*val;//value of env var
-	struct env_s	*next;
-}	t_env;
 
 typedef struct s_redir
 {
@@ -81,7 +74,6 @@ typedef struct s_shell
 	char	*input;
 	t_token	*tokens;
 	t_cmd	*cmds;
-	t_env	*envs;
 }	t_shell;
 
 int		is_word(char c);
@@ -102,6 +94,7 @@ void	free_tokens(t_token *tokens);
 void	free_redir(t_redir *redir);
 void	free_argv(char **argv);
 void	free_all(t_shell *shell);
+void	check_redi(t_cmd *cmd, t_token **tmp);
 
 void	init(t_cmd *cmd);
 void	ft_readline(t_shell *shell);
@@ -118,16 +111,16 @@ void	tokenadd_back(t_token **lst, t_token *new);
 void	handle_special(t_shell *shell, char *input, int *i);
 
 void	tokenize(t_shell *shell);
-void	check_type(t_token **tmp, t_cmd *cmd,  t_shell *shell, char **envp);
+void	check_type(t_token **tmp, t_cmd *cmd, t_shell *shell, char **envp);
 void	check_type2(t_token **tmp, t_cmd **cmd);
 void	add_redir(t_redir **redir_list, char *filename, int type);
 void	handle_heredoc(t_cmd *cmd);
 int		heredoc_pipe(const char *delimiter);
 
-char *expand_var(t_env *envs, const char *input, char **envp);
-char *env_value(char **envp, char *key);
-char *append_char(char *base, char c);
-char *str_append(char *base, const char *to_add);
+char	*expand_var(const char *input, char **envp);
+char	*env_value(char **envp, char *key);
+char	*append_char(char *base, char c);
+char	*str_append(char *base, const char *to_add);
 
 int		exit_shell(int status, t_shell *shell, char **str);
 int		print_exp(char **str);

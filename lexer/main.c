@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
+/*   By: sara <sara@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/20 07:47:10 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/07/04 16:15:45 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/07/04 18:33:06 by sara             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,15 +54,15 @@ char	**add_word(char **argv, char *word)
 	return (av);
 }
 
-void parsing(t_shell *shell, char **envp)
+void	parsing(t_shell *shell, char **envp)
 {
-    if (validate_input(shell->input))
-    {
-        printf("Invalid input: %s\n", shell->input);
-        return;
-    }
-    tokenize(shell);
-    tok_cmd(shell, envp);
+	if (validate_input(shell->input))
+	{
+		printf("Invalid input: %s\n", shell->input);
+		return ;
+	}
+	tokenize(shell);
+	tok_cmd(shell, envp);
 }
 
 int	heredoc_pipe(const char *delimiter)
@@ -81,7 +81,7 @@ int	heredoc_pipe(const char *delimiter)
 		if (!line || ft_strcmp(line, delimiter) == 0)
 		{
 			free(line);
-			break;
+			break ;
 		}
 		write(pipefd[1], line, ft_strlen(line));
 		write(pipefd[1], "\n", 1);
@@ -114,7 +114,7 @@ int	main(int ac, char **av, char **envp)
 			break ;
 		parsing(&shell, str);
 		if (shell.cmds && shell.cmds->argv && shell.cmds->next)
-		    pipex(&shell, str);
+			pipex(&shell, str);
 		else if (shell.cmds && shell.cmds->argv)
 			str = execute(&shell, shell.cmds->argv, str);
 		else
@@ -124,22 +124,3 @@ int	main(int ac, char **av, char **envp)
 	}
 	return (0);
 }
-
-/*LEAKS:
-==417900== 5 bytes in 1 blocks are still reachable in loss record 2 of 67
-==417900==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
-==417900==    by 0x405474: ft_strdup (in /home/sel-khao/Desktop/minishell.git/minishell)
-==417900==    by 0x401B81: add_word (in /home/sel-khao/Desktop/minishell.git/minishell)
-==417900==    by 0x4020AA: check_type (in /home/sel-khao/Desktop/minishell.git/minishell)
-==417900==    by 0x40192A: tok_cmd (in /home/sel-khao/Desktop/minishell.git/minishell)
-==417900==    by 0x401C1F: parsing (in /home/sel-khao/Desktop/minishell.git/minishell)
-==417900==    by 0x401DB8: main (in /home/sel-khao/Desktop/minishell.git/minishell)
-
-==417900== 24 bytes in 1 blocks are still reachable in loss record 15 of 67
-==417900==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
-==417900==    by 0x4018C1: tok_cmd (in /home/sel-khao/Desktop/minishell.git/minishell)
-==417900==    by 0x401C1F: parsing (in /home/sel-khao/Desktop/minishell.git/minishell)
-==417900==    by 0x401DB8: main (in /home/sel-khao/Desktop/minishell.git/minishell)
-
-
-*/

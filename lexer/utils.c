@@ -6,7 +6,7 @@
 /*   By: sara <sara@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 08:07:38 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/07/04 09:54:32 by sara             ###   ########.fr       */
+/*   Updated: 2025/07/04 18:29:48 by sara             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,19 +71,23 @@ void	init(t_cmd *cmd)
 
 char	*extract_quoted(char *input, int *i)
 {
-	char	quote = input[*i];
-	int		j = *i + 1;
-	int		len = 0;
-	char	*buffer = malloc(ft_strlen(input) + 1); // worst-case alloc
+	char	quote;
+	int		j;
+	int		len;
+	char	*buffer;
 
+	quote = input[*i];
+	j = *i + 1;
+	len = 0;
+	buffer = malloc(ft_strlen(input) + 1);
 	if (!buffer)
 		return (NULL);
 	while (input[j] && input[j] != quote)
 	{
 		if (quote == '"' && input[j] == '\\' && input[j + 1])
 		{
-			if (input[j + 1] == '"' || input[j + 1] == '\\' ||
-				input[j + 1] == '$')
+			if (input[j + 1] == '"' || input[j + 1] == '\\'
+				|| input[j + 1] == '$')
 				buffer[len++] = input[++j];
 			else
 				buffer[len++] = input[j];
@@ -99,16 +103,16 @@ char	*extract_quoted(char *input, int *i)
 		return (NULL);
 	}
 	buffer[len] = '\0';
-	*i = j + 1;//sposto index dopo virgola di chiusura
+	*i = j + 1;
 	return (buffer);
 }
 
 void	handle_special(t_shell *shell, char *input, int *i)
 {
-	char *quoted_str;
-	char quote;
-	char *var_token;
-	int start;
+	char	*quoted_str;
+	char	quote;
+	char	*var_token;
+	int		start;
 
 	quote = input[*i];
 	if (input[*i] == '\'' || input[*i] == '"')

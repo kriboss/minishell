@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   token.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
+/*   By: sara <sara@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/25 10:15:24 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/07/04 16:50:49 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/07/04 18:24:51 by sara             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
-char *extract_token(const char *input, int start, int end)
+char	*extract_token(const char *input, int start, int end)
 {
 	char	*out;
 	int		i;
@@ -22,23 +22,23 @@ char *extract_token(const char *input, int start, int end)
 	j = 0;
 	out = malloc(end - start + 1);
 	while (i < end)
-        out[j++] = input[i++];
-    out[j] = '\0';
-    return out;
+		out[j++] = input[i++];
+	out[j] = '\0';
+	return (out);
 }
 
 void	tokenize(t_shell *shell)
 {
-	int i;
-	char *input;
-	int start;
-	char *word;
+	int		i;
+	char	*input;
+	int		start;
+	char	*word;
 
 	i = 0;
 	input = shell->input;
 	while (input[i] && is_space(input[i]))
 		i++;
-	while(input[i])
+	while (input[i])
 	{
 		if (is_special(input[i]))
 			handle_special(shell, input, &i);
@@ -76,12 +76,12 @@ void	add_token(t_shell *shell, char *value, int type, char quote_type)
 		tokenadd_back(&shell->tokens, new_token);
 }
 
-void tok_cmd(t_shell *shell, char **envp)
+void	tok_cmd(t_shell *shell, char **envp)
 {
-	t_cmd *head;
-	t_cmd *cmd;
-	t_token *tmp;
-	t_token *prev;
+	t_cmd	*head;
+	t_cmd	*cmd;
+	t_token	*tmp;
+	t_token	*prev;
 
 	tmp = shell->tokens;
 	cmd = malloc(sizeof(t_cmd));

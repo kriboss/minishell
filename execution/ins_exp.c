@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ins_exp.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
+/*   By: sara <sara@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/09 11:17:27 by kbossio           #+#    #+#             */
-/*   Updated: 2025/07/04 16:34:23 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/07/04 18:47:22 by sara             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,8 @@ int	check_ins(char *str)
 	while (str[i] != '\0' && str[i] != '=')
 	{
 		if ((str[i] < '0' && str[i] > '9') || (str[i] < 'A' && str[i] > 'Z')
-			|| (str[i] < 'a' && str[i] > 'z') || (str[i] == '+' && str[i + 1] != '='))
+			|| (str[i] < 'a' && str[i] > 'z')
+			|| (str[i] == '+' && str[i + 1] != '='))
 		{
 			printf("bash: export: `%s': not a valid identifier\n", str);
 			return (1);
@@ -80,25 +81,25 @@ char	**add_exp(char **str, char **envp)
 {
 	int		i;
 	int		j;
-	char **new_env;
-	char *val;
-	char *tmp;
+	char	**new_env;
+	char	*val;
+	char	*tmp;
 
 	i = 0;
-	new_env = dup_env(envp);//duplico per non lavorare sull'originale
-	if(!new_env)
-		return NULL;
+	new_env = dup_env(envp);
+	if (!new_env)
+		return (NULL);
 	free_arr(envp, NULL);
 	while (str[i])
 	{
-		if (check_ins(str[i]) == 0)//se name valid
+		if (check_ins(str[i]) == 0)
 		{
 			j = check_same(str[i], new_env);
-			if (j != -1)//se esiste gia'
+			if (j != -1)
 			{
-				if (ft_strchr(str[i], '+'))//if +=value
+				if (ft_strchr(str[i], '+'))
 				{
-					val = ft_strchr(str[i], '=');//se = e vai oltre
+					val = ft_strchr(str[i], '=');
 					if (val)
 					{
 						if (ft_strchr(new_env[j], '='))
@@ -111,13 +112,13 @@ char	**add_exp(char **str, char **envp)
 						}
 					}
 				}
-				else if (ft_strchr(str[i], '='))//se solo var=value
+				else if (ft_strchr(str[i], '='))
 				{
 					free(new_env[j]);
-					new_env[j] = ft_strdup(str[i]); // sostituisco
+					new_env[j] = ft_strdup(str[i]);
 				}
 			}
-			else//se e' solo export VAR, do noting
+			else
 				new_env = ins_exp(str[i], new_env);
 		}
 		i++;
