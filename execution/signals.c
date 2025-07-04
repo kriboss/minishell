@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   signals.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
+/*   By: sara <sara@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:25:53 by kbossio           #+#    #+#             */
-/*   Updated: 2025/07/02 15:33:12 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/07/04 13:11:33 by sara             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,9 +25,7 @@ void	signal_handler(int sig)
 		rl_redisplay();
 	}
 	else if (sig == SIGQUIT)
-	{
 		g_status = 131;
-	}
 }
 
 void	start_signals(void)
@@ -89,19 +87,38 @@ int	exec_external(t_cmd *cmd, char **args, char **envp)
 	{
 		ft_putstr_fd(args[0], STDERR_FILENO);
 		ft_putendl_fd(": command not found", STDERR_FILENO);
+		g_status = 127;
 		return (127);
+	}
+	if (access(exe_path, X_OK) != 0)//macro di unistd.h, è il permesso di eseguzione su un file
+	{
+    	ft_putstr_fd(args[0], STDERR_FILENO);
+    	ft_putendl_fd(": permission denied", STDERR_FILENO);
+    	free(exe_path);
+    	g_status = 126;
+    	return 126;
 	}
 	pid = fork();
 	if (pid < 0)
 		return (perror("fork"), free(exe_path), 1);
 	if (pid == 0)
 	{
-		handle_heredoc(cmd);
-		execve(exe_path, args, envp);
-		return (perror("execve"), free(exe_path), 1);
+		signal(SIGINT, SIG_DFL);
+    	signal(SIGQUIT, SIG_DFL);
+    	handle_heredoc(cmd);
+    	execve(exe_path, args, envp);
+    	perror("execve");
+    	exit(1);
 	}
-	while (waitpid(pid, &status, 0) == -1)
-		;
+	else
+	{
+		while (waitpid(pid, &status, 0) == -1)
+			;
+		if (WIFEXITED(status))
+        	g_status = WEXITSTATUS(status);
+    	else if (WIFSIGNALED(status))
+        	g_status = 128 + WTERMSIG(status);
+	}
 	free(exe_path);
 	return (0);
 }
@@ -125,3 +142,11 @@ void	handle_heredoc(t_cmd *cmd)
 		r = r->next;
 	}
 }
+
+/*
+X_OK = controllo permesso di esecuzione
+
+R_OK = controllo permesso di lettura
+
+W_OK = controllo permesso di scrittura
+*/

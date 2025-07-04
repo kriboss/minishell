@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
+/*   By: sara <sara@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/03 09:48:20 by kbossio           #+#    #+#             */
-/*   Updated: 2025/07/02 15:33:40 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/07/04 11:21:32 by sara             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,7 +128,7 @@ int	exit_shell(int status, t_shell *shell, char **str)
 	exit(status);
 }
 
-int	check_cmd(t_shell *shell, char **cmds, char **envp)
+/*int	check_cmd(t_shell *shell, char **cmds, char **envp)
 {
 	int	i;
 
@@ -150,7 +150,7 @@ int	check_cmd(t_shell *shell, char **cmds, char **envp)
 		i++;
 	}
 	return (-2);
-}
+}*/
 
 char	**execute(t_shell *shell, char **cmd, char *envp[])
 {
@@ -162,7 +162,10 @@ char	**execute(t_shell *shell, char **cmd, char *envp[])
 	stdin_backup = dup(STDIN_FILENO);
 	stdout_backup = dup(STDOUT_FILENO);
 	if (handle_redirections(shell->cmds))
+	{
+		restore_fds(stdin_backup, stdout_backup);
 		return (envp);
+	}
 	if (ft_strncmp(cmd[0], "cd", 2) == 0)
 		es = cd(cmd + 1);
 	else if (ft_strncmp(cmd[0], "pwd", 3) == 0)
@@ -176,12 +179,20 @@ char	**execute(t_shell *shell, char **cmd, char *envp[])
 	else if (ft_strncmp(cmd[0], "unset", 5) == 0)
 		es = unset(cmd + 1, envp);
 	else if (ft_strncmp(cmd[0], "exit", 4) == 0)
+	{
+		restore_fds(stdin_backup, stdout_backup);
 		exit_shell(es, shell, envp);
+	}
 	else
 		es = exec_external(shell->cmds, shell->cmds->argv, envp);
-	dup2(stdout_backup, STDOUT_FILENO);
-	dup2(stdin_backup, STDIN_FILENO);
-	close(stdout_backup);
-	close(stdin_backup);
+	restore_fds(stdin_backup, stdout_backup);
 	return (envp);
+}
+
+void restore_fds(int in, int out)
+{
+    dup2(out, STDOUT_FILENO);
+    dup2(in, STDIN_FILENO);
+    close(in);
+    close(out);
 }
