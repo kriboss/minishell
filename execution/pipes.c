@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipes.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sara <sara@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 10:47:51 by kbossio           #+#    #+#             */
-/*   Updated: 2025/07/04 18:49:41 by sara             ###   ########.fr       */
+/*   Updated: 2025/07/05 17:50:08 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,9 @@
 
 static int	connect(t_shell *shell, char **envp, int pipe_fd[2])
 {
-	static int	prev_fd;
+	static int	prev_fd = STDIN_FILENO;
 	pid_t		pid;
 
-	prev_fd = STDIN_FILENO;
 	pid = fork();
 	if (pid == -1)
 		return (perror("fork"), -1);
@@ -47,19 +46,12 @@ static int	connect(t_shell *shell, char **envp, int pipe_fd[2])
 
 int	pipex(t_shell *shell, char **envp)
 {
-	int		i;
 	int		n;
 	int		pipe_fd[2];
 	t_cmd	*tmp;
-
+	
 	tmp = shell->cmds;
 	n = 0;
-	while (tmp)
-	{
-		n++;
-		tmp = tmp->next;
-	}
-	i = 0;
 	while (shell->cmds)
 	{
 		if (shell->cmds)
@@ -68,12 +60,10 @@ int	pipex(t_shell *shell, char **envp)
 		if (connect(shell, envp, pipe_fd) == -1)
 			return (1);
 		shell->cmds = shell->cmds->next;
+		n++;
 	}
-	i = 0;
-	while (i < n)
-	{
+	while (n-- > 0)
 		wait(NULL);
-		i++;
-	}
+	shell->cmds = tmp;
 	return (0);
 }

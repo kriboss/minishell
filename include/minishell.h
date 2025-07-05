@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sara <sara@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/20 07:47:00 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/07/04 18:59:41 by sara             ###   ########.fr       */
+/*   Updated: 2025/07/05 19:43:21 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,10 @@
 # define OUTFILE	11
 # define APPEND		12
 # define HDOC		13
+
+# define LLONG_MIN 9223372036854775808ULL
+# define LLONG_MAX 9223372036854775807ULL
+
 
 # include <stdio.h>
 # include <stdlib.h>
@@ -122,7 +126,7 @@ char	*env_value(char **envp, char *key);
 char	*append_char(char *base, char c);
 char	*str_append(char *base, const char *to_add);
 
-int		exit_shell(int status, t_shell *shell, char **str);
+int		exit_shell(int status, t_shell *shell, char **envp, char **str);
 int		print_exp(char **str);
 int		check_same(char *str, char **envp);
 int		match_word(char *str, char **envp);
