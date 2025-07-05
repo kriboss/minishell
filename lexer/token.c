@@ -6,7 +6,7 @@
 /*   By: sara <sara@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/25 10:15:24 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/07/04 18:24:51 by sara             ###   ########.fr       */
+/*   Updated: 2025/07/04 19:01:31 by sara             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,7 +96,7 @@ void	tok_cmd(t_shell *shell, char **envp)
 		if (tmp->type == PIPE)
 			check_type2(&tmp, &cmd);
 		else
-			check_type(&tmp, cmd, shell, envp);
+			check_type(&tmp, cmd, envp);
 		if (tmp == prev)
 			tmp = tmp->next;
 	}

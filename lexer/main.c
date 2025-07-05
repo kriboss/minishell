@@ -6,7 +6,7 @@
 /*   By: sara <sara@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/20 07:47:10 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/07/04 18:33:06 by sara             ###   ########.fr       */
+/*   Updated: 2025/07/05 14:52:07 by sara             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,16 +111,31 @@ int	main(int ac, char **av, char **envp)
 	{
 		ft_readline(&shell);
 		if (!shell.input)
-			break ;
+		{
+			printf("exit\n");
+    		free_all(&shell);
+    		free_arr(str, NULL);
+			str = NULL;
+    		break ;
+		}
 		parsing(&shell, str);
-		if (shell.cmds && shell.cmds->argv && shell.cmds->next)
-			pipex(&shell, str);
-		else if (shell.cmds && shell.cmds->argv)
-			str = execute(&shell, shell.cmds->argv, str);
+		if (!shell.cmds || !shell.cmds->argv || !shell.cmds->argv[0])
+    	{
+        	free_all(&shell);
+    	    shell.input = NULL;
+    	}
 		else
-			ft_putendl_fd("No command to execute", STDERR_FILENO);
-		free_all(&shell);
-		shell.input = NULL;
+		{
+			if (shell.cmds && shell.cmds->argv && shell.cmds->next)
+				pipex(&shell, str);
+			else
+				str = execute(&shell, shell.cmds->argv, str);
+			free_all(&shell);
+			shell.input = NULL;
+		}
 	}
+	free_all(&shell);
+	free_arr(str, NULL);
+	str = NULL;
 	return (0);
 }

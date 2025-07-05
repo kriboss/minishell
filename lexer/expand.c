@@ -1,6 +1,6 @@
 
 #include "../include/minishell.h"
-
+//6
 char	*str_append(char *base, const char *to_add)//concateno
 {
 	char	*str;
@@ -63,7 +63,7 @@ char	*env_value(char **envp, char *key)
 	return (NULL);
 }
 
-void	check_type(t_token **tmp, t_cmd *cmd, t_shell *shell, char **envp)
+void	check_type(t_token **tmp, t_cmd *cmd, char **envp)
 {
 	char	*expand;
 
@@ -125,7 +125,9 @@ char	*expand_var(const char *input, char **envp)
 			}
 			else if (input[i] == '?')
 			{
-				res = str_append(res, ft_itoa(g_status));
+				char *itoa_res = ft_itoa(g_status);
+				res = str_append(res, itoa_res);
+				free(itoa_res);
 				i++;
 			}
 			else if (ft_isalpha(input[i]) || input[i] == '_')

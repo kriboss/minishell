@@ -6,12 +6,12 @@
 /*   By: sara <sara@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:25:53 by kbossio           #+#    #+#             */
-/*   Updated: 2025/07/04 18:52:16 by sara             ###   ########.fr       */
+/*   Updated: 2025/07/05 15:06:08 by sara             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
-
+//6
 int	g_status = 0;
 
 void	signal_handler(int sig)
@@ -24,14 +24,12 @@ void	signal_handler(int sig)
 		rl_replace_line("", 0);
 		rl_redisplay();
 	}
-	else if (sig == SIGQUIT)
-		g_status = 131;
 }
 
 void	start_signals(void)
 {
 	signal(SIGINT, signal_handler);
-	signal(SIGQUIT, signal_handler);
+	signal(SIGQUIT, SIG_IGN);
 }
 
 static char	**get_path_dirs(char *envp[])

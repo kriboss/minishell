@@ -6,7 +6,7 @@
 /*   By: sara <sara@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 08:07:46 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/07/04 18:31:02 by sara             ###   ########.fr       */
+/*   Updated: 2025/07/05 14:40:25 by sara             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,12 @@
 
 int	validate_input(char *input)
 {
-	if (!input || !input[0] || input[0] == '<' || input[0] == '>')
+	if (!input || input[0] == '<' || input[0] == '>')
 		return (1);
 	while (*input == ' ')
 		input++;
+	if (*input == '\0')
+		return 0;
 	if (validate_quote(input) == 1)
 		return (1);
 	if (validate_pipe(input) == 1)

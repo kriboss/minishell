@@ -6,12 +6,12 @@
 /*   By: sara <sara@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/03 09:48:20 by kbossio           #+#    #+#             */
-/*   Updated: 2025/07/04 18:45:20 by sara             ###   ########.fr       */
+/*   Updated: 2025/07/05 13:31:00 by sara             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
-
+//8
 int	cd(char **path)
 {
 	char	*dir;
@@ -104,23 +104,26 @@ int	env(char **envp)
 
 char	**export(char **env, char **str)
 {
+	char	**tmp;
+
 	if (str == NULL || *str == NULL)
 		print_exp(env);
 	else
-		return (add_exp(str, env));
+	{
+		tmp = env;
+		env = add_exp(str, env);	
+		free_arr(tmp, NULL);
+	}
 	return (env);
 }
 
 int	exit_shell(int status, t_shell *shell, char **str)
 {
 	printf("Exiting shell...\n");
-	if (str != NULL)
+	if (str)
 		free_arr(str, NULL);
-	if (shell && shell->tokens)
-	{
-		free_tokens(shell->tokens);
-		shell->tokens = NULL;
-	}
+	if (shell)
+		free_all(shell);
 	clear_history();
 	exit(status);
 }

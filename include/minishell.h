@@ -6,23 +6,23 @@
 /*   By: sara <sara@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/20 07:47:00 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/07/04 18:54:23 by sara             ###   ########.fr       */
+/*   Updated: 2025/07/04 18:59:41 by sara             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
-# define WORD       1//
-# define EOF        2//
-# define REDIRECT   3//
-# define PIPE       4//
-# define HEREDOC    5//
+# define WORD       1
+# define EOF        2
+# define REDIRECT   3
+# define PIPE       4
+# define HEREDOC    5
 # define VAR		9
-# define INFILE		10//n
-# define OUTFILE	11//n
-# define APPEND		12//n
-# define HDOC		13//n
+# define INFILE		10
+# define OUTFILE	11
+# define APPEND		12
+# define HDOC		13
 
 # include <stdio.h>
 # include <stdlib.h>
@@ -111,7 +111,7 @@ void	tokenadd_back(t_token **lst, t_token *new);
 void	handle_special(t_shell *shell, char *input, int *i);
 
 void	tokenize(t_shell *shell);
-void	check_type(t_token **tmp, t_cmd *cmd, t_shell *shell, char **envp);
+void	check_type(t_token **tmp, t_cmd *cmd, char **envp);
 void	check_type2(t_token **tmp, t_cmd **cmd);
 void	add_redir(t_redir **redir_list, char *filename, int type);
 void	handle_heredoc(t_cmd *cmd);

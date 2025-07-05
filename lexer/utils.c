@@ -6,12 +6,12 @@
 /*   By: sara <sara@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 08:07:38 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/07/04 18:29:48 by sara             ###   ########.fr       */
+/*   Updated: 2025/07/05 14:07:18 by sara             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
-
+//8
 int	is_word(char c)
 {
 	if (is_space(c) || is_special(c))
@@ -54,10 +54,7 @@ void	ft_readline(t_shell *shell)
 {
 	shell->input = readline("mininshell> ");
 	if (!shell->input)
-	{
-		free_all(shell);
-		exit(0);
-	}
+		return ;
 	if (shell->input[0])
 		add_history(shell->input);
 }

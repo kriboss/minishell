@@ -6,7 +6,7 @@
 /*   By: sara <sara@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/09 11:17:27 by kbossio           #+#    #+#             */
-/*   Updated: 2025/07/04 18:47:22 by sara             ###   ########.fr       */
+/*   Updated: 2025/07/05 13:28:22 by sara             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,22 +74,22 @@ char	**ins_exp(char *str, char **envp)
 		i++;
 	}
 	new[i] = ft_strdup(str);
-	return (new[i + 1] = NULL, free_arr(envp, NULL), new);
+	return (new[i + 1] = NULL, new);//free old, return new
 }
 
 char	**add_exp(char **str, char **envp)
 {
 	int		i;
 	int		j;
+	char	**old_env;
 	char	**new_env;
 	char	*val;
 	char	*tmp;
 
 	i = 0;
-	new_env = dup_env(envp);
+	new_env = dup_env(envp);//
 	if (!new_env)
 		return (NULL);
-	free_arr(envp, NULL);
 	while (str[i])
 	{
 		if (check_ins(str[i]) == 0)
@@ -119,9 +119,13 @@ char	**add_exp(char **str, char **envp)
 				}
 			}
 			else
+			{
+				old_env = new_env;
 				new_env = ins_exp(str[i], new_env);
+				free_arr(old_env, NULL);
+			}
 		}
 		i++;
 	}
-	return (new_env);
+	return (new_env);//return new allocated
 }

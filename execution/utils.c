@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sara <sara@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/03 11:38:14 by kbossio           #+#    #+#             */
-/*   Updated: 2025/06/23 08:28:58 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/07/05 14:11:16 by sara             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,9 +22,11 @@ void	free_arr(char **str, char **new)
 		while (str[i] != NULL)
 		{
 			free(str[i]);
+			str[i] = NULL;
 			i++;
 		}
 		free(str);
+		str = NULL;
 	}
 	if (new != NULL)
 	{
@@ -32,9 +34,11 @@ void	free_arr(char **str, char **new)
 		while (new[i] != NULL)
 		{
 			free(new[i]);
+			new[i] = NULL;
 			i++;
 		}
 		free(new);
+		new = NULL;
 	}
 }
 
