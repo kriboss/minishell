@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
+/*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/03 09:48:20 by kbossio           #+#    #+#             */
-/*   Updated: 2025/07/07 15:40:07 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/07/07 18:28:01 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -149,7 +149,8 @@ int	check_overflow(char *str, long long *result)
 
 int	exit_shell(int status, t_shell *shell, char **envp, char **str)
 {
-	long long status_code;
+	long long	status_code;
+	int			fd;
 	
 	if (str && str[0])
 	{
@@ -170,6 +171,11 @@ int	exit_shell(int status, t_shell *shell, char **envp, char **str)
 		clear_history();
 		if (shell)
 			free_all(shell);
+		while(fd < 1024)
+		{
+			close(fd);
+			fd++;
+		}
 		exit(status_code);
 	}
 	exit(status);
@@ -177,10 +183,11 @@ int	exit_shell(int status, t_shell *shell, char **envp, char **str)
 
 char	**execute(t_shell *shell, char **cmd, char *envp[])
 {
-	int			stdout_backup;
-	int			stdin_backup;
-	static int	es = 0;
+	int		stdout_backup;
+	int		stdin_backup;
+	char	es;
 
+	es = 0;
 	stdin_backup = dup(STDIN_FILENO);
 	stdout_backup = dup(STDOUT_FILENO);
 	if (handle_redirections(shell->cmds))
@@ -188,22 +195,22 @@ char	**execute(t_shell *shell, char **cmd, char *envp[])
 		restore_fds(stdin_backup, stdout_backup);
 		return (envp);
 	}
-	if (ft_strncmp(cmd[0], "cd", 2) == 0)
+	if (ft_strcmp(cmd[0], "cd") == 0)
 		es = cd(cmd + 1);
-	else if (ft_strncmp(cmd[0], "pwd", 3) == 0)
+	else if (ft_strcmp(cmd[0], "pwd") == 0)
 		es = pwd();
-	else if (ft_strncmp(cmd[0], "echo", 4) == 0)
+	else if (ft_strcmp(cmd[0], "echo") == 0)
 		es = ft_echo(cmd + 1);
-	else if (ft_strncmp(cmd[0], "env", 3) == 0)
+	else if (ft_strcmp(cmd[0], "env") == 0)
 		es = env(envp);
-	else if (ft_strncmp(cmd[0], "export", 6) == 0)
+	else if (ft_strcmp(cmd[0], "export") == 0)
 		envp = export(envp, cmd + 1);
-	else if (ft_strncmp(cmd[0], "unset", 5) == 0)
+	else if (ft_strcmp(cmd[0], "unset") == 0)
 		es = unset(cmd + 1, envp);
-	else if (ft_strncmp(cmd[0], "exit", 4) == 0)
+	else if (ft_strcmp(cmd[0], "exit") == 0)
 	{
 		restore_fds(stdin_backup, stdout_backup);
-		es = exit_shell(es, shell, envp, cmd + 1);
+		exit_shell(es, shell, envp);
 	}
 	else
 		es = exec_external(shell->cmds, shell->cmds->argv, envp);

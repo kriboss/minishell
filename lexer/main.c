@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sara <sara@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/20 07:47:10 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/07/05 14:52:07 by sara             ###   ########.fr       */
+/*   Updated: 2025/07/07 18:25:10 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,14 +56,49 @@ char	**add_word(char **argv, char *word)
 
 void	parsing(t_shell *shell, char **envp)
 {
+	int		i;
+	t_token	*token;
+	t_cmd	*cmd;
+
 	if (validate_input(shell->input))
 	{
 		printf("Invalid input: %s\n", shell->input);
 		return ;
 	}
 	tokenize(shell);
+	printf("Tokens:\n");
+	token = shell->tokens;
+	while (token)
+	{
+		printf("Token: '%s', Type: %d, Quote: %c\n", token->value, token->type, token->quote);
+		printf("  type: %d, value: '%s'\n", token->type, token->value);
+		token = token->next;
+	}
 	tok_cmd(shell, envp);
+	cmd = shell->cmds;
+	while (cmd)
+	{
+		printf("Command:\n");
+		i = 0;
+		while (cmd->argv && cmd->argv[i])
+		{
+			printf("argv[%d]: %s\n", i, cmd->argv[i]);
+			i++;
+		}
+		cmd = cmd->next;
+	}
 }
+
+/*void	parsing(t_shell *shell, char **envp)
+{
+	if (validate_input(shell->input))
+	{
+		printf("bash: syntax error near unexpected token '%s'\n", shell->input);
+		return ;
+	}
+	tokenize(shell);
+	tok_cmd(shell, envp);
+}*/
 
 int	heredoc_pipe(const char *delimiter)
 {
