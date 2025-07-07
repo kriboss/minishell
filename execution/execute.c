@@ -6,7 +6,7 @@
 /*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/03 09:48:20 by kbossio           #+#    #+#             */
-/*   Updated: 2025/07/05 19:45:39 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/07/07 15:40:07 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,12 +46,12 @@ int	pwd(void)
 	if (pwd != NULL)
 	{
 		printf("%s\n", pwd);
-		return (0);
+		return (free(pwd), 0);
 	}
 	else
 	{
 		perror("pwd");
-		return (1);
+		return (free(pwd), 1);
 	}
 }
 

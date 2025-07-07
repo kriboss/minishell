@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   signals.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sara <sara@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:25:53 by kbossio           #+#    #+#             */
-/*   Updated: 2025/07/05 15:06:08 by sara             ###   ########.fr       */
+/*   Updated: 2025/07/07 15:29:23 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ void	signal_handler(int sig)
 void	start_signals(void)
 {
 	signal(SIGINT, signal_handler);
-	signal(SIGQUIT, SIG_IGN);
+	signal(SIGQUIT, SIG_DFL);
 }
 
 static char	**get_path_dirs(char *envp[])
@@ -38,7 +38,7 @@ static char	**get_path_dirs(char *envp[])
 
 	while (*envp && !ft_strnstr(*envp, "PATH=", 5))
 		envp++;
-	if (!ft_strnstr(*envp, "PATH=", 5))
+	if (!*envp)
 		return (NULL);
 	dirs = ft_split(ft_strnstr(*envp, "PATH=", 5) + 5, ':');
 	return (dirs);
@@ -110,8 +110,12 @@ int	exec_external(t_cmd *cmd, char **args, char **envp)
 	}
 	else
 	{
+		signal(SIGINT, SIG_IGN);
+		signal(SIGQUIT, SIG_IGN);
 		while (waitpid(pid, &status, 0) == -1)
 			;
+		signal(SIGINT, signal_handler);
+		signal(SIGQUIT, SIG_DFL);
 		if (WIFEXITED(status))
 			g_status = WEXITSTATUS(status);
 		else if (WIFSIGNALED(status))
