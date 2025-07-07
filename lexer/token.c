@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   token.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sara <sara@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/25 10:15:24 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/07/04 19:01:31 by sara             ###   ########.fr       */
+/*   Updated: 2025/07/07 18:33:16 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,9 @@ void	tok_cmd(t_shell *shell, char **envp)
 	while (tmp)
 	{
 		prev = tmp;
-		if (tmp->type == PIPE)
+		if (tmp->type == HEREDOC)
+			check_delim(&tmp, envp);
+		else if (tmp->type == PIPE)
 			check_type2(&tmp, &cmd);
 		else
 			check_type(&tmp, cmd, envp);
@@ -101,6 +103,20 @@ void	tok_cmd(t_shell *shell, char **envp)
 			tmp = tmp->next;
 	}
 	shell->cmds = head;
+}
+
+void check_delim(t_token **tmp, char **envp)
+{
+    t_token *delim;
+    char *delimiter;
+
+    delim = (*tmp)->next;
+    if (delim)
+    {
+        delimiter = delim->value;
+        handle_heredoc(delimiter, envp);
+        *tmp = (*tmp)->next->next;
+    }
 }
 
 void	create_token(t_shell *shell, char *input, int *i)

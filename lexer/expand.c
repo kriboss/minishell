@@ -83,7 +83,7 @@ void	check_type(t_token **tmp, t_cmd *cmd, char **envp)
 		check_redi(cmd, tmp);
 	else if ((*tmp)->type == HEREDOC && (*tmp)->next)
 	{
-		add_redir(&cmd->redir, (*tmp)->next->value, HDOC);
+		add_redir(&cmd->redir, (*tmp)->next->value, HEREDOC);
 		*tmp = (*tmp)->next->next;
 	}
 	else
@@ -108,6 +108,7 @@ char	*expand_var(const char *input, char **envp)
 	char	*key;
 	char	*val;
 	char	*res;
+	char	*itoa_res;
 
 	i = 0;
 	res = ft_strdup("");
@@ -125,7 +126,7 @@ char	*expand_var(const char *input, char **envp)
 			}
 			else if (input[i] == '?')
 			{
-				char *itoa_res = ft_itoa(g_status);
+				itoa_res = ft_itoa(g_status);
 				res = str_append(res, itoa_res);
 				free(itoa_res);
 				i++;

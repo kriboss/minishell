@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
+/*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 08:07:38 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/07/05 17:25:27 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/07/07 18:45:01 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ int	is_space(char c)
 
 int	is_special(char c)
 {
-	if (c == '<' || c == '>' || c == '|')
+	if (c == '<' || c == '>' || c == '|' || c == '"' || c == '\'')
 		return (1);
 	return (0);
 }
@@ -107,13 +107,13 @@ char	*extract_quoted(char *input, int *i)
 void	handle_special(t_shell *shell, char *input, int *i)
 {
 	char	*quoted_str;
-	char	quote;
 	char	*var_token;
+	char	quote;
 	int		start;
 
-	quote = input[*i];
 	if (input[*i] == '\'' || input[*i] == '"')
 	{
+		quote = input[*i];
 		quoted_str = extract_quoted(input, i);
 		if (!quoted_str)
 			return ;
@@ -138,3 +138,4 @@ void	handle_special(t_shell *shell, char *input, int *i)
 	else
 		create_token(shell, input, i);
 }
+

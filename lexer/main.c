@@ -6,7 +6,7 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/20 07:47:10 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/07/07 18:25:10 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/07/07 18:33:55 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,16 +100,18 @@ void	parsing(t_shell *shell, char **envp)
 	tok_cmd(shell, envp);
 }*/
 
-int	heredoc_pipe(const char *delimiter)
+int	heredoc_pipe(const char *delimiter, char** envp)
 {
 	int		pipefd[2];
 	char	*line;
+	char	*expand;
 
 	if (pipe(pipefd) == -1)
 	{
 		perror("pipe");
 		return (-1);
 	}
+	signal(SIGINT, SIG_IGN);
 	while (1)
 	{
 		line = readline("> ");
@@ -118,9 +120,17 @@ int	heredoc_pipe(const char *delimiter)
 			free(line);
 			break ;
 		}
-		write(pipefd[1], line, ft_strlen(line));
+		expand = expand_var(line, envp);
+		if (!expand)
+		{
+			free(line);
+			close(pipefd[1]);
+			return (-1);
+		}
+		write(pipefd[1], expand, ft_strlen(expand));
 		write(pipefd[1], "\n", 1);
 		free(line);
+		free(expand);
 	}
 	close(pipefd[1]);
 	return (pipefd[0]);

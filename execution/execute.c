@@ -6,7 +6,7 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/03 09:48:20 by kbossio           #+#    #+#             */
-/*   Updated: 2025/07/07 18:28:01 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/07/07 18:49:05 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,13 +145,12 @@ int	check_overflow(char *str, long long *result)
 	return (1);
 }
 
-
-
 int	exit_shell(int status, t_shell *shell, char **envp, char **str)
 {
 	long long	status_code;
 	int			fd;
-	
+
+	fd = 0;
 	if (str && str[0])
 	{
 	    if (str[1])
@@ -171,7 +170,7 @@ int	exit_shell(int status, t_shell *shell, char **envp, char **str)
 		clear_history();
 		if (shell)
 			free_all(shell);
-		while(fd < 1024)
+		while (fd < 1024)
 		{
 			close(fd);
 			fd++;
@@ -210,7 +209,7 @@ char	**execute(t_shell *shell, char **cmd, char *envp[])
 	else if (ft_strcmp(cmd[0], "exit") == 0)
 	{
 		restore_fds(stdin_backup, stdout_backup);
-		exit_shell(es, shell, envp);
+		exit_shell(es, shell, envp, cmd + 1);
 	}
 	else
 		es = exec_external(shell->cmds, shell->cmds->argv, envp);

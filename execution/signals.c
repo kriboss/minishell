@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   signals.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
+/*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:25:53 by kbossio           #+#    #+#             */
-/*   Updated: 2025/07/07 15:29:23 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/07/07 18:42:18 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ void	signal_handler(int sig)
 void	start_signals(void)
 {
 	signal(SIGINT, signal_handler);
-	signal(SIGQUIT, SIG_DFL);
+	signal(SIGQUIT, SIG_DFL);//or SIG_IGN
 }
 
 static char	**get_path_dirs(char *envp[])
@@ -51,19 +51,33 @@ static char	*find_executable(char *cmd, char *envp[])
 	char	*tmp;
 	int		i;
 
-	if ((cmd[0] == '.' && cmd[1] == '/') || cmd[0] == '/')
-		return (ft_strdup(cmd));
+	if (!cmd || !*cmd)
+		return NULL;
+	if (cmd[0] == '/' || (cmd[0] == '.' && cmd[1] == '/'))
+	{
+		if (access(cmd, F_OK) == 0)
+			return (ft_strdup(cmd));
+		else
+			return (NULL);
+	}
 	dirs = get_path_dirs(envp);
 	if (!dirs)
 		return (NULL);
+	full_path = NULL;
 	i = 0;
 	while (dirs[i])
 	{
 		tmp = ft_strjoin(dirs[i], "/");
 		full_path = ft_strjoin(tmp, cmd);
 		free(tmp);
-		if (access(full_path, X_OK) == 0)
+		if (access(full_path, F_OK) == 0)
+		{
+			if (access(full_path, X_OK) == 0)
+				break ;
+			free(full_path);
+			full_path = NULL;
 			break ;
+		}
 		free(full_path);
 		full_path = NULL;
 		i++;
@@ -80,11 +94,27 @@ int	exec_external(t_cmd *cmd, char **args, char **envp)
 	int		status;
 	char	*exe_path;
 
+	if (!args[0] || args[0][0] == '\0')
+	{
+        ft_putendl_fd("bash: : command not found", STDERR_FILENO);
+        g_status = 127;
+        return (127);
+    }
 	exe_path = find_executable(args[0], envp);
 	if (!exe_path)
 	{
-		ft_putstr_fd(args[0], STDERR_FILENO);
-		ft_putendl_fd(": command not found", STDERR_FILENO);
+		if (ft_strchr(args[0], '/'))
+		{
+			ft_putstr_fd("bash: ", STDERR_FILENO);
+            ft_putstr_fd(args[0], STDERR_FILENO);
+            ft_putendl_fd(": No such file or directory", STDERR_FILENO);
+		}
+		else
+		{
+			ft_putstr_fd("bash: ", STDERR_FILENO);
+			ft_putstr_fd(args[0], STDERR_FILENO);
+			ft_putendl_fd(": command not found", STDERR_FILENO);
+		}
 		g_status = 127;
 		return (127);
 	}
@@ -103,7 +133,8 @@ int	exec_external(t_cmd *cmd, char **args, char **envp)
 	{
 		signal(SIGINT, SIG_DFL);
 		signal(SIGQUIT, SIG_DFL);
-		handle_heredoc(cmd);
+		if (cmd->redir && cmd->redir->type == HEREDOC)
+			handle_heredoc(cmd->redir->filename, envp);
 		execve(exe_path, args, envp);
 		perror("execve");
 		exit(1);
@@ -125,7 +156,21 @@ int	exec_external(t_cmd *cmd, char **args, char **envp)
 	return (0);
 }
 
-void	handle_heredoc(t_cmd *cmd)
+void handle_heredoc(char *delimiter, char **envp)
+{
+    int hdoc_fd;
+
+    hdoc_fd = heredoc_pipe(delimiter, envp);
+    if (hdoc_fd < 0)
+    {
+        perror("heredoc pipe error");
+        exit(1);
+    }
+    dup2(hdoc_fd, STDIN_FILENO);
+    close(hdoc_fd);
+}
+
+/* void	handle_heredoc(t_cmd *cmd)
 {
 	t_redir	*r;
 	int		hdoc_fd;
@@ -143,7 +188,7 @@ void	handle_heredoc(t_cmd *cmd)
 		}
 		r = r->next;
 	}
-}
+} */
 
 /*
 X_OK = controllo permesso di esecuzione

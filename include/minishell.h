@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
+/*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/20 07:47:00 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/07/05 19:43:21 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/07/07 18:45:39 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,11 +22,9 @@
 # define INFILE		10
 # define OUTFILE	11
 # define APPEND		12
-# define HDOC		13
 
 # define LLONG_MIN 9223372036854775808ULL
 # define LLONG_MAX 9223372036854775807ULL
-
 
 # include <stdio.h>
 # include <stdlib.h>
@@ -80,6 +78,7 @@ typedef struct s_shell
 	t_cmd	*cmds;
 }	t_shell;
 
+
 int		is_word(char c);
 int		is_space(char c);
 int		is_special(char c);
@@ -90,6 +89,7 @@ int		validate_pipe(char *input);
 int		validate_input(char *input);
 int		validate_redirection(char *input);
 int		validate_redirection(char *input);
+int		validate_heredoc(char **input);
 
 char	**add_word(char **argv, char *word);
 char	*extract_token(const char *input, int start, int end);
@@ -117,16 +117,17 @@ void	handle_special(t_shell *shell, char *input, int *i);
 void	tokenize(t_shell *shell);
 void	check_type(t_token **tmp, t_cmd *cmd, char **envp);
 void	check_type2(t_token **tmp, t_cmd **cmd);
+void check_delim(t_token **tmp, char **envp);
 void	add_redir(t_redir **redir_list, char *filename, int type);
-void	handle_heredoc(t_cmd *cmd);
-int		heredoc_pipe(const char *delimiter);
+void handle_heredoc(char *delimiter, char **envp);
+int		heredoc_pipe(const char *delimiter, char **envp);
 
 char	*expand_var(const char *input, char **envp);
 char	*env_value(char **envp, char *key);
 char	*append_char(char *base, char c);
 char	*str_append(char *base, const char *to_add);
 
-int		exit_shell(int status, t_shell *shell, char **envp, char **str);
+int	exit_shell(int status, t_shell *shell, char **envp, char **str);
 int		print_exp(char **str);
 int		check_same(char *str, char **envp);
 int		match_word(char *str, char **envp);
