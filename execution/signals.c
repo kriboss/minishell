@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   signals.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:25:53 by kbossio           #+#    #+#             */
-/*   Updated: 2025/07/07 18:42:18 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/07/08 16:23:45 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,12 +24,20 @@ void	signal_handler(int sig)
 		rl_replace_line("", 0);
 		rl_redisplay();
 	}
+	if (sig == SIGQUIT)
+	{
+		g_status = 131;
+		write(2, "Quit (core dumped)\n", 19);
+		rl_on_new_line();
+		rl_replace_line("", 0);
+		rl_redisplay();
+	}
 }
 
 void	start_signals(void)
 {
 	signal(SIGINT, signal_handler);
-	signal(SIGQUIT, SIG_DFL);//or SIG_IGN
+	signal(SIGQUIT, SIG_IGN);//or SIG_IGN
 }
 
 static char	**get_path_dirs(char *envp[])
@@ -131,8 +139,7 @@ int	exec_external(t_cmd *cmd, char **args, char **envp)
 		return (perror("fork"), free(exe_path), 1);
 	if (pid == 0)
 	{
-		signal(SIGINT, SIG_DFL);
-		signal(SIGQUIT, SIG_DFL);
+		signal(SIGQUIT, signal_handler);
 		if (cmd->redir && cmd->redir->type == HEREDOC)
 			handle_heredoc(cmd->redir->filename, envp);
 		execve(exe_path, args, envp);
@@ -146,11 +153,17 @@ int	exec_external(t_cmd *cmd, char **args, char **envp)
 		while (waitpid(pid, &status, 0) == -1)
 			;
 		signal(SIGINT, signal_handler);
-		signal(SIGQUIT, SIG_DFL);
+		// signal(SIGQUIT, signal_handler);
 		if (WIFEXITED(status))
 			g_status = WEXITSTATUS(status);
 		else if (WIFSIGNALED(status))
+		{
+			if (WTERMSIG(status) == SIGINT)
+				write(1, "\n", 1);
+			else if (WTERMSIG(status) == SIGQUIT)
+				write(2, "Quit (core dumped)\n", 19);
 			g_status = 128 + WTERMSIG(status);
+		}
 	}
 	free(exe_path);
 	return (0);

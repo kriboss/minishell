@@ -6,7 +6,7 @@
 /*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 10:47:51 by kbossio           #+#    #+#             */
-/*   Updated: 2025/07/05 17:50:08 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/07/08 17:40:07 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,11 @@ static int	connect(t_shell *shell, char **envp, int pipe_fd[2])
 	pid = fork();
 	if (pid == -1)
 		return (perror("fork"), -1);
+	if (pid > 0)
+	{
+		signal(SIGINT, SIG_IGN);
+		signal(SIGQUIT, SIG_IGN);
+	}
 	if (pid == 0)
 	{
 		if (prev_fd != STDIN_FILENO)
@@ -49,7 +54,10 @@ int	pipex(t_shell *shell, char **envp)
 	int		n;
 	int		pipe_fd[2];
 	t_cmd	*tmp;
+	int		i;
+	int		ok;
 	
+	ok = 0;
 	tmp = shell->cmds;
 	n = 0;
 	while (shell->cmds)
@@ -63,7 +71,15 @@ int	pipex(t_shell *shell, char **envp)
 		n++;
 	}
 	while (n-- > 0)
-		wait(NULL);
+	{
+		wait(&i);
+		if (WIFEXITED(i) && WEXITSTATUS(i) == 130)
+			ok = 130;
+	}
+	signal(SIGINT, signal_handler);
+	signal(SIGQUIT, SIG_IGN);
+	if (ok == 130)
+		write(1, "ciao\n", 5);
 	shell->cmds = tmp;
 	return (0);
 }

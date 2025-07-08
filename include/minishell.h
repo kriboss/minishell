@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/20 07:47:00 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/07/07 18:45:39 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/07/08 16:41:12 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,6 +146,7 @@ char	*ft_rmchar(char *str, char c);
 
 void	free_arr(char **str, char **new);
 void	start_signals(void);
+void	signal_handler(int sig);
 
 void	restore_fds(int in, int out);
 
