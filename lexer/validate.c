@@ -6,7 +6,7 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 08:07:46 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/07/07 18:30:36 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/07/09 22:47:29 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,23 +26,9 @@ int	validate_input(char *input)
 	return (0);
 }
 
-int	validate_heredoc(char **input)
-{
-	if (*input && (*input)[0] == '<' && (*input)[1] == '<')
-	{
-		*input += 2;
-		while (**input == ' ')
-			(*input)++;
-		if (**input == '\0')
-			return (1);
-		return (0);
-	}
-	return (0);
-}
-
 int	validate_redirection(char *input)
 {
-    char	quote;
+	char	quote;
 
 	while (*input)
 	{
@@ -61,7 +47,8 @@ int	validate_redirection(char *input)
 			{
 				if (validate_heredoc(&input))
 					return (1);
-			} else if (mult_redir(input))
+			}
+			else if (mult_redir(input))
 				return (1);
 			while (*input == '<' || *input == '>')
 				input++;
@@ -73,22 +60,6 @@ int	validate_redirection(char *input)
 		else
 			input++;
 	}
-	return (0);
-}
-
-int	mult_redir(char *input)
-{
-	int		count;
-	char	a;
-
-	count = 1;
-	a = *input;
-	if (input[1] && input[1] != a && (input[1] == '<' || input[1] == '>'))
-		return (1);
-	while (input[count] && input[count] == a)
-		count++;
-	if (count > 2)
-		return (1);
 	return (0);
 }
 

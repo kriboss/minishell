@@ -6,7 +6,7 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:25:53 by kbossio           #+#    #+#             */
-/*   Updated: 2025/07/09 19:10:40 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/07/09 22:22:20 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -163,20 +163,4 @@ int	exec_external(t_cmd *cmd, char **args, char **envp)
 	}
 	free(exe_path);
 	return (0);
-}
-
-void handle_heredoc(char *delimiter, char **envp, t_cmd *cmd, int *es)
-{
-    int hdoc_fd;
-	char	*fd_str;
-
-    hdoc_fd = heredoc_pipe(delimiter, envp, es);
-    if (hdoc_fd < 0)
-    {
-        perror("heredoc pipe error");
-        exit(1);
-    }
-	fd_str = ft_itoa(hdoc_fd);
-    add_redir(&cmd->redir, fd_str, HEREDOC);
-    free(fd_str);
 }

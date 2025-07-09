@@ -6,7 +6,7 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/03 09:48:20 by kbossio           #+#    #+#             */
-/*   Updated: 2025/07/09 19:24:44 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/07/09 23:45:15 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,46 +148,8 @@ int	check_overflow(char *str, long long *result)
 	return (1);
 }
 
-/* int	exit_shell(int status, t_shell *shell, char **envp, char **str)
-{
-	long long	status_code;
-	int			fd;
 
-	fd = 0;
-	status_code = status;
-	if (str && str[0])
-	{
-	    if (str[1])
-			return (write(2, "bash: exit: too many arguments\n", 31), 1);
-		printf("exit\n");
-		if (check_overflow(str[0], &status_code) == 0)
-		{
-			write(2, "bash: exit: ", 12);
-			write(2, str[0], ft_strlen(str[0]));
-			write(2, ": numeric argument required\n", 28);
-			status_code = 2;
-		}
-		else
-			status_code = status_code % 256;
-		if (envp)
-		free_arr(envp, NULL);
-		clear_history();
-		if (shell)
-			free_all(shell);
-		while (fd < 1024)
-		{
-			close(fd);
-			fd++;
-		}
-		exit(status_code);
-	}
-	if (g_status != 0)
-		exit(g_status);
-	exit(status);
-} */
-
-//sara exit
-int	exit_shell(int status, t_shell *shell, char **envp, char **str)
+int	exit_shell(int status, t_shell *shell, char **envp, char **str, t_cmd *tmp)
 {
 	long long	status_code;
 	int			fd;
@@ -212,6 +174,8 @@ int	exit_shell(int status, t_shell *shell, char **envp, char **str)
 	if (envp)
 		free_arr(envp, NULL);
 	rl_clear_history();
+	if (tmp != NULL)
+		shell->cmds = tmp;
 	if (shell)
 		free_all(shell);
 	while (fd < 1024)
@@ -231,7 +195,7 @@ int	is_builtin(char *cmd)
 	return (0);
 }
 
-char	**execute(t_shell *shell, char **cmd, char *envp[])
+char	**execute(t_shell *shell, char **cmd, char *envp[], t_cmd *tmp)
 {
 	int		stdout_backup;
 	int		stdin_backup;
@@ -261,7 +225,7 @@ char	**execute(t_shell *shell, char **cmd, char *envp[])
 	{
 		restore_fds(stdin_backup, stdout_backup);
 		rl_clear_history();
-		shell->es = exit_shell(shell->es, shell, envp, cmd + 1);
+		shell->es = exit_shell(shell->es, shell, envp, cmd + 1, tmp);
 	}
 	else
 		shell->es = exec_external(shell->cmds, shell->cmds->argv, envp);

@@ -1,7 +1,7 @@
 
 #include "../include/minishell.h"
-//6
-char	*str_append(char *base, const char *to_add)//concateno
+
+char	*str_append(char *base, const char *to_add)
 {
 	char	*str;
 	size_t	base_len;
@@ -61,44 +61,6 @@ char	*env_value(char **envp, char *key)
 			return (envp[i] + j + 1);
 	}
 	return (NULL);
-}
-
-void	check_type(t_token **tmp, t_cmd *cmd, char **envp, int *es)
-{
-	char	*expand;
-
-	if ((*tmp)->type == WORD || (*tmp)->type == EOF)
-	{
-		if ((*tmp)->quote != '\'')
-			expand = expand_var((*tmp)->value, envp, es);
-		else
-			expand = ft_strdup((*tmp)->value);
-		if (!expand)
-			expand = ft_strdup("");
-		cmd->argv = add_word(cmd->argv, expand);
-		free(expand);
-		*tmp = (*tmp)->next;
-	}
-	else if ((*tmp)->type == REDIRECT && (*tmp)->next)
-		check_redi(cmd, tmp);
-	else if ((*tmp)->type == HEREDOC && (*tmp)->next)
-	{
-		add_redir(&cmd->redir, (*tmp)->next->value, HEREDOC);
-		*tmp = (*tmp)->next->next;
-	}
-	else
-		*tmp = (*tmp)->next;
-}
-
-void	check_redi(t_cmd *cmd, t_token **tmp)
-{
-	if (ft_strcmp((*tmp)->value, "<") == 0)
-		add_redir(&cmd->redir, (*tmp)->next->value, INFILE);
-	else if (ft_strcmp((*tmp)->value, ">") == 0)
-		add_redir(&cmd->redir, (*tmp)->next->value, OUTFILE);
-	else if (ft_strcmp((*tmp)->value, ">>") == 0)
-		add_redir(&cmd->redir, (*tmp)->next->value, APPEND);
-	*tmp = (*tmp)->next->next;
 }
 
 char	*expand_var(const char *input, char **envp, int *es)

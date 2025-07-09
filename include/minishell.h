@@ -6,7 +6,7 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/20 07:47:00 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/07/09 19:15:56 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/07/10 00:08:52 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,11 +77,13 @@ typedef struct s_shell
 	t_token	*tokens;
 	t_cmd	*cmds;
 	int		es;
+	int		i;
+	pid_t	pids[4000];
 }	t_shell;
 
 
-char *process_quotes(char *word);
-int in_quotes(char *input, int pos);
+char	*process_quotes(char *word);
+int		in_quotes(char *input, int pos);
 int		is_word(char c);
 int		is_space(char c);
 int		is_special(char c);
@@ -123,15 +125,15 @@ void	check_type2(t_token **tmp, t_cmd **cmd);
 void	add_redir(t_redir **redir_list, char *filename, int type);
 int		heredoc_pipe(const char *delimiter, char **envp, int *es);
 
-void check_delim(t_token **tmp, char **envp,t_cmd *cmd, int *es);
-void handle_heredoc(char *delimiter, char **envp, t_cmd *cmd, int *es);
+void	check_delim(t_token **tmp, char **envp,t_cmd *cmd, int *es);
+void	handle_heredoc(char *delimiter, char **envp, t_cmd *cmd, int *es);
 
 char	*expand_var(const char *input, char **envp, int *es);
 char	*env_value(char **envp, char *key);
 char	*append_char(char *base, char c);
 char	*str_append(char *base, const char *to_add);
 
-int		exit_shell(int status, t_shell *shell, char **envp, char **str);
+int		exit_shell(int status, t_shell *shell, char **envp, char **str, t_cmd *tmp);
 int		print_exp(char **str);
 int		check_same(char *str, char **envp);
 int		match_word(char *str, char **envp);
@@ -147,7 +149,7 @@ int		is_builtin(char *cmd);
 
 char	**add_exp(char **str, char **envp, int *es);
 char	**dup_env(char **envp);
-char	**execute(t_shell *shell, char **cmd, char *envp[]);
+char	**execute(t_shell *shell, char **cmd, char *envp[], t_cmd *tmp);
 char	*ft_rmchar(char *str, char c);
 
 void	free_arr(char **str, char **new);

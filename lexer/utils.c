@@ -6,18 +6,18 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 08:07:38 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/07/09 13:25:48 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/07/09 22:44:55 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
-//8
-int is_word(char c)
+
+int	is_word(char c)
 {
-    int result;
-	
+	int	result;
+
 	result = !(is_space(c) || is_special(c));
-    return (result);
+	return (result);
 }
 
 int	is_space(char c)
@@ -34,21 +34,20 @@ int	is_special(char c)
 	return (0);
 }
 
-void	tokenadd_back(t_token **lst, t_token *new)
+int	mult_redir(char *input)
 {
-	t_token	*ptr;
+	int		count;
+	char	a;
 
-	if (!new)
-		return ;
-	if (!*lst)
-	{
-		*lst = new;
-		return ;
-	}
-	ptr = *lst;
-	while (ptr->next)
-		ptr = ptr->next;
-	ptr->next = new;
+	count = 1;
+	a = *input;
+	if (input[1] && input[1] != a && (input[1] == '<' || input[1] == '>'))
+		return (1);
+	while (input[count] && input[count] == a)
+		count++;
+	if (count > 2)
+		return (1);
+	return (0);
 }
 
 void	ft_readline(t_shell *shell)
@@ -66,77 +65,3 @@ void	init(t_cmd *cmd)
 	cmd->redir = NULL;
 	cmd->next = NULL;
 }
-
-char	*extract_quoted(char *input, int *i)
-{
-	char	quote;
-	int		j;
-	int		len;
-	char	*buffer;
-
-	quote = input[*i];
-	j = *i + 1;
-	len = 0;
-	buffer = malloc(ft_strlen(input) + 1);
-	if (!buffer)
-		return (NULL);
-	while (input[j] && input[j] != quote)
-	{
-		if (quote == '"' && input[j] == '\\' && input[j + 1])
-		{
-			if (input[j + 1] == '"' || input[j + 1] == '\\'
-				|| input[j + 1] == '$')
-				buffer[len++] = input[++j];
-			else
-				buffer[len++] = input[j];
-			j++;
-		}
-		else
-			buffer[len++] = input[j++];
-	}
-	if (!input[j] || input[j] != quote)
-	{
-		free(buffer);
-		printf("syntax error: unclosed quote\n");
-		return (NULL);
-	}
-	buffer[len] = '\0';
-	*i = j + 1;
-	return (buffer);
-}
-
-void	handle_special(t_shell *shell, char *input, int *i)
-{
-	char	*quoted_str;
-	char	*var_token;
-	char	quote;
-	int		start;
-
-	if (input[*i] == '\'' || input[*i] == '"')
-	{
-		quote = input[*i];
-		quoted_str = extract_quoted(input, i);
-		if (!quoted_str)
-			return ;
-		add_token(shell, quoted_str, WORD, quote);
-		free(quoted_str);
-	}
-	else if (input[*i] == '$')
-	{
-		start = *i;
-		(*i)++;
-		while (input[*i] && (ft_isalnum(input[*i]) || input[*i] == '_'))
-			(*i)++;
-		if (start + 1 == *i)
-		{
-			add_token(shell, "$", WORD, 0);
-			return ;
-		}
-		var_token = ft_substr(input, start, *i - start);
-		add_token(shell, var_token, WORD, 0);
-		free(var_token);
-	}
-	else
-		create_token(shell, input, i);
-}
-
