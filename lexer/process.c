@@ -3,17 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   process.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sara <sara@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 08:07:27 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/07/04 11:02:50 by sara             ###   ########.fr       */
+/*   Updated: 2025/07/09 18:29:15 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
-
-// ls -l | grep txt | wc -l
-// linked list of t_cmd, cmd1 → cmd2 → cmd3
 
 void	check_type2(t_token **tmp, t_cmd **cmd)
 {

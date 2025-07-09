@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
+/*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/03 09:48:20 by kbossio           #+#    #+#             */
-/*   Updated: 2025/07/09 14:23:54 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/07/09 19:24:44 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,12 +148,13 @@ int	check_overflow(char *str, long long *result)
 	return (1);
 }
 
-int	exit_shell(int status, t_shell *shell, char **envp, char **str)
+/* int	exit_shell(int status, t_shell *shell, char **envp, char **str)
 {
 	long long	status_code;
 	int			fd;
 
 	fd = 0;
+	status_code = status;
 	if (str && str[0])
 	{
 	    if (str[1])
@@ -183,6 +184,42 @@ int	exit_shell(int status, t_shell *shell, char **envp, char **str)
 	if (g_status != 0)
 		exit(g_status);
 	exit(status);
+} */
+
+//sara exit
+int	exit_shell(int status, t_shell *shell, char **envp, char **str)
+{
+	long long	status_code;
+	int			fd;
+
+	status_code = status;
+	fd = 0;
+	if (str && str[0])
+	{
+		if (str[1])
+			return (write(2, "bash: exit: too many arguments\n", 31), 1);
+		printf("exit\n");
+		if (check_overflow(str[0], &status_code) == 0)
+		{
+			write(2, "bash: exit: ", 12);
+			write(2, str[0], ft_strlen(str[0]));
+			write(2, ": numeric argument required\n", 28);
+			status_code = 2;
+		}
+		else
+			status_code = status_code % 256;
+	}
+	if (envp)
+		free_arr(envp, NULL);
+	rl_clear_history();
+	if (shell)
+		free_all(shell);
+	while (fd < 1024)
+	{
+		close(fd);
+		fd++;
+	}
+	exit(status_code);
 }
 
 int	is_builtin(char *cmd)
@@ -223,10 +260,11 @@ char	**execute(t_shell *shell, char **cmd, char *envp[])
 	else if (ft_strcmp(cmd[0], "exit") == 0)
 	{
 		restore_fds(stdin_backup, stdout_backup);
+		rl_clear_history();
 		exit_shell(shell->es, shell, envp, cmd + 1);
 	}
 	else
-		shell->es = exec_external(shell->cmds, shell->cmds->argv, envp, &shell->es);
+		shell->es = exec_external(shell->cmds, shell->cmds->argv, envp);
 	restore_fds(stdin_backup, stdout_backup);
 	return (envp);
 }

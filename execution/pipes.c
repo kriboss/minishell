@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   pipes.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
+/*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 10:47:51 by kbossio           #+#    #+#             */
-/*   Updated: 2025/07/09 14:14:43 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/07/09 19:03:40 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
-static int	connect(t_shell *shell, char **envp, int pipe_fd[2])
+static int	connect(t_shell *shell, char **envp, int pipe_fd[2], t_cmd *tmp)
 {
 	static int	prev_fd = STDIN_FILENO;
 	pid_t		pid;
@@ -27,8 +27,6 @@ static int	connect(t_shell *shell, char **envp, int pipe_fd[2])
 	}
 	if (pid == 0)
 	{
-		signal(SIGINT, signal_handler);
-		signal(SIGQUIT, signal_handler);
 		if (prev_fd != STDIN_FILENO)
 		{
 			dup2(prev_fd, STDIN_FILENO);
@@ -39,8 +37,11 @@ static int	connect(t_shell *shell, char **envp, int pipe_fd[2])
 		close(pipe_fd[0]);
 		close(pipe_fd[1]);
 		execute(shell, shell->cmds->argv, envp);
-		if (g_status == 130 || g_status == 131)
-			exit(g_status);
+		shell->cmds = tmp;
+		if (shell)
+            free_all(shell);
+        if (envp)
+            free_arr(envp, NULL);
 		exit(1);
 	}
 	if (shell->cmds->next)
@@ -58,8 +59,8 @@ int	pipex(t_shell *shell, char **envp)
 	int		n;
 	int		pipe_fd[2];
 	t_cmd	*tmp;
-	int		status;
 	int		ok;
+	int		status;
 	
 	ok = 0;
 	tmp = shell->cmds;
@@ -69,7 +70,7 @@ int	pipex(t_shell *shell, char **envp)
 		if (shell->cmds)
 			if (pipe(pipe_fd) == -1)
 				return (perror("pipe"), 1);
-		if (connect(shell, envp, pipe_fd) == -1)
+		if (connect(shell, envp, pipe_fd, tmp) == -1)
 			return (1);
 		shell->cmds = shell->cmds->next;
 		n++;

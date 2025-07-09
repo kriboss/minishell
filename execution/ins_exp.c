@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ins_exp.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
+/*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/09 11:17:27 by kbossio           #+#    #+#             */
-/*   Updated: 2025/07/09 13:31:54 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/07/09 19:00:58 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,23 +33,26 @@ int	check_ins(char *str)
 	return (0);
 }
 
-char	**ins_exp(char *str, char **envp)
+char **ins_exp(char *str, char **envp)
 {
-	int		i;
-	char	**new;
-
-	i = 0;
-	while (envp[i])
-		i++;
-	new = malloc(sizeof(char *) * (i + 2));
-	i = 0;
-	while (envp[i] != NULL)
-	{
-		new[i] = ft_strdup(envp[i]);
-		i++;
-	}
-	new[i] = ft_strdup(str);
-	return (new[i + 1] = NULL, new);//free old, return new
+    int i;
+    char **new;
+    
+    i = 0;
+    while (envp[i])
+        i++;
+    new = malloc(sizeof(char *) * (i + 2));
+    if (!new)
+        return (NULL);
+    i = 0;
+    while (envp[i] != NULL)
+    {
+        new[i] = ft_strdup(envp[i]);
+        i++;
+    }
+    new[i] = ft_strdup(str);
+    new[i + 1] = NULL;
+    return (new);
 }
 
 char	**add_exp(char **str, char **envp, int *es)
@@ -62,7 +65,7 @@ char	**add_exp(char **str, char **envp, int *es)
 	char	*tmp;
 
 	i = 0;
-	new_env = dup_env(envp);//
+	new_env = dup_env(envp);
 	if (!new_env)
 		return (NULL);
 	while (str[i])

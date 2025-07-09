@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
+/*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/20 07:47:10 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/07/09 14:19:06 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/07/09 18:40:30 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,41 +56,6 @@ char	**add_word(char **argv, char *word)
 
 void	parsing(t_shell *shell, char **envp)
 {
-	int		i;
-	t_token	*token;
-	t_cmd	*cmd;
-
-	if (validate_input(shell->input))
-	{
-		printf("Invalid input: %s\n", shell->input);
-		return ;
-	}
-	tokenize(shell);
-	printf("Tokens:\n");
-	token = shell->tokens;
-	while (token)
-	{
-		printf("Token: '%s', Type: %d, Quote: %c\n", token->value, token->type, token->quote);
-		printf("  type: %d, value: '%s'\n", token->type, token->value);
-		token = token->next;
-	}
-	tok_cmd(shell, envp);
-	cmd = shell->cmds;
-	while (cmd)
-	{
-		printf("Command:\n");
-		i = 0;
-		while (cmd->argv && cmd->argv[i])
-		{
-			printf("argv[%d]: %s\n", i, cmd->argv[i]);
-			i++;
-		}
-		cmd = cmd->next;
-	}
-}
-
-/*void	parsing(t_shell *shell, char **envp)
-{
 	if (validate_input(shell->input))
 	{
 		printf("bash: syntax error near unexpected token '%s'\n", shell->input);
@@ -98,17 +63,6 @@ void	parsing(t_shell *shell, char **envp)
 	}
 	tokenize(shell);
 	tok_cmd(shell, envp);
-}*/
-static void heredoc_sig(int sig)
-{
-	if (sig == SIGINT)
-	{
-		g_status = 130;
-		write(1, "\n", 1);
-		rl_on_new_line();
-		rl_replace_line("", 0);
-		rl_done = 1;
-	}
 }
 
 int	heredoc_pipe(const char *delimiter, char** envp, int *es)
@@ -122,7 +76,7 @@ int	heredoc_pipe(const char *delimiter, char** envp, int *es)
 		perror("pipe");
 		return (-1);
 	}
-	signal(SIGINT, heredoc_sig);
+	// se ci sono virgolette nel delimiter non vanno espansi $ nel testo dell'heredoc
 	while (1)
 	{
 		line = readline("> ");
@@ -152,7 +106,6 @@ int	heredoc_pipe(const char *delimiter, char** envp, int *es)
 		free(expand);
 	}
 	close(pipefd[1]);
-	signal(SIGINT, signal_handler);
 	return (pipefd[0]);
 }
 
@@ -169,7 +122,6 @@ int	main(int ac, char **av, char **envp)
 	shell.tokens = NULL;
 	shell.input = NULL;
 	shell.cmds = NULL;
-	shell.es = 0;
 	str = dup_env(envp);
 	start_signals();
 	print_header();
@@ -200,6 +152,7 @@ int	main(int ac, char **av, char **envp)
 			shell.input = NULL;
 		}
 	}
+	rl_clear_history();//added
 	free_all(&shell);
 	free_arr(str, NULL);
 	str = NULL;

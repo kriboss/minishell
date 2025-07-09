@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   signals.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
+/*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:25:53 by kbossio           #+#    #+#             */
-/*   Updated: 2025/07/09 14:20:48 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/07/09 19:10:40 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ void	signal_handler(int sig)
 	if (sig == SIGQUIT)
 	{
 		g_status = 131;
-		// write(2, "Quit (core dumped)\n", 19);
+		//write(2, "Quit (core dumped)\n", 19);
 		rl_on_new_line();
 		rl_replace_line("", 0);
 		rl_redisplay();
@@ -37,7 +37,7 @@ void	signal_handler(int sig)
 void	start_signals(void)
 {
 	signal(SIGINT, signal_handler);
-	signal(SIGQUIT, SIG_IGN);//or SIG_IGN
+	signal(SIGQUIT, SIG_IGN);
 }
 
 static char	**get_path_dirs(char *envp[])
@@ -96,8 +96,9 @@ static char	*find_executable(char *cmd, char *envp[])
 	return (free(dirs), full_path);
 }
 
-int	exec_external(t_cmd *cmd, char **args, char **envp, int *es)
+int	exec_external(t_cmd *cmd, char **args, char **envp)
 {
+	(void)cmd;
 	pid_t	pid;
 	int		status;
 	char	*exe_path;
@@ -105,7 +106,6 @@ int	exec_external(t_cmd *cmd, char **args, char **envp, int *es)
 	if (!args[0] || args[0][0] == '\0')
 	{
         ft_putendl_fd("bash: : command not found", STDERR_FILENO);
-        g_status = 127;
         return (127);
     }
 	exe_path = find_executable(args[0], envp);
@@ -123,7 +123,6 @@ int	exec_external(t_cmd *cmd, char **args, char **envp, int *es)
 			ft_putstr_fd(args[0], STDERR_FILENO);
 			ft_putendl_fd(": command not found", STDERR_FILENO);
 		}
-		g_status = 127;
 		return (127);
 	}
 	if (access(exe_path, X_OK) != 0)
@@ -131,7 +130,6 @@ int	exec_external(t_cmd *cmd, char **args, char **envp, int *es)
 		ft_putstr_fd(args[0], STDERR_FILENO);
 		ft_putendl_fd(": permission denied", STDERR_FILENO);
 		free(exe_path);
-		g_status = 126;
 		return (126);
 	}
 	pid = fork();
@@ -139,9 +137,8 @@ int	exec_external(t_cmd *cmd, char **args, char **envp, int *es)
 		return (perror("fork"), free(exe_path), 1);
 	if (pid == 0)
 	{
+		// va liberata tutta la memoria 
 		signal(SIGQUIT, signal_handler);
-		if (cmd->redir && cmd->redir->type == HEREDOC)
-			handle_heredoc(cmd->redir->filename, envp, es);
 		execve(exe_path, args, envp);
 		perror("execve");
 		exit(1);
@@ -168,9 +165,10 @@ int	exec_external(t_cmd *cmd, char **args, char **envp, int *es)
 	return (0);
 }
 
-void handle_heredoc(char *delimiter, char **envp, int *es)
+void handle_heredoc(char *delimiter, char **envp, t_cmd *cmd, int *es)
 {
     int hdoc_fd;
+	char	*fd_str;
 
     hdoc_fd = heredoc_pipe(delimiter, envp, es);
     if (hdoc_fd < 0)
@@ -178,34 +176,7 @@ void handle_heredoc(char *delimiter, char **envp, int *es)
         perror("heredoc pipe error");
         exit(1);
     }
-    dup2(hdoc_fd, STDIN_FILENO);
-    close(hdoc_fd);
+	fd_str = ft_itoa(hdoc_fd);
+    add_redir(&cmd->redir, fd_str, HEREDOC);
+    free(fd_str);
 }
-
-/* void	handle_heredoc(t_cmd *cmd)
-{
-	t_redir	*r;
-	int		hdoc_fd;
-
-	r = cmd->redir;
-	while (r)
-	{
-		if (r->type == HDOC)
-		{
-			hdoc_fd = heredoc_pipe(r->filename);
-			if (hdoc_fd < 0)
-				exit(1);
-			dup2(hdoc_fd, STDIN_FILENO);
-			close(hdoc_fd);
-		}
-		r = r->next;
-	}
-} */
-
-/*
-X_OK = controllo permesso di esecuzione
-
-R_OK = controllo permesso di lettura
-
-W_OK = controllo permesso di scrittura
-*/

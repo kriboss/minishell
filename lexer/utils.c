@@ -3,20 +3,21 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
+/*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 08:07:38 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/07/09 14:08:32 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/07/09 13:25:48 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 //8
-int	is_word(char c)
+int is_word(char c)
 {
-	if (is_space(c) || is_special(c))
-		return (0);
-	return (1);
+    int result;
+	
+	result = !(is_space(c) || is_special(c));
+    return (result);
 }
 
 int	is_space(char c)
@@ -28,7 +29,7 @@ int	is_space(char c)
 
 int	is_special(char c)
 {
-	if (c == '<' || c == '>' || c == '|' || c == '"' || c == '\'')
+	if (c == '<' || c == '>' || c == '|')
 		return (1);
 	return (0);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
+/*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/20 07:47:00 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/07/09 14:22:13 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/07/09 19:15:56 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,8 @@ typedef struct s_shell
 }	t_shell;
 
 
+char *process_quotes(char *word);
+int in_quotes(char *input, int pos);
 int		is_word(char c);
 int		is_space(char c);
 int		is_special(char c);
@@ -118,10 +120,11 @@ void	handle_special(t_shell *shell, char *input, int *i);
 void	tokenize(t_shell *shell);
 void	check_type(t_token **tmp, t_cmd *cmd, char **envp, int *es);
 void	check_type2(t_token **tmp, t_cmd **cmd);
-void	check_delim(t_token **tmp, char **envp, int *es);
 void	add_redir(t_redir **redir_list, char *filename, int type);
-void	handle_heredoc(char *delimiter, char **envp, int *es);
 int		heredoc_pipe(const char *delimiter, char **envp, int *es);
+
+void check_delim(t_token **tmp, char **envp,t_cmd *cmd, int *es);
+void handle_heredoc(char *delimiter, char **envp, t_cmd *cmd, int *es);
 
 char	*expand_var(const char *input, char **envp, int *es);
 char	*env_value(char **envp, char *key);
@@ -138,7 +141,9 @@ int		pipex(t_shell *shell, char **envp);
 
 int		handle_redirections(t_cmd *cmd);
 
-int		exec_external(t_cmd *cmd, char **args, char **envp, int *es);
+int		exec_external(t_cmd *cmd, char **args, char **envp);
+
+int		is_builtin(char *cmd);
 
 char	**add_exp(char **str, char **envp, int *es);
 char	**dup_env(char **envp);
