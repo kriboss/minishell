@@ -17,17 +17,23 @@ int	check_ins(char *str)
 	int	i;
 
 	i = 0;
-	if (str[0] >= '0' && str[0] <= '9')
+	if (!str || str[0] == '\0')
+		return (printf("bash: export: `%s': not a valid identifier\n", str), 1);
+	if ((str[0] >= '0' && str[0] <= '9') || str[0] == '=')
 		return (printf("bash: export: `%s': not a valid identifier\n", str), 1);
 	while (str[i] != '\0' && str[i] != '=')
 	{
-		if ((str[i] < '0' && str[i] > '9') || (str[i] < 'A' && str[i] > 'Z')
-			|| (str[i] < 'a' && str[i] > 'z')
-			|| (str[i] == '+' && str[i + 1] != '='))
+		if (!( (str[i] >= 'A' && str[i] <= 'Z') ||
+			   (str[i] >= 'a' && str[i] <= 'z') ||
+			   (str[i] >= '0' && str[i] <= '9') ||
+			   (str[i] == '_') ||
+			   (str[i] == '+' && str[i+1] == '=') ))
 		{
 			printf("bash: export: `%s': not a valid identifier\n", str);
 			return (1);
 		}
+		if (str[i] == '+' && str[i+1] == '=')
+			break;
 		i++;
 	}
 	return (0);
@@ -98,9 +104,11 @@ char	**add_exp(char **str, char **envp, int *es)
 			}
 			else
 			{
+				tmp = ft_rmchar(str[i], '+');
 				old_env = new_env;
-				new_env = ins_exp(str[i], new_env);
+				new_env = ins_exp(tmp, new_env);
 				free_arr(old_env, NULL);
+				free(tmp);
 			}
 		}
 		else

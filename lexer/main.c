@@ -122,6 +122,7 @@ int	main(int ac, char **av, char **envp)
 	shell.tokens = NULL;
 	shell.input = NULL;
 	shell.cmds = NULL;
+	shell.es = 0;
 	str = dup_env(envp);
 	start_signals();
 	print_header();

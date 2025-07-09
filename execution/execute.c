@@ -196,9 +196,9 @@ int	exit_shell(int status, t_shell *shell, char **envp, char **str)
 	fd = 0;
 	if (str && str[0])
 	{
+		printf("exit\n");
 		if (str[1])
 			return (write(2, "bash: exit: too many arguments\n", 31), 1);
-		printf("exit\n");
 		if (check_overflow(str[0], &status_code) == 0)
 		{
 			write(2, "bash: exit: ", 12);
@@ -261,7 +261,7 @@ char	**execute(t_shell *shell, char **cmd, char *envp[])
 	{
 		restore_fds(stdin_backup, stdout_backup);
 		rl_clear_history();
-		exit_shell(shell->es, shell, envp, cmd + 1);
+		shell->es = exit_shell(shell->es, shell, envp, cmd + 1);
 	}
 	else
 		shell->es = exec_external(shell->cmds, shell->cmds->argv, envp);
