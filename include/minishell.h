@@ -6,7 +6,7 @@
 /*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/20 07:47:00 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/07/08 16:41:12 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/07/09 14:22:13 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,7 @@ typedef struct s_shell
 	char	*input;
 	t_token	*tokens;
 	t_cmd	*cmds;
+	int		es;
 }	t_shell;
 
 
@@ -115,19 +116,19 @@ void	tokenadd_back(t_token **lst, t_token *new);
 void	handle_special(t_shell *shell, char *input, int *i);
 
 void	tokenize(t_shell *shell);
-void	check_type(t_token **tmp, t_cmd *cmd, char **envp);
+void	check_type(t_token **tmp, t_cmd *cmd, char **envp, int *es);
 void	check_type2(t_token **tmp, t_cmd **cmd);
-void check_delim(t_token **tmp, char **envp);
+void	check_delim(t_token **tmp, char **envp, int *es);
 void	add_redir(t_redir **redir_list, char *filename, int type);
-void handle_heredoc(char *delimiter, char **envp);
-int		heredoc_pipe(const char *delimiter, char **envp);
+void	handle_heredoc(char *delimiter, char **envp, int *es);
+int		heredoc_pipe(const char *delimiter, char **envp, int *es);
 
-char	*expand_var(const char *input, char **envp);
+char	*expand_var(const char *input, char **envp, int *es);
 char	*env_value(char **envp, char *key);
 char	*append_char(char *base, char c);
 char	*str_append(char *base, const char *to_add);
 
-int	exit_shell(int status, t_shell *shell, char **envp, char **str);
+int		exit_shell(int status, t_shell *shell, char **envp, char **str);
 int		print_exp(char **str);
 int		check_same(char *str, char **envp);
 int		match_word(char *str, char **envp);
@@ -137,9 +138,9 @@ int		pipex(t_shell *shell, char **envp);
 
 int		handle_redirections(t_cmd *cmd);
 
-int		exec_external(t_cmd *cmd, char **args, char **envp);
+int		exec_external(t_cmd *cmd, char **args, char **envp, int *es);
 
-char	**add_exp(char **str, char **envp);
+char	**add_exp(char **str, char **envp, int *es);
 char	**dup_env(char **envp);
 char	**execute(t_shell *shell, char **cmd, char *envp[]);
 char	*ft_rmchar(char *str, char c);

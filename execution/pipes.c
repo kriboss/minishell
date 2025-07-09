@@ -6,7 +6,7 @@
 /*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 10:47:51 by kbossio           #+#    #+#             */
-/*   Updated: 2025/07/08 17:40:07 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/07/09 14:14:43 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,8 @@ static int	connect(t_shell *shell, char **envp, int pipe_fd[2])
 	}
 	if (pid == 0)
 	{
+		signal(SIGINT, signal_handler);
+		signal(SIGQUIT, signal_handler);
 		if (prev_fd != STDIN_FILENO)
 		{
 			dup2(prev_fd, STDIN_FILENO);
@@ -37,6 +39,8 @@ static int	connect(t_shell *shell, char **envp, int pipe_fd[2])
 		close(pipe_fd[0]);
 		close(pipe_fd[1]);
 		execute(shell, shell->cmds->argv, envp);
+		if (g_status == 130 || g_status == 131)
+			exit(g_status);
 		exit(1);
 	}
 	if (shell->cmds->next)
@@ -54,7 +58,7 @@ int	pipex(t_shell *shell, char **envp)
 	int		n;
 	int		pipe_fd[2];
 	t_cmd	*tmp;
-	int		i;
+	int		status;
 	int		ok;
 	
 	ok = 0;
@@ -72,14 +76,25 @@ int	pipex(t_shell *shell, char **envp)
 	}
 	while (n-- > 0)
 	{
-		wait(&i);
-		if (WIFEXITED(i) && WEXITSTATUS(i) == 130)
+		wait(&status);
+		if ((WIFEXITED(status) && WEXITSTATUS(status) == 130) ||
+			(WIFSIGNALED(status) && WTERMSIG(status) == 130))
 			ok = 130;
+		else if ((WIFEXITED(status) && WEXITSTATUS(status) == 131) ||
+			(WIFSIGNALED(status) && WTERMSIG(status) == 131))
+			ok = 131;
 	}
 	signal(SIGINT, signal_handler);
 	signal(SIGQUIT, SIG_IGN);
-	if (ok == 130)
-		write(1, "ciao\n", 5);
 	shell->cmds = tmp;
+	if (ok == 130)
+	{
+		write(1, "\n", 1);
+		g_status = 130;
+	}
+	else if (ok == 131)
+		g_status = 131;
+	else if (ft_strcmp(shell->cmds->argv[0], "exit") != 0)
+		g_status = 0;
 	return (0);
 }

@@ -63,14 +63,14 @@ char	*env_value(char **envp, char *key)
 	return (NULL);
 }
 
-void	check_type(t_token **tmp, t_cmd *cmd, char **envp)
+void	check_type(t_token **tmp, t_cmd *cmd, char **envp, int *es)
 {
 	char	*expand;
 
 	if ((*tmp)->type == WORD || (*tmp)->type == EOF)
 	{
 		if ((*tmp)->quote != '\'')
-			expand = expand_var((*tmp)->value, envp);
+			expand = expand_var((*tmp)->value, envp, es);
 		else
 			expand = ft_strdup((*tmp)->value);
 		if (!expand)
@@ -101,7 +101,7 @@ void	check_redi(t_cmd *cmd, t_token **tmp)
 	*tmp = (*tmp)->next->next;
 }
 
-char	*expand_var(const char *input, char **envp)
+char	*expand_var(const char *input, char **envp, int *es)
 {
 	int		i;
 	int		start;
@@ -126,7 +126,10 @@ char	*expand_var(const char *input, char **envp)
 			}
 			else if (input[i] == '?')
 			{
-				itoa_res = ft_itoa(g_status);
+				if (g_status != 0)
+					itoa_res = ft_itoa(g_status);
+				else
+					itoa_res = ft_itoa(es[0]);
 				res = str_append(res, itoa_res);
 				free(itoa_res);
 				i++;

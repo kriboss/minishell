@@ -6,7 +6,7 @@
 /*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:25:53 by kbossio           #+#    #+#             */
-/*   Updated: 2025/07/08 16:23:45 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/07/09 14:20:48 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ void	signal_handler(int sig)
 	if (sig == SIGQUIT)
 	{
 		g_status = 131;
-		write(2, "Quit (core dumped)\n", 19);
+		// write(2, "Quit (core dumped)\n", 19);
 		rl_on_new_line();
 		rl_replace_line("", 0);
 		rl_redisplay();
@@ -96,7 +96,7 @@ static char	*find_executable(char *cmd, char *envp[])
 	return (free(dirs), full_path);
 }
 
-int	exec_external(t_cmd *cmd, char **args, char **envp)
+int	exec_external(t_cmd *cmd, char **args, char **envp, int *es)
 {
 	pid_t	pid;
 	int		status;
@@ -141,7 +141,7 @@ int	exec_external(t_cmd *cmd, char **args, char **envp)
 	{
 		signal(SIGQUIT, signal_handler);
 		if (cmd->redir && cmd->redir->type == HEREDOC)
-			handle_heredoc(cmd->redir->filename, envp);
+			handle_heredoc(cmd->redir->filename, envp, es);
 		execve(exe_path, args, envp);
 		perror("execve");
 		exit(1);
@@ -153,7 +153,6 @@ int	exec_external(t_cmd *cmd, char **args, char **envp)
 		while (waitpid(pid, &status, 0) == -1)
 			;
 		signal(SIGINT, signal_handler);
-		// signal(SIGQUIT, signal_handler);
 		if (WIFEXITED(status))
 			g_status = WEXITSTATUS(status);
 		else if (WIFSIGNALED(status))
@@ -161,7 +160,7 @@ int	exec_external(t_cmd *cmd, char **args, char **envp)
 			if (WTERMSIG(status) == SIGINT)
 				write(1, "\n", 1);
 			else if (WTERMSIG(status) == SIGQUIT)
-				write(2, "Quit (core dumped)\n", 19);
+				write(1, "Quit (core dumped)\n", 19);
 			g_status = 128 + WTERMSIG(status);
 		}
 	}
@@ -169,11 +168,11 @@ int	exec_external(t_cmd *cmd, char **args, char **envp)
 	return (0);
 }
 
-void handle_heredoc(char *delimiter, char **envp)
+void handle_heredoc(char *delimiter, char **envp, int *es)
 {
     int hdoc_fd;
 
-    hdoc_fd = heredoc_pipe(delimiter, envp);
+    hdoc_fd = heredoc_pipe(delimiter, envp, es);
     if (hdoc_fd < 0)
     {
         perror("heredoc pipe error");

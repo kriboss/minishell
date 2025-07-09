@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/03 09:48:20 by kbossio           #+#    #+#             */
-/*   Updated: 2025/07/07 18:49:05 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/07/09 14:23:54 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,16 +102,19 @@ int	env(char **envp)
 	return (0);
 }
 
-char	**export(char **env, char **str)
+char	**export(char **env, char **str, int *es)
 {
 	char	**tmp;
 
 	if (str == NULL || *str == NULL)
+	{
 		print_exp(env);
+		*es = 0;
+	}
 	else
 	{
 		tmp = env;
-		env = add_exp(str, env);	
+		env = add_exp(str, env, es);	
 		free_arr(tmp, NULL);
 	}
 	return (env);
@@ -177,16 +180,25 @@ int	exit_shell(int status, t_shell *shell, char **envp, char **str)
 		}
 		exit(status_code);
 	}
+	if (g_status != 0)
+		exit(g_status);
 	exit(status);
+}
+
+int	is_builtin(char *cmd)
+{
+	if (ft_strcmp(cmd, "cd") == 0 || ft_strcmp(cmd, "pwd") == 0 ||
+		ft_strcmp(cmd, "echo") == 0 || ft_strcmp(cmd, "env") == 0 ||
+		ft_strcmp(cmd, "export") == 0 || ft_strcmp(cmd, "unset") == 0)
+		return (1);
+	return (0);
 }
 
 char	**execute(t_shell *shell, char **cmd, char *envp[])
 {
 	int		stdout_backup;
 	int		stdin_backup;
-	char	es;
 
-	es = 0;
 	stdin_backup = dup(STDIN_FILENO);
 	stdout_backup = dup(STDOUT_FILENO);
 	if (handle_redirections(shell->cmds))
@@ -194,25 +206,27 @@ char	**execute(t_shell *shell, char **cmd, char *envp[])
 		restore_fds(stdin_backup, stdout_backup);
 		return (envp);
 	}
+	if (is_builtin(cmd[0]) == 1)
+		g_status = 0;
 	if (ft_strcmp(cmd[0], "cd") == 0)
-		es = cd(cmd + 1);
+		shell->es = cd(cmd + 1);
 	else if (ft_strcmp(cmd[0], "pwd") == 0)
-		es = pwd();
+		shell->es = pwd();
 	else if (ft_strcmp(cmd[0], "echo") == 0)
-		es = ft_echo(cmd + 1);
+		shell->es = ft_echo(cmd + 1);
 	else if (ft_strcmp(cmd[0], "env") == 0)
-		es = env(envp);
+		shell->es = env(envp);
 	else if (ft_strcmp(cmd[0], "export") == 0)
-		envp = export(envp, cmd + 1);
+		envp = export(envp, cmd + 1, &shell->es);
 	else if (ft_strcmp(cmd[0], "unset") == 0)
-		es = unset(cmd + 1, envp);
+		shell->es = unset(cmd + 1, envp);
 	else if (ft_strcmp(cmd[0], "exit") == 0)
 	{
 		restore_fds(stdin_backup, stdout_backup);
-		exit_shell(es, shell, envp, cmd + 1);
+		exit_shell(shell->es, shell, envp, cmd + 1);
 	}
 	else
-		es = exec_external(shell->cmds, shell->cmds->argv, envp);
+		shell->es = exec_external(shell->cmds, shell->cmds->argv, envp, &shell->es);
 	restore_fds(stdin_backup, stdout_backup);
 	return (envp);
 }

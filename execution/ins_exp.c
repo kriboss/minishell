@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ins_exp.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sara <sara@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/09 11:17:27 by kbossio           #+#    #+#             */
-/*   Updated: 2025/07/05 13:28:22 by sara             ###   ########.fr       */
+/*   Updated: 2025/07/09 13:31:54 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,31 +33,6 @@ int	check_ins(char *str)
 	return (0);
 }
 
-char	**rm_quotes(char **str)
-{
-	int		i;
-	char	*tmp;
-
-	i = 0;
-	while (str[i])
-	{
-		if (strchr(str[i], '\''))
-		{
-			tmp = str[i];
-			str[i] = ft_rmchar(tmp, '\'');
-			free(tmp);
-		}
-		if (strchr(str[i], '\"'))
-		{
-			tmp = str[i];
-			str[i] = ft_rmchar(tmp, '\"');
-			free(tmp);
-		}
-		i++;
-	}
-	return (str);
-}
-
 char	**ins_exp(char *str, char **envp)
 {
 	int		i;
@@ -77,7 +52,7 @@ char	**ins_exp(char *str, char **envp)
 	return (new[i + 1] = NULL, new);//free old, return new
 }
 
-char	**add_exp(char **str, char **envp)
+char	**add_exp(char **str, char **envp, int *es)
 {
 	int		i;
 	int		j;
@@ -125,6 +100,8 @@ char	**add_exp(char **str, char **envp)
 				free_arr(old_env, NULL);
 			}
 		}
+		else
+			*es = 1;
 		i++;
 	}
 	return (new_env);//return new allocated

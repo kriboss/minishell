@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   token.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/25 10:15:24 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/07/07 18:33:16 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/07/09 14:22:03 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,18 +94,18 @@ void	tok_cmd(t_shell *shell, char **envp)
 	{
 		prev = tmp;
 		if (tmp->type == HEREDOC)
-			check_delim(&tmp, envp);
+			check_delim(&tmp, envp, &shell->es);
 		else if (tmp->type == PIPE)
 			check_type2(&tmp, &cmd);
 		else
-			check_type(&tmp, cmd, envp);
+			check_type(&tmp, cmd, envp, &shell->es);
 		if (tmp == prev)
 			tmp = tmp->next;
 	}
 	shell->cmds = head;
 }
 
-void check_delim(t_token **tmp, char **envp)
+void check_delim(t_token **tmp, char **envp, int *es)
 {
     t_token *delim;
     char *delimiter;
@@ -114,7 +114,7 @@ void check_delim(t_token **tmp, char **envp)
     if (delim)
     {
         delimiter = delim->value;
-        handle_heredoc(delimiter, envp);
+        handle_heredoc(delimiter, envp, es);
         *tmp = (*tmp)->next->next;
     }
 }

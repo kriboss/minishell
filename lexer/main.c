@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/20 07:47:10 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/07/07 18:33:55 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/07/09 14:19:06 by kbossio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,8 +99,19 @@ void	parsing(t_shell *shell, char **envp)
 	tokenize(shell);
 	tok_cmd(shell, envp);
 }*/
+static void heredoc_sig(int sig)
+{
+	if (sig == SIGINT)
+	{
+		g_status = 130;
+		write(1, "\n", 1);
+		rl_on_new_line();
+		rl_replace_line("", 0);
+		rl_done = 1;
+	}
+}
 
-int	heredoc_pipe(const char *delimiter, char** envp)
+int	heredoc_pipe(const char *delimiter, char** envp, int *es)
 {
 	int		pipefd[2];
 	char	*line;
@@ -111,16 +122,24 @@ int	heredoc_pipe(const char *delimiter, char** envp)
 		perror("pipe");
 		return (-1);
 	}
-	signal(SIGINT, SIG_IGN);
+	signal(SIGINT, heredoc_sig);
 	while (1)
 	{
 		line = readline("> ");
+		if (g_status == 130)
+		{
+			rl_done = 1;
+			close(pipefd[1]);
+			free(line);
+			signal(SIGINT, signal_handler);
+			return (130);
+		}
 		if (!line || ft_strcmp(line, delimiter) == 0)
 		{
 			free(line);
 			break ;
 		}
-		expand = expand_var(line, envp);
+		expand = expand_var(line, envp, es);
 		if (!expand)
 		{
 			free(line);
@@ -133,6 +152,7 @@ int	heredoc_pipe(const char *delimiter, char** envp)
 		free(expand);
 	}
 	close(pipefd[1]);
+	signal(SIGINT, signal_handler);
 	return (pipefd[0]);
 }
 
@@ -149,6 +169,7 @@ int	main(int ac, char **av, char **envp)
 	shell.tokens = NULL;
 	shell.input = NULL;
 	shell.cmds = NULL;
+	shell.es = 0;
 	str = dup_env(envp);
 	start_signals();
 	print_header();
