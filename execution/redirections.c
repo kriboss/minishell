@@ -12,49 +12,73 @@
 
 #include "../include/minishell.h"
 
+static int	handle_outfile_redir(const char *filename)
+{
+	int	fd;
+
+	fd = open(filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	if (fd == -1)
+		return (perror("open"), 1);
+	dup2(fd, STDOUT_FILENO);
+	close(fd);
+	return (0);
+}
+
+static int	handle_append_redir(const char *filename)
+{
+	int	fd;
+
+	fd = open(filename, O_WRONLY | O_CREAT | O_APPEND, 0644);
+	if (fd == -1)
+		return (perror("open"), 1);
+	dup2(fd, STDOUT_FILENO);
+	close(fd);
+	return (0);
+}
+
+static int	handle_infile_redir(const char *filename)
+{
+	int	fd;
+
+	fd = open(filename, O_RDONLY);
+	if (fd == -1)
+		return (perror("open"), 1);
+	dup2(fd, STDIN_FILENO);
+	close(fd);
+	return (0);
+}
+
+static int	handle_heredoc_redir(const char *filename)
+{
+	int	fd;
+
+	fd = ft_atoi(filename);
+	if (fd <= 0)
+	{
+		perror("invalid heredoc fd");
+		return (1);
+	}
+	dup2(fd, STDIN_FILENO);
+	close(fd);
+	return (0);
+}
+
 int	handle_redirections(t_cmd *cmd)
 {
 	t_redir	*redir;
-	int		fd;
 
 	redir = cmd->redir;
 	while (redir)
 	{
-		if (redir->type == OUTFILE)
-		{
-			fd = open(redir->filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-			if (fd == -1)
-				return (perror("open"), 1);
-			dup2(fd, STDOUT_FILENO);
-			close(fd);
-		}
-		else if (redir->type == APPEND)
-		{
-			fd = open(redir->filename, O_WRONLY | O_CREAT | O_APPEND, 0644);
-			if (fd == -1)
-				return (perror("open"), 1);
-			dup2(fd, STDOUT_FILENO);
-			close(fd);
-		}
-		else if (redir->type == INFILE)
-		{
-			fd = open(redir->filename, O_RDONLY);
-			if (fd == -1)
-				return (perror("open"), 1);
-			dup2(fd, STDIN_FILENO);
-			close(fd);
-		}
-		else if (redir->type == HEREDOC)
-		{
-    		fd = ft_atoi(redir->filename);
-    		if (fd <= 0)
-    		{
-    			perror("invalid heredoc fd");
-    	    	return (1);
-    		}
-    		dup2(fd, STDIN_FILENO);
-    		close(fd);
-		}
+		if (redir->type == OUTFILE && handle_outfile_redir(redir->filename))
+			return (1);
+		else if (redir->type == APPEND && handle_append_redir(redir->filename))
+			return (1);
+		else if (redir->type == INFILE && handle_infile_redir(redir->filename))
+			return (1);
+		else if (redir->type == HEREDOC
+			&& handle_heredoc_redir(redir->filename))
+			return (1);
 		redir = redir->next;
 	}
 	return (0);

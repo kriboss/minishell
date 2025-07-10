@@ -22,7 +22,6 @@ void	free_arr(char **str, char **new)
 		while (str[i] != NULL)
 		{
 			free(str[i]);
-			str[i] = NULL;
 			i++;
 		}
 		free(str);
@@ -34,7 +33,6 @@ void	free_arr(char **str, char **new)
 		while (new[i] != NULL)
 		{
 			free(new[i]);
-			new[i] = NULL;
 			i++;
 		}
 		free(new);

@@ -113,8 +113,9 @@ char	**export(char **env, char **str, int *es)
 	}
 	else
 	{
+		*es = 0;
 		tmp = env;
-		env = add_exp(str, env, es);	
+		env = add_exp(str, env, es);
 		free_arr(tmp, NULL);
 	}
 	return (env);
@@ -122,8 +123,8 @@ char	**export(char **env, char **str, int *es)
 
 int	check_overflow(char *str, long long *result)
 {
-	int	i;
-	int	sign;
+	int					i;
+	int					sign;
 	unsigned long long	num;
 
 	i = 0;
@@ -148,46 +149,30 @@ int	check_overflow(char *str, long long *result)
 	return (1);
 }
 
-/* int	exit_shell(int status, t_shell *shell, char **envp, char **str)
-{
-	long long	status_code;
-	int			fd;
+// static int	exit_status_code(char **str, long long *status_code)
+// {
+// 	int	ret;
 
-	fd = 0;
-	status_code = status;
-	if (str && str[0])
-	{
-	    if (str[1])
-			return (write(2, "bash: exit: too many arguments\n", 31), 1);
-		printf("exit\n");
-		if (check_overflow(str[0], &status_code) == 0)
-		{
-			write(2, "bash: exit: ", 12);
-			write(2, str[0], ft_strlen(str[0]));
-			write(2, ": numeric argument required\n", 28);
-			status_code = 2;
-		}
-		else
-			status_code = status_code % 256;
-		if (envp)
-		free_arr(envp, NULL);
-		clear_history();
-		if (shell)
-			free_all(shell);
-		while (fd < 1024)
-		{
-			close(fd);
-			fd++;
-		}
-		exit(status_code);
-	}
-	if (g_status != 0)
-		exit(g_status);
-	exit(status);
-} */
+// 	ret = 0;
+// 	if (str && str[0])
+// 	{
+// 		printf("exit\n");
+// 		if (str[1])
+// 			return (write(2, "bash: exit: too many arguments\n", 31), 1);
+// 		if (check_overflow(str[0], status_code) == 0)
+// 		{
+// 			write(2, "bash: exit: ", 12);
+// 			write(2, str[0], ft_strlen(str[0]));
+// 			write(2, ": numeric argument required\n", 28);
+// 			*status_code = 2;
+// 		}
+// 		else
+// 			*status_code = *status_code % 256;
+// 	}
+// 	return (ret);
+// }
 
-//sara exit
-int	exit_shell(int status, t_shell *shell, char **envp, char **str)
+int	exit_shell(int status, t_shell *shell, char **envp, char **str, t_cmd *tmp)
 {
 	long long	status_code;
 	int			fd;
@@ -212,6 +197,8 @@ int	exit_shell(int status, t_shell *shell, char **envp, char **str)
 	if (envp)
 		free_arr(envp, NULL);
 	rl_clear_history();
+	if (tmp != NULL)
+		shell->cmds = tmp;
 	if (shell)
 		free_all(shell);
 	while (fd < 1024)
@@ -222,51 +209,53 @@ int	exit_shell(int status, t_shell *shell, char **envp, char **str)
 	exit(status_code);
 }
 
-int	is_builtin(char *cmd)
+char	**is_builtin(t_shell *shell, char **cmd, char **envp)
 {
-	if (ft_strcmp(cmd, "cd") == 0 || ft_strcmp(cmd, "pwd") == 0 ||
-		ft_strcmp(cmd, "echo") == 0 || ft_strcmp(cmd, "env") == 0 ||
-		ft_strcmp(cmd, "export") == 0 || ft_strcmp(cmd, "unset") == 0)
-		return (1);
-	return (0);
+	if (ft_strcmp(cmd[0], "cd") == 0 || ft_strcmp(cmd[0], "pwd") == 0
+		|| ft_strcmp(cmd[0], "echo") == 0 || ft_strcmp(cmd[0], "env") == 0
+		|| ft_strcmp(cmd[0], "export") == 0 || ft_strcmp(cmd[0], "unset") == 0)
+	{
+		g_status = 0;
+		if (ft_strcmp(cmd[0], "cd") == 0)
+			shell->es = cd(cmd + 1);
+		else if (ft_strcmp(cmd[0], "pwd") == 0)
+			shell->es = pwd();
+		else if (ft_strcmp(cmd[0], "echo") == 0)
+			shell->es = ft_echo(cmd + 1);
+		else if (ft_strcmp(cmd[0], "env") == 0)
+			shell->es = env(envp);
+		else if (ft_strcmp(cmd[0], "export") == 0)
+			envp = export(envp, cmd + 1, &shell->es);
+		else if (ft_strcmp(cmd[0], "unset") == 0)
+			shell->es = unset(cmd + 1, envp);
+		return (envp);
+	}
+	return (NULL);
 }
 
-char	**execute(t_shell *shell, char **cmd, char *envp[])
+char	**execute(t_shell *shell, char **cmd, char *envp[], t_cmd *tmp)
 {
 	int		stdout_backup;
 	int		stdin_backup;
+	char	**new_envp;
 
 	stdin_backup = dup(STDIN_FILENO);
 	stdout_backup = dup(STDOUT_FILENO);
 	if (handle_redirections(shell->cmds))
-	{
-		restore_fds(stdin_backup, stdout_backup);
-		return (envp);
-	}
-	if (is_builtin(cmd[0]) == 1)
-		g_status = 0;
-	if (ft_strcmp(cmd[0], "cd") == 0)
-		shell->es = cd(cmd + 1);
-	else if (ft_strcmp(cmd[0], "pwd") == 0)
-		shell->es = pwd();
-	else if (ft_strcmp(cmd[0], "echo") == 0)
-		shell->es = ft_echo(cmd + 1);
-	else if (ft_strcmp(cmd[0], "env") == 0)
-		shell->es = env(envp);
-	else if (ft_strcmp(cmd[0], "export") == 0)
-		envp = export(envp, cmd + 1, &shell->es);
-	else if (ft_strcmp(cmd[0], "unset") == 0)
-		shell->es = unset(cmd + 1, envp);
-	else if (ft_strcmp(cmd[0], "exit") == 0)
+		return (restore_fds(stdin_backup, stdout_backup), envp);
+	new_envp = is_builtin(shell, cmd, envp);
+	if (!new_envp && ft_strcmp(cmd[0], "exit") == 0)
 	{
 		restore_fds(stdin_backup, stdout_backup);
 		rl_clear_history();
-		shell->es = exit_shell(shell->es, shell, envp, cmd + 1);
+		shell->es = exit_shell(shell->es, shell, envp, cmd + 1, tmp);
 	}
-	else
-		shell->es = exec_external(shell->cmds, shell->cmds->argv, envp);
+	else if (!new_envp)
+		shell->es = exec_external(shell->cmds->argv, envp);
 	restore_fds(stdin_backup, stdout_backup);
-	return (envp);
+	if (!new_envp)
+		return (envp);
+	return (new_envp);
 }
 
 void	restore_fds(int in, int out)

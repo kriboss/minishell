@@ -123,6 +123,7 @@ int	main(int ac, char **av, char **envp)
 	shell.input = NULL;
 	shell.cmds = NULL;
 	shell.es = 0;
+	shell.i = -1;
 	str = dup_env(envp);
 	start_signals();
 	print_header();
@@ -148,7 +149,7 @@ int	main(int ac, char **av, char **envp)
 			if (shell.cmds && shell.cmds->argv && shell.cmds->next)
 				pipex(&shell, str);
 			else
-				str = execute(&shell, shell.cmds->argv, str);
+				str = execute(&shell, shell.cmds->argv, str, NULL);
 			free_all(&shell);
 			shell.input = NULL;
 		}

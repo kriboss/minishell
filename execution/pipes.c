@@ -6,7 +6,7 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 10:47:51 by kbossio           #+#    #+#             */
-/*   Updated: 2025/07/09 19:03:40 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/07/10 09:03:44 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,17 +15,17 @@
 static int	connect(t_shell *shell, char **envp, int pipe_fd[2], t_cmd *tmp)
 {
 	static int	prev_fd = STDIN_FILENO;
-	pid_t		pid;
 
-	pid = fork();
-	if (pid == -1)
+	shell->i = shell->i + 1;
+	shell->pids[shell->i] = fork();
+	if (shell->pids[shell->i] == -1)
 		return (perror("fork"), -1);
-	if (pid > 0)
+	if (shell->pids[shell->i] > 0)
 	{
 		signal(SIGINT, SIG_IGN);
 		signal(SIGQUIT, SIG_IGN);
 	}
-	if (pid == 0)
+	if (shell->pids[shell->i] == 0)
 	{
 		if (prev_fd != STDIN_FILENO)
 		{
@@ -34,37 +34,49 @@ static int	connect(t_shell *shell, char **envp, int pipe_fd[2], t_cmd *tmp)
 		}
 		if (shell->cmds->next)
 			dup2(pipe_fd[1], STDOUT_FILENO);
-		close(pipe_fd[0]);
-		close(pipe_fd[1]);
-		execute(shell, shell->cmds->argv, envp);
+        if (pipe_fd[0] != -1)
+            close(pipe_fd[0]);
+        if (pipe_fd[1] != -1)
+            close(pipe_fd[1]);
+		execute(shell, shell->cmds->argv, envp, tmp);
 		shell->cmds = tmp;
 		if (shell)
             free_all(shell);
         if (envp)
             free_arr(envp, NULL);
-		exit(1);
+		exit(shell->es);
 	}
-	if (shell->cmds->next)
+    if (shell->cmds->next)
+    {
+        close(pipe_fd[1]);
+        if (prev_fd != STDIN_FILENO)
+            close(prev_fd);
+        prev_fd = pipe_fd[0];
+    }
+    else
+    {
+		close(pipe_fd[0]);
 		close(pipe_fd[1]);
-	if (prev_fd != STDIN_FILENO)
-		close(prev_fd);
-	prev_fd = pipe_fd[0];
-	if (!shell->cmds->next)
-		prev_fd = STDIN_FILENO;
+        if (prev_fd != STDIN_FILENO)
+            close(prev_fd);
+        prev_fd = STDIN_FILENO;
+    }
 	return (0);
 }
 
 int	pipex(t_shell *shell, char **envp)
 {
 	int		n;
+	int		i;
 	int		pipe_fd[2];
 	t_cmd	*tmp;
 	int		ok;
-	int		status;
+	int		status = 0;
 	
 	ok = 0;
 	tmp = shell->cmds;
 	n = 0;
+	shell->i = -1;
 	while (shell->cmds)
 	{
 		if (shell->cmds)
@@ -75,21 +87,24 @@ int	pipex(t_shell *shell, char **envp)
 		shell->cmds = shell->cmds->next;
 		n++;
 	}
-	while (n-- > 0)
+	i = 0;
+	while (i < n)
 	{
-		wait(&status);
-		if ((WIFEXITED(status) && WEXITSTATUS(status) == 130) ||
-			(WIFSIGNALED(status) && WTERMSIG(status) == 130))
+		waitpid(shell->pids[i], &status, 0);
+		if (WIFSIGNALED(status) && WTERMSIG(status) == 130)
 			ok = 130;
-		else if ((WIFEXITED(status) && WEXITSTATUS(status) == 131) ||
-			(WIFSIGNALED(status) && WTERMSIG(status) == 131))
+		else if (WIFSIGNALED(status) && WTERMSIG(status) == 131)
 			ok = 131;
+		if (WIFEXITED(status))
+			shell->es = WEXITSTATUS(status);
+		i++;
 	}
 	signal(SIGINT, signal_handler);
 	signal(SIGQUIT, SIG_IGN);
 	shell->cmds = tmp;
 	if (ok == 130)
 	{
+		write(2, "ciaoo\n", 6);
 		write(1, "\n", 1);
 		g_status = 130;
 	}

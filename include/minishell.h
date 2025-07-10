@@ -77,6 +77,8 @@ typedef struct s_shell
 	t_token	*tokens;
 	t_cmd	*cmds;
 	int		es;
+	int		i;
+	int		pids[1024];
 }	t_shell;
 
 
@@ -131,7 +133,7 @@ char	*env_value(char **envp, char *key);
 char	*append_char(char *base, char c);
 char	*str_append(char *base, const char *to_add);
 
-int		exit_shell(int status, t_shell *shell, char **envp, char **str);
+int		exit_shell(int status, t_shell *shell, char **envp, char **str, t_cmd *tmp);
 int		print_exp(char **str);
 int		check_same(char *str, char **envp);
 int		match_word(char *str, char **envp);
@@ -141,13 +143,11 @@ int		pipex(t_shell *shell, char **envp);
 
 int		handle_redirections(t_cmd *cmd);
 
-int		exec_external(t_cmd *cmd, char **args, char **envp);
-
-int		is_builtin(char *cmd);
+int		exec_external(char **args, char **envp);
 
 char	**add_exp(char **str, char **envp, int *es);
 char	**dup_env(char **envp);
-char	**execute(t_shell *shell, char **cmd, char *envp[]);
+char	**execute(t_shell *shell, char **cmd, char *envp[], t_cmd *tmp);
 char	*ft_rmchar(char *str, char c);
 
 void	free_arr(char **str, char **new);
