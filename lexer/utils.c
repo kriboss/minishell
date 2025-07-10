@@ -6,7 +6,7 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 08:07:38 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/07/09 22:44:55 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/07/10 11:21:38 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,22 +30,6 @@ int	is_space(char c)
 int	is_special(char c)
 {
 	if (c == '<' || c == '>' || c == '|')
-		return (1);
-	return (0);
-}
-
-int	mult_redir(char *input)
-{
-	int		count;
-	char	a;
-
-	count = 1;
-	a = *input;
-	if (input[1] && input[1] != a && (input[1] == '<' || input[1] == '>'))
-		return (1);
-	while (input[count] && input[count] == a)
-		count++;
-	if (count > 2)
 		return (1);
 	return (0);
 }

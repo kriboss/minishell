@@ -6,7 +6,7 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 08:07:27 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/07/09 22:11:35 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/07/10 11:22:00 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,4 +94,20 @@ void	check_redi(t_cmd *cmd, t_token **tmp)
 	else if (ft_strcmp((*tmp)->value, ">>") == 0)
 		add_redir(&cmd->redir, (*tmp)->next->value, APPEND);
 	*tmp = (*tmp)->next->next;
+}
+
+int	mult_redir(char *input)
+{
+	int		count;
+	char	a;
+
+	count = 1;
+	a = *input;
+	if (input[1] && input[1] != a && (input[1] == '<' || input[1] == '>'))
+		return (1);
+	while (input[count] && input[count] == a)
+		count++;
+	if (count > 2)
+		return (1);
+	return (0);
 }

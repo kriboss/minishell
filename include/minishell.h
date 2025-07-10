@@ -6,7 +6,7 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/20 07:47:00 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/07/10 00:08:52 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/07/10 11:10:27 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,15 @@ typedef struct s_token
 	struct s_token	*next;
 }	t_token;
 
+typedef struct s_expand
+{
+	char		**res;
+	const char	*input;
+	char		**envp;
+	int			*es;
+	int			*i;
+} t_expand;
+
 typedef struct s_shell
 {
 	char	*input;
@@ -96,17 +105,25 @@ int		validate_redirection(char *input);
 int		validate_redirection(char *input);
 int		validate_heredoc(char **input);
 
+int		handle_redirections(t_cmd *cmd);
+int		handle_redirection(char **input);
+void	handle_special(t_shell *shell, char *input, int *i);
+void	handle_heredoc(char *delimiter, char **envp, t_cmd *cmd, int *es);
+
 char	**add_word(char **argv, char *word);
+int		heredoc_pipe(const char *delimiter, char **envp, int *es);
 char	*extract_token(const char *input, int start, int end);
+
 void	free_cmds(t_cmd *cmds);
 void	free_tokens(t_token *tokens);
 void	free_redir(t_redir *redir);
 void	free_argv(char **argv);
 void	free_all(t_shell *shell);
-void	check_redi(t_cmd *cmd, t_token **tmp);
 
-void	init(t_cmd *cmd);
+void	check_redi(t_cmd *cmd, t_token **tmp);
 void	ft_readline(t_shell *shell);
+void	init(t_cmd *cmd);
+char	**initialize_shell(t_shell *shell, char **envp);
 
 void	parsing(t_shell *shell, char **envp);
 void	create_token(t_shell *shell, char *input, int *i);
@@ -117,16 +134,12 @@ char	*extract_quoted(char *input, int *i);
 void	add_token(t_shell *shell, char *value, int type, char quote_type);
 void	tokenadd_back(t_token **lst, t_token *new);
 
-void	handle_special(t_shell *shell, char *input, int *i);
-
 void	tokenize(t_shell *shell);
 void	check_type(t_token **tmp, t_cmd *cmd, char **envp, int *es);
 void	check_type2(t_token **tmp, t_cmd **cmd);
 void	add_redir(t_redir **redir_list, char *filename, int type);
-int		heredoc_pipe(const char *delimiter, char **envp, int *es);
 
 void	check_delim(t_token **tmp, char **envp,t_cmd *cmd, int *es);
-void	handle_heredoc(char *delimiter, char **envp, t_cmd *cmd, int *es);
 
 char	*expand_var(const char *input, char **envp, int *es);
 char	*env_value(char **envp, char *key);
@@ -141,7 +154,6 @@ int		unset(char **str, char **envp);
 int		ft_strcmp(char *s1, const char *s2);
 int		pipex(t_shell *shell, char **envp);
 
-int		handle_redirections(t_cmd *cmd);
 
 int		exec_external(t_cmd *cmd, char **args, char **envp);
 

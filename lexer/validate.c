@@ -6,7 +6,7 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 08:07:46 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/07/09 22:47:29 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/07/10 11:21:09 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,26 @@ int	validate_input(char *input)
 		input++;
 	if (*input == '\0')
 		return (0);
-	if (validate_quote(input) == 1 || validate_pipe(input) == 1 ||
-		validate_redirection(input) == 1)
+	if (validate_quote(input) == 1 || validate_pipe(input) == 1
+		|| validate_redirection(input) == 1)
+		return (1);
+	return (0);
+}
+
+int	handle_redirection(char **input)
+{
+	if (**input == '<' && *(*input + 1) == '<')
+	{
+		if (validate_heredoc(input))
+			return (1);
+	}
+	else if (mult_redir(*input))
+		return (1);
+	while (**input == '<' || **input == '>')
+		(*input)++;
+	while (**input == ' ')
+		(*input)++;
+	if (!**input || **input == '<' || **input == '>')
 		return (1);
 	return (0);
 }
@@ -43,18 +61,7 @@ int	validate_redirection(char *input)
 		}
 		else if (*input == '<' || *input == '>')
 		{
-			if (*input == '<' && *(input + 1) == '<')
-			{
-				if (validate_heredoc(&input))
-					return (1);
-			}
-			else if (mult_redir(input))
-				return (1);
-			while (*input == '<' || *input == '>')
-				input++;
-			while (*input == ' ')
-				input++;
-			if (!*input || *input == '<' || *input == '>')
+			if (handle_redirection(&input))
 				return (1);
 		}
 		else

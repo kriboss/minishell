@@ -6,7 +6,7 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 10:47:51 by kbossio           #+#    #+#             */
-/*   Updated: 2025/07/10 00:19:33 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/07/10 10:11:18 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,15 +91,12 @@ int	pipex(t_shell *shell, char **envp)
 	while (i < n)
 	{
 		waitpid(shell->pids[i], &status, 0);
-		if ((WIFEXITED(status) && WEXITSTATUS(status) == 130) ||
-			(WIFSIGNALED(status) && WTERMSIG(status) == 130))
+		if (WIFSIGNALED(status) && WTERMSIG(status) == 130)
 			ok = 130;
-		else if ((WIFEXITED(status) && WEXITSTATUS(status) == 131) ||
-			(WIFSIGNALED(status) && WTERMSIG(status) == 131))
+		else if (WIFSIGNALED(status) && WTERMSIG(status) == 131)
 			ok = 131;
 		if (WIFEXITED(status))
 			shell->es = WEXITSTATUS(status);
-		//printf("WEXITSTATUS(status) %d\n", WEXITSTATUS(status));
 		i++;
 	}
 	signal(SIGINT, signal_handler);
