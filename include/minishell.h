@@ -6,7 +6,7 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/20 07:47:00 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/07/11 10:12:53 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/07/11 12:52:57 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,7 @@ typedef struct s_cmd
 	char			**argv;
 	t_redir			*redir;
 	struct s_cmd	*next;
+	int				invalid;
 }	t_cmd;
 
 typedef struct s_token
@@ -104,6 +105,7 @@ int		is_space(char c);
 int		is_special(char c);
 int		mult_redir(char *input);
 
+char	*find_env(char **envp, const char *var);
 int		validate_quote(char *str);
 int		validate_pipe(char *input);
 int		validate_input(char *input);
@@ -172,7 +174,7 @@ int		pipex(t_shell *shell, char **envp);
 int		exec_external(t_shell *shell, char **args, char **envp, t_fd *t);
 
 int		is_builtin(char *cmd);
-int		cd(char **path);
+int		cd(char **path, char **envp);
 int		pwd(void);
 int		ft_echo(char **str);
 int		env(char **envp);

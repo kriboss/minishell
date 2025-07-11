@@ -6,7 +6,7 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 10:47:51 by kbossio           #+#    #+#             */
-/*   Updated: 2025/07/11 09:34:50 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/07/11 11:07:21 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,8 @@
 
 static int	connect(t_shell *shell, char **envp, int pipe_fd[2], t_cmd *tmp)
 {
-	static int	prev_fd;
+	static int	prev_fd = STDIN_FILENO;
 
-	prev_fd = STDIN_FILENO;
 	shell->i = shell->i + 1;
 	shell->pids[shell->i] = fork();
 	if (shell->pids[shell->i] == -1)

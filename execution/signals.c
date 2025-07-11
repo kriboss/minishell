@@ -6,7 +6,7 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:25:53 by kbossio           #+#    #+#             */
-/*   Updated: 2025/07/11 09:11:12 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/07/11 12:59:55 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,6 +108,15 @@ int	exec_external(t_shell *shell, char **args, char **envp, t_fd *t)
 		ft_putendl_fd("bash: : command not found", STDERR_FILENO);
 		return (127);
 	}
+	fd = open(args[0], __O_DIRECTORY);
+	if (fd >= 0)
+	{
+		ft_putstr_fd("bash: ", STDERR_FILENO);
+		ft_putstr_fd(args[0], STDERR_FILENO);
+		ft_putendl_fd(": is a directory", STDERR_FILENO);
+		close(fd);
+		return (126);
+	}
 	exe_path = find_executable(args[0], envp);
 	if (!exe_path)
 	{
@@ -126,19 +135,6 @@ int	exec_external(t_shell *shell, char **args, char **envp, t_fd *t)
 		free(exe_path);
 		return (127);
 	}
-	if (ft_strchr(args[0], '/'))
-	{
-		fd = open(args[0], __O_DIRECTORY);
-		if (fd > 0)
-		{
-			ft_putstr_fd("bash: ", STDERR_FILENO);
-			ft_putstr_fd(args[0], STDERR_FILENO);
-			ft_putendl_fd(": is a directory", STDERR_FILENO);
-			close(fd);
-		}
-		free(exe_path);
-		return (126);
-	}
 	if (shell->pipe == 0)
 	{
 		pid = fork();
@@ -147,8 +143,8 @@ int	exec_external(t_shell *shell, char **args, char **envp, t_fd *t)
 		if (pid == 0)
 		{
 			signal(SIGQUIT, signal_handler);
-		    close(t->input);
-    		close(t->output);	
+			close(t->input);
+			close(t->output);
 			execve(exe_path, args, envp);
 			perror("execve");
 			free_all(shell);

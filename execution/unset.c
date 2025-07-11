@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   unset.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbossio <kbossio@student.42firenze.it>     +#+  +:+       +#+        */
+/*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/05 19:47:51 by kbossio           #+#    #+#             */
-/*   Updated: 2025/05/13 17:14:06 by kbossio          ###   ########.fr       */
+/*   Updated: 2025/07/11 12:51:48 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,4 +73,22 @@ int	unset(char **str, char **envp)
 		n++;
 	}
 	return (0);
+}
+
+char	*find_env(char **envp, const char *var)
+{
+	int		i;
+	char	*value;
+
+	i = 0;
+	if (match_word((char *)var, envp) == -1)
+		return (NULL);
+	while (envp[i])
+	{
+		value = ft_strchr(envp[i], '=');
+		if (value && ft_strncmp(envp[i], var, value - envp[i]) == 0)
+			return (value + 1);
+		i++;
+	}
+	return (NULL);
 }

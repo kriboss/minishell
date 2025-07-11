@@ -6,7 +6,7 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/09 22:13:11 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/07/11 10:13:15 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/07/11 12:58:00 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,10 +63,11 @@ void	heredoc_sig(int sig)
 	if (sig == SIGINT)
 	{
 		g_status = 130;
+		write(1, "\n", 1);
 		rl_done = 1;
 		rl_replace_line("", 0);
 		rl_redisplay();
-		write(1, "\n", 1);
+		close(STDIN_FILENO);
 	}
 }
 
@@ -75,26 +76,37 @@ int	heredoc_pipe(const char *delimiter, char **envp, int *es)
 	int		pipefd[2];
 	char	*line;
 	char	*expand;
+	int		stdin_backup;
 
 	if (pipe(pipefd) == -1)
 	{
 		perror("pipe");
 		return (-1);
 	}
+	stdin_backup = dup(STDIN_FILENO);
+	g_status = 0;
 	signal(SIGINT, heredoc_sig);
 	while (1)
 	{
 		line = readline("> ");
-		if (g_status == 130)
+		if (g_status == 130 || !line)
 		{
-			rl_done = 1;
-			close(pipefd[1]);
-			close(pipefd[0]);
+			if (g_status == 130)
+			{
+				close(pipefd[1]);
+				close(pipefd[0]);
+				if (line)
+					free(line);
+				dup2(stdin_backup, STDIN_FILENO);
+				close(stdin_backup);
+				signal(SIGINT, signal_handler);
+				rl_done = 0;
+				return (-1);
+			}
 			free(line);
-			signal(SIGINT, signal_handler);
-			return (-1);
+			break ;
 		}
-		if (!line || ft_strcmp(line, delimiter) == 0)
+		if (ft_strcmp(line, delimiter) == 0)
 		{
 			free(line);
 			break ;
@@ -105,6 +117,9 @@ int	heredoc_pipe(const char *delimiter, char **envp, int *es)
 			free(line);
 			close(pipefd[1]);
 			close(pipefd[0]);
+			dup2(stdin_backup, STDIN_FILENO);
+			close(stdin_backup);
+			signal(SIGINT, signal_handler);
 			return (-1);
 		}
 		write(pipefd[1], expand, ft_strlen(expand));
@@ -113,5 +128,9 @@ int	heredoc_pipe(const char *delimiter, char **envp, int *es)
 		free(expand);
 	}
 	close(pipefd[1]);
+	dup2(stdin_backup, STDIN_FILENO);
+	close(stdin_backup);
+	signal(SIGINT, signal_handler);
+	rl_done = 0;
 	return (pipefd[0]);
 }

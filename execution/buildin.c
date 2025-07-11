@@ -6,19 +6,19 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/10 15:29:31 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/07/10 15:47:04 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/07/11 12:51:18 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
-int	cd(char **path)
+int	cd(char **path, char **envp)
 {
 	char	*dir;
 
 	if (!path || !path[0])
 	{
-		dir = getenv("HOME");
+		dir = find_env(envp, "HOME");
 		if (!dir)
 			return (printf("bash: cd: HOME not set\n"), 1);
 		if (chdir(dir) == -1)
