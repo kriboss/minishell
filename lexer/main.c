@@ -6,7 +6,7 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/20 07:47:10 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/07/11 20:18:09 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/07/11 22:55:35 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ void	parsing(t_shell *shell)
 	tok_cmd(shell);
 }
 
-static char	**ft_minishell(t_shell *shell, char **str)
+static char	**ft_minishell(t_shell *shell, char **str, t_cmd *tmp)
 {
 	ft_readline(shell);
 	if (!shell->input)
@@ -62,7 +62,7 @@ static char	**ft_minishell(t_shell *shell, char **str)
 		if (shell->cmds && shell->cmds->argv && shell->cmds->next)
 			pipex(shell, str, 0);
 		else
-			str = execute(shell, shell->cmds->argv, str);
+			str = execute(shell, shell->cmds->argv, str, tmp);
 		free_all(shell);
 		shell->input = NULL;
 	}
@@ -96,7 +96,7 @@ int	main(int ac, char **av, char **envp)
 	shell.envp = initialize_shell(&shell, envp);
 	while (1)
 	{
-		shell.envp = ft_minishell(&shell, shell.envp);
+		shell.envp = ft_minishell(&shell, shell.envp, shell.cmds);
 		if (!shell.envp)
 			break ;
 	}
