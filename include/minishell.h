@@ -6,7 +6,7 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/20 07:47:00 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/07/10 11:10:27 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/07/11 10:12:53 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,16 +28,16 @@
 
 # include <stdio.h>
 # include <stdlib.h>
-# include <unistd.h>// access, fork, execve, chdir, dup, pipe, read, close
-# include <fcntl.h>// open, unlink
-# include <string.h>// strerror
-# include <sys/types.h>// wait, waitpid, wait3, wait4, stat-related types
-# include <sys/wait.h>// wait, waitpid, wait3, wait4
-# include <sys/stat.h>// stat, lstat, fstat
-# include <signal.h>// signal, sigaction, sigemptyset, sigaddset, kill
-# include <dirent.h>// opendir, readdir, closedir
-# include <curses.h>// for termcap on some systems
-# include <sys/ioctl.h>// ioctl
+# include <unistd.h>
+# include <fcntl.h>
+# include <string.h>
+# include <sys/types.h>
+# include <sys/wait.h>
+# include <sys/stat.h>
+# include <signal.h>
+# include <dirent.h>
+# include <curses.h>
+# include <sys/ioctl.h>
 # include <readline/readline.h>
 # include <readline/history.h>
 # include "../libft/libft.h"
@@ -52,13 +52,13 @@ extern int	g_status;
 typedef struct s_redir
 {
 	char			*filename;
-	int				type;//infile or outfile
+	int				type;
 	struct s_redir	*next;
 }	t_redir;
 
 typedef struct s_cmd
 {
-	char			**argv;//for kri
+	char			**argv;
 	t_redir			*redir;
 	struct s_cmd	*next;
 }	t_cmd;
@@ -78,7 +78,7 @@ typedef struct s_expand
 	char		**envp;
 	int			*es;
 	int			*i;
-} t_expand;
+}	t_expand;
 
 typedef struct s_shell
 {
@@ -87,9 +87,15 @@ typedef struct s_shell
 	t_cmd	*cmds;
 	int		es;
 	int		i;
+	int		pipe;
 	pid_t	pids[4000];
 }	t_shell;
 
+typedef struct s_fd
+{
+	int	input;
+	int	output;
+}	t_fd;
 
 char	*process_quotes(char *word);
 int		in_quotes(char *input, int pos);
@@ -114,11 +120,15 @@ char	**add_word(char **argv, char *word);
 int		heredoc_pipe(const char *delimiter, char **envp, int *es);
 char	*extract_token(const char *input, int start, int end);
 
-void	free_cmds(t_cmd *cmds);
 void	free_tokens(t_token *tokens);
-void	free_redir(t_redir *redir);
 void	free_argv(char **argv);
+void	free_cmds(t_cmd *cmds);
 void	free_all(t_shell *shell);
+void	free_redir(t_redir *redir);
+void	free_arr(char **str, char **new);
+
+char	**process_valid_export(char *str, char **new_env);
+char	**handle_existing_var(char *str, char **new_env, int j);
 
 void	check_redi(t_cmd *cmd, t_token **tmp);
 void	ft_readline(t_shell *shell);
@@ -133,41 +143,54 @@ char	*extract_quoted(char *input, int *i);
 
 void	add_token(t_shell *shell, char *value, int type, char quote_type);
 void	tokenadd_back(t_token **lst, t_token *new);
-
 void	tokenize(t_shell *shell);
+
 void	check_type(t_token **tmp, t_cmd *cmd, char **envp, int *es);
 void	check_type2(t_token **tmp, t_cmd **cmd);
 void	add_redir(t_redir **redir_list, char *filename, int type);
 
-void	check_delim(t_token **tmp, char **envp,t_cmd *cmd, int *es);
+void	check_delim(t_token **tmp, char **envp, t_cmd *cmd, int *es);
 
 char	*expand_var(const char *input, char **envp, int *es);
 char	*env_value(char **envp, char *key);
 char	*append_char(char *base, char c);
 char	*str_append(char *base, const char *to_add);
 
-int		exit_shell(int status, t_shell *shell, char **envp, char **str, t_cmd *tmp);
+void	cleanup_and_exit(t_shell *shell, char **envp, long long status_code);
+int		exitt(t_shell *shell, char **envp, char **str);
 int		print_exp(char **str);
 int		check_same(char *str, char **envp);
 int		match_word(char *str, char **envp);
 int		unset(char **str, char **envp);
-int		ft_strcmp(char *s1, const char *s2);
+
+void	close_pipe(int pipe_fd[2]);
+
+void	close_fd(void);
+int		count_pipe(t_shell *shell);
 int		pipex(t_shell *shell, char **envp);
 
-
-int		exec_external(t_cmd *cmd, char **args, char **envp);
+int		exec_external(t_shell *shell, char **args, char **envp, t_fd *t);
 
 int		is_builtin(char *cmd);
+int		cd(char **path);
+int		pwd(void);
+int		ft_echo(char **str);
+int		env(char **envp);
+char	**export(char **env, char **str, int *es);
 
 char	**add_exp(char **str, char **envp, int *es);
 char	**dup_env(char **envp);
-char	**execute(t_shell *shell, char **cmd, char *envp[], t_cmd *tmp);
+char	**execute(t_shell *shell, char **cmd, char *envp[]);
 char	*ft_rmchar(char *str, char c);
 
-void	free_arr(char **str, char **new);
 void	start_signals(void);
 void	signal_handler(int sig);
 
 void	restore_fds(int in, int out);
+
+void	free_matrix(char **matrix);
+int		matrix_len(char **matrix);
+char	**order_env(char **envp);
+char	**matrix_dup(char **old_mtx);
 
 #endif

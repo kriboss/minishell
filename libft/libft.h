@@ -6,7 +6,7 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/18 12:18:03 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/06/22 19:05:03 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/07/10 15:35:12 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,7 @@ char	*ft_strchr(const char *s, int c);
 char	*ft_strrchr(const char *s, int c);
 char	**ft_split(char const *s, char c);
 int		ft_printf(const char *format, ...);
+int		ft_strcmp(char *s1, const char *s2);
 void	*ft_memset(void *s, int c, size_t n);
 void	*ft_calloc(size_t nmemb, size_t size);
 void	ft_lstadd_back(t_list **lst, t_list *new);

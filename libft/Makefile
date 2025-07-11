@@ -10,6 +10,7 @@ SRC = ft_atoi.c \
 		ft_memcmp.c \
 		ft_memcpy.c \
 		ft_memset.c \
+		ft_strcmp.c \
 		ft_strchr.c \
 		ft_strlen.c \
 		ft_calloc.c \

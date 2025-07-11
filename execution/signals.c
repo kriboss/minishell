@@ -6,12 +6,12 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:25:53 by kbossio           #+#    #+#             */
-/*   Updated: 2025/07/09 22:22:20 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/07/11 09:11:12 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
-//6
+
 int	g_status = 0;
 
 void	signal_handler(int sig)
@@ -27,7 +27,6 @@ void	signal_handler(int sig)
 	if (sig == SIGQUIT)
 	{
 		g_status = 131;
-		//write(2, "Quit (core dumped)\n", 19);
 		rl_on_new_line();
 		rl_replace_line("", 0);
 		rl_redisplay();
@@ -60,7 +59,7 @@ static char	*find_executable(char *cmd, char *envp[])
 	int		i;
 
 	if (!cmd || !*cmd)
-		return NULL;
+		return (NULL);
 	if (cmd[0] == '/' || (cmd[0] == '.' && cmd[1] == '/'))
 	{
 		if (access(cmd, F_OK) == 0)
@@ -93,29 +92,30 @@ static char	*find_executable(char *cmd, char *envp[])
 	i = 0;
 	while (dirs[i])
 		free(dirs[i++]);
-	return (free(dirs), full_path);
+	free(dirs);
+	return (full_path);
 }
 
-int	exec_external(t_cmd *cmd, char **args, char **envp)
+int	exec_external(t_shell *shell, char **args, char **envp, t_fd *t)
 {
-	(void)cmd;
-	pid_t	pid;
+	int		pid;
+	int		fd;
 	int		status;
 	char	*exe_path;
 
 	if (!args[0] || args[0][0] == '\0')
 	{
-        ft_putendl_fd("bash: : command not found", STDERR_FILENO);
-        return (127);
-    }
+		ft_putendl_fd("bash: : command not found", STDERR_FILENO);
+		return (127);
+	}
 	exe_path = find_executable(args[0], envp);
 	if (!exe_path)
 	{
 		if (ft_strchr(args[0], '/'))
 		{
 			ft_putstr_fd("bash: ", STDERR_FILENO);
-            ft_putstr_fd(args[0], STDERR_FILENO);
-            ft_putendl_fd(": No such file or directory", STDERR_FILENO);
+			ft_putstr_fd(args[0], STDERR_FILENO);
+			ft_putendl_fd(": No such file or directory", STDERR_FILENO);
 		}
 		else
 		{
@@ -123,43 +123,65 @@ int	exec_external(t_cmd *cmd, char **args, char **envp)
 			ft_putstr_fd(args[0], STDERR_FILENO);
 			ft_putendl_fd(": command not found", STDERR_FILENO);
 		}
+		free(exe_path);
 		return (127);
 	}
-	if (access(exe_path, X_OK) != 0)
+	if (ft_strchr(args[0], '/'))
 	{
-		ft_putstr_fd(args[0], STDERR_FILENO);
-		ft_putendl_fd(": permission denied", STDERR_FILENO);
+		fd = open(args[0], __O_DIRECTORY);
+		if (fd > 0)
+		{
+			ft_putstr_fd("bash: ", STDERR_FILENO);
+			ft_putstr_fd(args[0], STDERR_FILENO);
+			ft_putendl_fd(": is a directory", STDERR_FILENO);
+			close(fd);
+		}
 		free(exe_path);
 		return (126);
 	}
-	pid = fork();
-	if (pid < 0)
-		return (perror("fork"), free(exe_path), 1);
-	if (pid == 0)
+	if (shell->pipe == 0)
 	{
-		// va liberata tutta la memoria 
-		signal(SIGQUIT, signal_handler);
-		execve(exe_path, args, envp);
-		perror("execve");
-		exit(1);
+		pid = fork();
+		if (pid < 0)
+			return (perror("fork"), free(exe_path), 1);
+		if (pid == 0)
+		{
+			signal(SIGQUIT, signal_handler);
+		    close(t->input);
+    		close(t->output);	
+			execve(exe_path, args, envp);
+			perror("execve");
+			free_all(shell);
+			exit(1);
+		}
+		else
+		{
+			signal(SIGINT, SIG_IGN);
+			signal(SIGQUIT, SIG_IGN);
+			while (waitpid(pid, &status, 0) == -1)
+				;
+			signal(SIGINT, signal_handler);
+			if (WIFEXITED(status))
+				g_status = WEXITSTATUS(status);
+			else if (WIFSIGNALED(status))
+			{
+				if (WTERMSIG(status) == SIGINT)
+					write(1, "\n", 1);
+				else if (WTERMSIG(status) == SIGQUIT)
+					write(1, "Quit (core dumped)\n", 19);
+				g_status = 128 + WTERMSIG(status);
+			}
+		}
 	}
 	else
 	{
-		signal(SIGINT, SIG_IGN);
-		signal(SIGQUIT, SIG_IGN);
-		while (waitpid(pid, &status, 0) == -1)
-			;
-		signal(SIGINT, signal_handler);
-		if (WIFEXITED(status))
-			g_status = WEXITSTATUS(status);
-		else if (WIFSIGNALED(status))
-		{
-			if (WTERMSIG(status) == SIGINT)
-				write(1, "\n", 1);
-			else if (WTERMSIG(status) == SIGQUIT)
-				write(1, "Quit (core dumped)\n", 19);
-			g_status = 128 + WTERMSIG(status);
-		}
+		signal(SIGQUIT, signal_handler);
+		execve(exe_path, args, envp);
+		perror("execve");
+		close(t->input);
+		close(t->output);
+		free_all(shell);
+		exit(1);
 	}
 	free(exe_path);
 	return (0);

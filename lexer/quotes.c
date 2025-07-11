@@ -6,11 +6,21 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/10 10:43:02 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/07/10 10:43:05 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/07/10 22:56:43 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
+
+static void	handle_escape_sequence(char *input, int *j, char *buffer, int *len)
+{
+	if (input[*j + 1] == '"' || input[*j + 1] == '\\'
+		|| input[*j + 1] == '$')
+		buffer[(*len)++] = input[++(*j)];
+	else
+		buffer[(*len)++] = input[*j];
+	(*j)++;
+}
 
 char	*extract_quoted(char *input, int *i)
 {
@@ -28,22 +38,9 @@ char	*extract_quoted(char *input, int *i)
 	while (input[j] && input[j] != quote)
 	{
 		if (quote == '"' && input[j] == '\\' && input[j + 1])
-		{
-			if (input[j + 1] == '"' || input[j + 1] == '\\'
-				|| input[j + 1] == '$')
-				buffer[len++] = input[++j];
-			else
-				buffer[len++] = input[j];
-			j++;
-		}
+			handle_escape_sequence(input, &j, buffer, &len);
 		else
 			buffer[len++] = input[j++];
-	}
-	if (!input[j] || input[j] != quote)
-	{
-		free(buffer);
-		printf("syntax error: unclosed quote\n");
-		return (NULL);
 	}
 	buffer[len] = '\0';
 	*i = j + 1;

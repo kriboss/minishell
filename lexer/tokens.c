@@ -6,7 +6,7 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/10 10:43:10 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/07/10 10:43:12 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/07/10 22:38:39 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,12 +78,29 @@ void	create_token(t_shell *shell, char *input, int *i)
 	}
 }
 
+static void	handle_variable(t_shell *shell, char *input, int *i)
+{
+	char	*var_token;
+	int		start;
+
+	start = *i;
+	(*i)++;
+	while (input[*i] && (ft_isalnum(input[*i]) || input[*i] == '_'))
+		(*i)++;
+	if (start + 1 == *i)
+	{
+		add_token(shell, "$", WORD, 0);
+		return ;
+	}
+	var_token = ft_substr(input, start, *i - start);
+	add_token(shell, var_token, WORD, 0);
+	free(var_token);
+}
+
 void	handle_special(t_shell *shell, char *input, int *i)
 {
 	char	*quoted_str;
-	char	*var_token;
 	char	quote;
-	int		start;
 
 	if (input[*i] == '\'' || input[*i] == '"')
 	{
@@ -95,20 +112,7 @@ void	handle_special(t_shell *shell, char *input, int *i)
 		free(quoted_str);
 	}
 	else if (input[*i] == '$')
-	{
-		start = *i;
-		(*i)++;
-		while (input[*i] && (ft_isalnum(input[*i]) || input[*i] == '_'))
-			(*i)++;
-		if (start + 1 == *i)
-		{
-			add_token(shell, "$", WORD, 0);
-			return ;
-		}
-		var_token = ft_substr(input, start, *i - start);
-		add_token(shell, var_token, WORD, 0);
-		free(var_token);
-	}
+		handle_variable(shell, input, i);
 	else
 		create_token(shell, input, i);
 }

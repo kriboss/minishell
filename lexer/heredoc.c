@@ -6,7 +6,7 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/09 22:13:11 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/07/09 22:48:35 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/07/11 10:13:15 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,13 +47,27 @@ void	handle_heredoc(char *delimiter, char **envp, t_cmd *cmd, int *es)
 
 	hdoc_fd = heredoc_pipe(delimiter, envp, es);
 	if (hdoc_fd < 0)
-	{
-		perror("heredoc pipe error");
-		exit(1);
-	}
+		return ;
 	fd_str = ft_itoa(hdoc_fd);
+	if (!fd_str)
+	{
+		close(hdoc_fd);
+		return ;
+	}
 	add_redir(&cmd->redir, fd_str, HEREDOC);
 	free(fd_str);
+}
+
+void	heredoc_sig(int sig)
+{
+	if (sig == SIGINT)
+	{
+		g_status = 130;
+		rl_done = 1;
+		rl_replace_line("", 0);
+		rl_redisplay();
+		write(1, "\n", 1);
+	}
 }
 
 int	heredoc_pipe(const char *delimiter, char **envp, int *es)
@@ -67,6 +81,7 @@ int	heredoc_pipe(const char *delimiter, char **envp, int *es)
 		perror("pipe");
 		return (-1);
 	}
+	signal(SIGINT, heredoc_sig);
 	while (1)
 	{
 		line = readline("> ");
@@ -74,9 +89,10 @@ int	heredoc_pipe(const char *delimiter, char **envp, int *es)
 		{
 			rl_done = 1;
 			close(pipefd[1]);
+			close(pipefd[0]);
 			free(line);
 			signal(SIGINT, signal_handler);
-			return (130);
+			return (-1);
 		}
 		if (!line || ft_strcmp(line, delimiter) == 0)
 		{
@@ -88,6 +104,7 @@ int	heredoc_pipe(const char *delimiter, char **envp, int *es)
 		{
 			free(line);
 			close(pipefd[1]);
+			close(pipefd[0]);
 			return (-1);
 		}
 		write(pipefd[1], expand, ft_strlen(expand));

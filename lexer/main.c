@@ -6,7 +6,7 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/20 07:47:10 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/07/10 11:19:17 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/07/11 00:30:55 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,10 +46,10 @@ static char	**ft_minishell(t_shell *shell, char **str)
 		printf("exit\n");
 		free_all(shell);
 		free_arr(str, NULL);
-		str = NULL;
-		return (NULL);
+		return (str = NULL, NULL);
 	}
 	parsing(shell, str);
+	count_pipe(shell);
 	if (!shell->cmds || !shell->cmds->argv || !shell->cmds->argv[0])
 	{
 		free_all(shell);
@@ -60,7 +60,7 @@ static char	**ft_minishell(t_shell *shell, char **str)
 		if (shell->cmds && shell->cmds->argv && shell->cmds->next)
 			pipex(shell, str);
 		else
-			str = execute(shell, shell->cmds->argv, str, NULL);
+			str = execute(shell, shell->cmds->argv, str);
 		free_all(shell);
 		shell->input = NULL;
 	}
@@ -72,6 +72,7 @@ char	**initialize_shell(t_shell *shell, char **envp)
 	shell->tokens = NULL;
 	shell->input = NULL;
 	shell->cmds = NULL;
+	shell->pipe = 0;
 	shell->es = 0;
 	shell->i = -1;
 	start_signals();

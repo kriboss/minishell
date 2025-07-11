@@ -6,7 +6,7 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 08:07:46 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/07/10 11:21:09 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/07/10 12:04:29 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,15 +81,10 @@ int	validate_quote(char *str)
 	s = 0;
 	while (str[i])
 	{
-		if (str[i] == '\\' && (str[i + 1] == '\'' || str[i + 1] == '"'))
-			i++;
-		else
-		{
-			if (str[i] == '\'' && d == 0)
-				s = !s;
-			else if (str[i] == '"' && s == 0)
-				d = !d;
-		}
+		if (str[i] == '\'' && d == 0)
+			s = !s;
+		else if (str[i] == '"' && s == 0)
+			d = !d;
 		i++;
 	}
 	if (s == 1 || d == 1)

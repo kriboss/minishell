@@ -6,7 +6,7 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 10:47:51 by kbossio           #+#    #+#             */
-/*   Updated: 2025/07/10 10:11:18 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/07/11 09:34:50 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,9 @@
 
 static int	connect(t_shell *shell, char **envp, int pipe_fd[2], t_cmd *tmp)
 {
-	static int	prev_fd = STDIN_FILENO;
+	static int	prev_fd;
 
+	prev_fd = STDIN_FILENO;
 	shell->i = shell->i + 1;
 	shell->pids[shell->i] = fork();
 	if (shell->pids[shell->i] == -1)
@@ -32,35 +33,33 @@ static int	connect(t_shell *shell, char **envp, int pipe_fd[2], t_cmd *tmp)
 			dup2(prev_fd, STDIN_FILENO);
 			close(prev_fd);
 		}
-		if (shell->cmds->next)
+		if (shell->cmds->next && pipe_fd[1] != -1)
 			dup2(pipe_fd[1], STDOUT_FILENO);
-        if (pipe_fd[0] != -1)
-            close(pipe_fd[0]);
-        if (pipe_fd[1] != -1)
-            close(pipe_fd[1]);
-		execute(shell, shell->cmds->argv, envp, tmp);
+		close_pipe(pipe_fd);
+		close_fd();
+		execute(shell, shell->cmds->argv, envp);
 		shell->cmds = tmp;
 		if (shell)
-            free_all(shell);
-        if (envp)
-            free_arr(envp, NULL);
+			free_all(shell);
+		if (envp)
+			free_arr(envp, NULL);
 		exit(shell->es);
 	}
-    if (shell->cmds->next)
-    {
-        close(pipe_fd[1]);
-        if (prev_fd != STDIN_FILENO)
-            close(prev_fd);
-        prev_fd = pipe_fd[0];
-    }
-    else
-    {
-		close(pipe_fd[0]);
-		close(pipe_fd[1]);
-        if (prev_fd != STDIN_FILENO)
-            close(prev_fd);
-        prev_fd = STDIN_FILENO;
-    }
+	if (shell->cmds->next)
+	{
+		if (pipe_fd[1] != -1)
+			close(pipe_fd[1]);
+		if (prev_fd != STDIN_FILENO)
+			close(prev_fd);
+		prev_fd = pipe_fd[0];
+	}
+	else
+	{
+		close_pipe(pipe_fd);
+		if (prev_fd != STDIN_FILENO)
+			close(prev_fd);
+		prev_fd = STDIN_FILENO;
+	}
 	return (0);
 }
 
@@ -71,17 +70,22 @@ int	pipex(t_shell *shell, char **envp)
 	int		pipe_fd[2];
 	t_cmd	*tmp;
 	int		ok;
-	int		status = 0;
-	
+	int		status;
+
+	status = 0;
 	ok = 0;
 	tmp = shell->cmds;
 	n = 0;
 	shell->i = -1;
 	while (shell->cmds)
 	{
-		if (shell->cmds)
+		pipe_fd[0] = -1;
+		pipe_fd[1] = -1;
+		if (shell->cmds->next)
+		{
 			if (pipe(pipe_fd) == -1)
 				return (perror("pipe"), 1);
+		}
 		if (connect(shell, envp, pipe_fd, tmp) == -1)
 			return (1);
 		shell->cmds = shell->cmds->next;

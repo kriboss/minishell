@@ -6,7 +6,7 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/25 10:15:24 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/07/09 22:46:25 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/07/11 10:08:50 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,14 +54,32 @@ char	*extract_token(const char *input, int start, int end)
 	return (out);
 }
 
+static void	handle_word_token(t_shell *shell, char *input, int *i)
+{
+	int		start;
+	char	*word;
+	char	*no_quote;
+	char	quote_type;
+
+	start = *i;
+	while (input[*i] && (is_word(input[*i]) || in_quotes(input, *i)))
+		(*i)++;
+	word = ft_substr(input, start, *i - start);
+	quote_type = 0;
+	if (strchr(word, '\''))
+		quote_type = '\'';
+	else if (strchr(word, '"'))
+		quote_type = '"';
+	no_quote = process_quotes(word);
+	add_token(shell, no_quote, WORD, quote_type);
+	free(word);
+	free(no_quote);
+}
+
 void	tokenize(t_shell *shell)
 {
 	int		i;
 	char	*input;
-	int		start;
-	char	*no_quote;
-	char	*word;
-	char	quote_type;
 
 	i = 0;
 	input = shell->input;
@@ -72,21 +90,7 @@ void	tokenize(t_shell *shell)
 		if (is_special(input[i]))
 			handle_special(shell, input, &i);
 		else if (is_word(input[i]))
-		{
-			start = i;
-			while (input[i] && (is_word(input[i]) || in_quotes(input, i)))
-				i++;
-			word = ft_substr(input, start, i - start);
-			quote_type = 0;
-			if (strchr(word, '\''))
-				quote_type = '\'';
-			else if (strchr(word, '"'))
-				quote_type = '"';
-			no_quote = process_quotes(word);
-			add_token(shell, no_quote, WORD, quote_type);
-			free(word);
-			free(no_quote);
-		}
+			handle_word_token(shell, input, &i);
 		while (input[i] && is_space(input[i]))
 			i++;
 	}
