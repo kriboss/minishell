@@ -6,16 +6,16 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/09 22:13:11 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/07/11 16:09:25 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/07/11 19:08:39 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
-int	init_heredoc(t_hd *hd, const char *delimiter, char **envp, int *es)
+int	init_heredoc(t_shell *shell, t_hd *hd, const char *delimiter, int *es)
 {
 	hd->delimiter = delimiter;
-	hd->envp = envp;
+	hd->envp = shell->envp;
 	hd->es = es;
 	if (pipe(hd->pipefd) == -1)
 	{
@@ -23,7 +23,7 @@ int	init_heredoc(t_hd *hd, const char *delimiter, char **envp, int *es)
 		return (-1);
 	}
 	hd->stdin_backup = dup(STDIN_FILENO);
-	g_status = 0;
+	shell->status = 0;
 	signal(SIGINT, heredoc_sig);
 	return (0);
 }
@@ -51,13 +51,13 @@ static int	finalize_heredoc_pipe(t_hd *hd)
 	return (hd->pipefd[0]);
 }
 
-static int	process_heredoc_line(char *line, t_hd *hd)
+static int	process_heredoc_line(t_shell *shell, char *line, t_hd *hd)
 {
 	char	*expand;
 
-	if (g_status == 130 || !line)
+	if (shell->status == 130 || !line)
 	{
-		if (g_status == 130)
+		if (shell->status == 130)
 			return (cleanup_heredoc_resources(hd, line));
 		free(line);
 		return (1);
@@ -67,7 +67,7 @@ static int	process_heredoc_line(char *line, t_hd *hd)
 		free(line);
 		return (1);
 	}
-	expand = expand_var(line, hd->envp, hd->es);
+	expand = expand_var(shell, line, hd->es);
 	if (!expand)
 		return (cleanup_heredoc_resources(hd, line));
 	write(hd->pipefd[1], expand, ft_strlen(expand));
@@ -77,18 +77,19 @@ static int	process_heredoc_line(char *line, t_hd *hd)
 	return (0);
 }
 
-int	heredoc_pipe(const char *delimiter, char **envp, int *es)
+int	heredoc_pipe(t_shell *shell, const char *delimiter, int *es)
 {
 	t_hd		hd;
 	char		*line;
 	int			result;
 
-	if (init_heredoc(&hd, delimiter, envp, es) == -1)
+	if (init_heredoc(shell, &hd, delimiter, es) == -1)
 		return (-1);
 	while (1)
 	{
 		line = readline("> ");
-		result = process_heredoc_line(line, &hd);
+		update_status_code(shell);
+		result = process_heredoc_line(shell, line, &hd);
 		if (result == -1)
 			return (-1);
 		if (result == 1)

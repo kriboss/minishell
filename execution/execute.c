@@ -6,7 +6,7 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/03 09:48:20 by kbossio           #+#    #+#             */
-/*   Updated: 2025/07/11 12:59:43 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/07/11 19:23:07 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,11 +50,6 @@ char	**execute(t_shell *shell, char **cmd, char *envp[])
 {
 	t_fd	f;
 
-	if (g_status == 130)
-	{
-		g_status = 0;
-		return (envp);
-	}
 	f.input = dup(STDIN_FILENO);
 	f.output = dup(STDOUT_FILENO);
 	if (handle_redirections(shell->cmds))
@@ -63,7 +58,7 @@ char	**execute(t_shell *shell, char **cmd, char *envp[])
 		return (envp);
 	}
 	if (is_builtin(cmd[0]) == 1)
-		g_status = 0;
+		shell->status = 0;
 	if (ft_strcmp(cmd[0], "exit") == 0)
 		return (handle_exit_cmd(shell, cmd, envp, f));
 	else if (is_builtin(cmd[0]))

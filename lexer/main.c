@@ -6,11 +6,13 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/20 07:47:10 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/07/11 00:30:55 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/07/11 19:16:12 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
+
+int	g_status = INT_MIN;
 
 void	print_header(void)
 {
@@ -27,7 +29,7 @@ void	print_header(void)
 	printf(RESET);
 }
 
-void	parsing(t_shell *shell, char **envp)
+void	parsing(t_shell *shell)
 {
 	if (validate_input(shell->input))
 	{
@@ -35,7 +37,7 @@ void	parsing(t_shell *shell, char **envp)
 		return ;
 	}
 	tokenize(shell);
-	tok_cmd(shell, envp);
+	tok_cmd(shell);
 }
 
 static char	**ft_minishell(t_shell *shell, char **str)
@@ -48,7 +50,7 @@ static char	**ft_minishell(t_shell *shell, char **str)
 		free_arr(str, NULL);
 		return (str = NULL, NULL);
 	}
-	parsing(shell, str);
+	parsing(shell);
 	count_pipe(shell);
 	if (!shell->cmds || !shell->cmds->argv || !shell->cmds->argv[0])
 	{
@@ -75,6 +77,7 @@ char	**initialize_shell(t_shell *shell, char **envp)
 	shell->pipe = 0;
 	shell->es = 0;
 	shell->i = -1;
+	shell->status = 0;
 	start_signals();
 	print_header();
 	return (dup_env(envp));
@@ -83,23 +86,22 @@ char	**initialize_shell(t_shell *shell, char **envp)
 int	main(int ac, char **av, char **envp)
 {
 	t_shell	shell;
-	char	**str;
 
+	g_status = INT_MIN;
 	if (ac != 1)
 	{
 		printf("Usage: %s\n", av[0]);
 		return (1);
 	}
-	str = initialize_shell(&shell, envp);
+	shell.envp = initialize_shell(&shell, envp);
 	while (1)
 	{
-		str = ft_minishell(&shell, str);
-		if (!str)
+		shell.envp = ft_minishell(&shell, shell.envp);
+		if (!shell.envp)
 			break ;
 	}
 	rl_clear_history();
 	free_all(&shell);
-	free_arr(str, NULL);
-	str = NULL;
+	free_arr(shell.envp, NULL);
 	return (0);
 }

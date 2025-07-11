@@ -6,18 +6,18 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/10 10:42:41 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/07/10 10:42:44 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/07/11 18:55:06 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
-static char	*handle_exit_status(t_expand *exp)
+static char	*handle_exit_status(t_shell *shell, t_expand *exp)
 {
 	char	*itoa_res;
 
-	if (g_status != 0)
-		itoa_res = ft_itoa(g_status);
+	if (shell->status != 0)
+		itoa_res = ft_itoa(shell->status);
 	else
 		itoa_res = ft_itoa(exp->es[0]);
 	*(exp->res) = str_append(*(exp)->res, itoa_res);
@@ -49,7 +49,7 @@ static char	*handle_var_exp(t_expand *exp)
 	return (*(exp->res));
 }
 
-static char	*process_dollar_sign(t_expand *exp)
+static char	*process_dollar_sign(t_shell *shell, t_expand *exp)
 {
 	(*(exp->i))++;
 	if (exp->input[*(exp->i)] == '\0')
@@ -58,7 +58,7 @@ static char	*process_dollar_sign(t_expand *exp)
 		return (*(exp->res));
 	}
 	else if (exp->input[*(exp->i)] == '?')
-		return (handle_exit_status(exp));
+		return (handle_exit_status(shell, exp));
 	else if (ft_isalpha(exp->input[*(exp->i)]) || exp->input[*(exp->i)] == '_')
 		return (handle_var_exp(exp));
 	else
@@ -68,7 +68,7 @@ static char	*process_dollar_sign(t_expand *exp)
 	}
 }
 
-char	*expand_var(const char *input, char **envp, int *es)
+char	*expand_var(t_shell *shell, const char *input, int *es)
 {
 	int			i;
 	char		*res;
@@ -80,13 +80,13 @@ char	*expand_var(const char *input, char **envp, int *es)
 		return (NULL);
 	exp.res = &res;
 	exp.input = input;
-	exp.envp = envp;
+	exp.envp = shell->envp;
 	exp.es = es;
 	exp.i = &i;
 	while (input[i])
 	{
 		if (input[i] == '$')
-			res = process_dollar_sign(&exp);
+			res = process_dollar_sign(shell, &exp);
 		else
 			res = append_char(res, input[i++]);
 	}

@@ -6,7 +6,7 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 08:07:38 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/07/10 11:21:38 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/07/11 19:37:48 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ int	is_special(char c)
 void	ft_readline(t_shell *shell)
 {
 	shell->input = readline("mininshell> ");
+	update_status_code(shell);
 	if (!shell->input)
 		return ;
 	if (shell->input[0])

@@ -6,7 +6,7 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/20 07:47:00 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/07/11 16:08:23 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/07/11 19:38:36 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,9 +23,6 @@
 # define OUTFILE	11
 # define APPEND		12
 
-# define LLONG_MIN 9223372036854775808ULL
-# define LLONG_MAX 9223372036854775807ULL
-
 # include <stdio.h>
 # include <stdlib.h>
 # include <unistd.h>
@@ -38,6 +35,7 @@
 # include <dirent.h>
 # include <curses.h>
 # include <sys/ioctl.h>
+# include <limits.h>
 # include <readline/readline.h>
 # include <readline/history.h>
 # include "../libft/libft.h"
@@ -96,6 +94,9 @@ typedef struct s_shell
 	int		i;
 	int		pipe;
 	pid_t	pids[4000];
+	int		status;
+
+	char	**envp;
 }	t_shell;
 
 typedef struct s_hd
@@ -107,6 +108,8 @@ typedef struct s_hd
 	int			stdin_backup;
 }	t_hd;
 
+void	update_status_code(t_shell *shell);
+
 void	heredoc_sig(int sig);
 char	*process_quotes(char *word);
 int		in_quotes(char *input, int pos);
@@ -115,7 +118,7 @@ int		is_space(char c);
 int		is_special(char c);
 int		mult_redir(char *input);
 
-int		init_heredoc(t_hd *hd, const char *delimiter, char **envp, int *es);
+int		init_heredoc(t_shell *shell, t_hd *hd, const char *delimiter, int *es);
 
 int		cleanup_heredoc_resources(t_hd *hd, char *line);
 
@@ -130,10 +133,10 @@ int		validate_heredoc(char **input);
 int		handle_redirections(t_cmd *cmd);
 int		handle_redirection(char **input);
 void	handle_special(t_shell *shell, char *input, int *i);
-void	handle_heredoc(char *delimiter, char **envp, t_cmd *cmd, int *es);
+void	handle_heredoc(t_shell *shell, char *delimiter, t_cmd *cmd, int *es);
 
 char	**add_word(char **argv, char *word);
-int		heredoc_pipe(const char *delimiter, char **envp, int *es);
+int		heredoc_pipe(t_shell *shell, const char *delimiter, int *es);
 char	*extract_token(const char *input, int start, int end);
 
 void	free_tokens(t_token *tokens);
@@ -151,9 +154,9 @@ void	ft_readline(t_shell *shell);
 void	init(t_cmd *cmd);
 char	**initialize_shell(t_shell *shell, char **envp);
 
-void	parsing(t_shell *shell, char **envp);
+void	parsing(t_shell *shell);
 void	create_token(t_shell *shell, char *input, int *i);
-void	tok_cmd(t_shell *shell, char **envp);
+void	tok_cmd(t_shell *shell);
 
 char	*extract_quoted(char *input, int *i);
 
@@ -161,13 +164,13 @@ void	add_token(t_shell *shell, char *value, int type, char quote_type);
 void	tokenadd_back(t_token **lst, t_token *new);
 void	tokenize(t_shell *shell);
 
-void	check_type(t_token **tmp, t_cmd *cmd, char **envp, int *es);
+void	check_type(t_shell *shell, t_token **tmp, t_cmd *cmd, int *es);
 void	check_type2(t_token **tmp, t_cmd **cmd);
 void	add_redir(t_redir **redir_list, char *filename, int type);
 
-void	check_delim(t_token **tmp, char **envp, t_cmd *cmd, int *es);
+void	check_delim(t_shell *shell, t_token **tmp, t_cmd *cmd, int *es);
 
-char	*expand_var(const char *input, char **envp, int *es);
+char	*expand_var(t_shell *shell, const char *input, int *es);
 char	*env_value(char **envp, char *key);
 char	*append_char(char *base, char c);
 char	*str_append(char *base, const char *to_add);

@@ -6,7 +6,7 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 00:45:31 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/07/11 00:46:24 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/07/11 19:07:19 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,8 @@ int	check_overflow(char *str, long long *result)
 		if (str[i] < '0' || str[i] > '9')
 			return (0);
 		num = num * 10 + (str[i] - '0');
-		if ((num > LLONG_MAX && sign == 1) || (num > LLONG_MIN && sign == -1))
+		if (((long long)num > LLONG_MAX && sign == 1)
+			|| ((long long)num > LLONG_MIN && sign == -1))
 			return (0);
 		i++;
 	}

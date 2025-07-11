@@ -6,7 +6,7 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 08:07:27 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/07/10 12:35:20 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/07/11 19:08:49 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,14 +58,14 @@ void	add_redir(t_redir **redir_list, char *filename, int type)
 	}
 }
 
-void	check_type(t_token **tmp, t_cmd *cmd, char **envp, int *es)
+void	check_type(t_shell *shell, t_token **tmp, t_cmd *cmd, int *es)
 {
 	char	*expand;
 
 	if ((*tmp)->type == WORD || (*tmp)->type == EOF)
 	{
 		if ((*tmp)->quote != '\'')
-			expand = expand_var((*tmp)->value, envp, es);
+			expand = expand_var(shell, (*tmp)->value, es);
 		else
 			expand = ft_strdup((*tmp)->value);
 		if (!expand)

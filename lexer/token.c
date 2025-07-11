@@ -6,7 +6,7 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/25 10:15:24 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/07/11 10:08:50 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/07/11 19:29:44 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,7 @@ void	tokenize(t_shell *shell)
 		i++;
 	while (input[i])
 	{
-		if (is_special(input[i]))
+		if (is_special_special(input[i]))
 			handle_special(shell, input, &i);
 		else if (is_word(input[i]))
 			handle_word_token(shell, input, &i);
@@ -96,7 +96,7 @@ void	tokenize(t_shell *shell)
 	}
 }
 
-void	tok_cmd(t_shell *shell, char **envp)
+void	tok_cmd(t_shell *shell)
 {
 	t_cmd	*head;
 	t_cmd	*cmd;
@@ -114,11 +114,11 @@ void	tok_cmd(t_shell *shell, char **envp)
 	{
 		prev = tmp;
 		if (tmp->type == HEREDOC)
-			check_delim(&tmp, envp, cmd, &shell->es);
+			check_delim(shell, &tmp, cmd, &shell->es);
 		else if (tmp->type == PIPE)
 			check_type2(&tmp, &cmd);
 		else
-			check_type(&tmp, cmd, envp, &shell->es);
+			check_type(shell, &tmp, cmd, &shell->es);
 		if (tmp == prev)
 			tmp = tmp->next;
 	}

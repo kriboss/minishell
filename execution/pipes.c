@@ -6,7 +6,7 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 10:47:51 by kbossio           #+#    #+#             */
-/*   Updated: 2025/07/11 11:07:21 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/07/11 18:44:20 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,11 +108,11 @@ int	pipex(t_shell *shell, char **envp)
 	if (ok == 130)
 	{
 		write(1, "\n", 1);
-		g_status = 130;
+		shell->status = 130;
 	}
 	else if (ok == 131)
-		g_status = 131;
+		shell->status = 131;
 	else if (ft_strcmp(shell->cmds->argv[0], "exit") != 0)
-		g_status = 0;
+		shell->status = 0;
 	return (0);
 }
