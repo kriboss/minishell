@@ -6,7 +6,7 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/09 11:17:27 by kbossio           #+#    #+#             */
-/*   Updated: 2025/07/11 23:16:54 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/07/11 23:47:32 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,8 +126,6 @@ char	**add_exp(char **str, char **envp, int *es)
 		{
 			tmp = new_env;
 			new_env = process_valid_export(str[i], new_env);
-			// if (tmp != new_env)
-			// 	free_matrix(tmp);
 		}
 		else
 			*es = 1;
@@ -135,4 +133,3 @@ char	**add_exp(char **str, char **envp, int *es)
 	}
 	return (new_env);
 }
-

@@ -6,7 +6,7 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/20 07:47:00 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/07/11 22:53:32 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/07/11 23:54:38 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -214,4 +214,6 @@ char	**order_env(char **envp);
 char	**matrix_dup(char **old_mtx);
 void	signla_status(t_shell *shell, int *ok, int n);
 void	pipex_exit(t_shell *shell, int ok);
+void	print_erro(t_hd *hd);
+
 #endif

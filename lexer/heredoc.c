@@ -6,7 +6,7 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/09 22:13:11 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/07/11 19:08:39 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/07/11 23:59:15 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,9 @@ static int	process_heredoc_line(t_shell *shell, char *line, t_hd *hd)
 	{
 		if (shell->status == 130)
 			return (cleanup_heredoc_resources(hd, line));
+		print_erro(hd);
+		close(hd->pipefd[1]);
+		close(hd->pipefd[0]);
 		free(line);
 		return (1);
 	}

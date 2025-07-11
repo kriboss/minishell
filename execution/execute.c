@@ -6,7 +6,7 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/03 09:48:20 by kbossio           #+#    #+#             */
-/*   Updated: 2025/07/11 22:52:52 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/07/11 23:47:09 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ char	**execute(t_shell *shell, char **cmd, char *envp[], t_cmd *tmp)
 		return (envp);
 	}
 	if (!cmd)
-		return(restore_fds(f.input, f.output), envp);//idk if i should return envp
+		return (restore_fds(f.input, f.output), envp);
 	if (is_builtin(cmd[0]) == 1)
 		shell->status = 0;
 	if (ft_strcmp(cmd[0], "exit") == 0)

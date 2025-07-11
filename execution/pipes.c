@@ -6,7 +6,7 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 10:47:51 by kbossio           #+#    #+#             */
-/*   Updated: 2025/07/11 23:17:35 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/07/11 23:49:16 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,25 +114,4 @@ void	pipex_exit(t_shell *shell, int ok)
 		shell->status = 131;
 	else if (ft_strcmp(shell->cmds->argv[0], "exit") != 0)
 		shell->status = 0;
-}
-
-void	signla_status(t_shell *shell, int *ok, int n)
-{
-	int	i;
-	int	status;
-
-	status = 0;
-	*(ok) = 0;
-	i = 0;
-	while (i < n)
-	{
-		waitpid(shell->pids[i], &status, 0);
-		if (WIFSIGNALED(status) && WTERMSIG(status) == 130)
-			*(ok) = 130;
-		else if (WIFSIGNALED(status) && WTERMSIG(status) == 131)
-			*(ok) = 131;
-		if (WIFEXITED(status))
-			shell->es = WEXITSTATUS(status);
-		i++;
-	}
 }

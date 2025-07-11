@@ -6,7 +6,7 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:25:53 by kbossio           #+#    #+#             */
-/*   Updated: 2025/07/11 21:49:00 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/07/12 00:08:25 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -170,11 +170,11 @@ int	exec_external(t_shell *shell, char **args, char **envp, t_fd *t)
 	}
 	else
 	{
-		close(t->input);
-		close(t->output);
 		signal(SIGQUIT, signal_handler);
 		execve(exe_path, args, envp);
 		perror("execve");
+		close(t->input);
+		close(t->output);
 		free_all(shell);
 		exit(1);
 	}

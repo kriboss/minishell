@@ -6,33 +6,11 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/16 08:07:38 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/07/11 19:37:48 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/07/11 23:49:41 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
-
-int	is_word(char c)
-{
-	int	result;
-
-	result = !(is_space(c) || is_special(c));
-	return (result);
-}
-
-int	is_space(char c)
-{
-	if (c == ' ' || c == '\t' || c == '\b' || c == '\n' || c == '\v')
-		return (1);
-	return (0);
-}
-
-int	is_special(char c)
-{
-	if (c == '<' || c == '>' || c == '|')
-		return (1);
-	return (0);
-}
 
 void	ft_readline(t_shell *shell)
 {
@@ -49,4 +27,25 @@ void	init(t_cmd *cmd)
 	cmd->argv = NULL;
 	cmd->redir = NULL;
 	cmd->next = NULL;
+}
+
+void	signla_status(t_shell *shell, int *ok, int n)
+{
+	int	i;
+	int	status;
+
+	status = 0;
+	*(ok) = 0;
+	i = 0;
+	while (i < n)
+	{
+		waitpid(shell->pids[i], &status, 0);
+		if (WIFSIGNALED(status) && WTERMSIG(status) == 130)
+			*(ok) = 130;
+		else if (WIFSIGNALED(status) && WTERMSIG(status) == 131)
+			*(ok) = 131;
+		if (WIFEXITED(status))
+			shell->es = WEXITSTATUS(status);
+		i++;
+	}
 }
