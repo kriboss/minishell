@@ -6,7 +6,7 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/03 11:38:14 by kbossio           #+#    #+#             */
-/*   Updated: 2025/07/11 00:16:20 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/07/11 21:34:32 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ char	**dup_env(char **envp)
 		env[i] = ft_strdup(envp[i]);
 		if (!env[i])
 		{
-			free_arr(env, NULL);
+			free_single_arr(env);
 			return (NULL);
 		}
 		i++;

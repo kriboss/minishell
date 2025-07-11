@@ -6,7 +6,7 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/10 15:27:25 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/07/11 09:12:48 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/07/11 21:37:16 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,7 @@ void	free_matrix(char **matrix)
 		j++;
 	}
 	free(matrix);
+	matrix = NULL;
 }
 
 void	close_pipe(int pipe_fd[2])

@@ -6,7 +6,7 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/09 11:17:27 by kbossio           #+#    #+#             */
-/*   Updated: 2025/07/11 00:09:38 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/07/11 22:49:15 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ char	**ins_exp(char *str, char **envp)
 {
 	int		i;
 	char	**new;
+	int j;
 
 	i = 0;
 	while (envp[i])
@@ -50,14 +51,14 @@ char	**ins_exp(char *str, char **envp)
 	new = malloc(sizeof(char *) * (i + 2));
 	if (!new)
 		return (NULL);
-	i = 0;
-	while (envp[i] != NULL)
+	j = 0;
+	while (i < j)
 	{
-		new[i] = ft_strdup(envp[i]);
-		i++;
+		new[j] = ft_strdup(envp[j]);
+		j++;
 	}
-	new[i] = ft_strdup(str);
-	new[i + 1] = NULL;
+	new[j + i] = ft_strdup(str);
+	new[j+ i + 1] = NULL;
 	return (new);
 }
 
@@ -75,8 +76,9 @@ char	**process_valid_export(char *str, char **new_env)
 		tmp = ft_rmchar(str, '+');
 		old_env = new_env;
 		new_env = ins_exp(tmp, new_env);
-		free_arr(old_env, NULL);
 		free(tmp);
+		if (old_env != new_env)
+			free_matrix(old_env);
 		return (new_env);
 	}
 }
@@ -113,6 +115,7 @@ char	**add_exp(char **str, char **envp, int *es)
 {
 	int		i;
 	char	**new_env;
+	char	**tmp;
 
 	i = 0;
 	new_env = dup_env(envp);
@@ -121,10 +124,16 @@ char	**add_exp(char **str, char **envp, int *es)
 	while (str[i])
 	{
 		if (check_ins(str[i]) == 0)
+		{
+			tmp = new_env;
 			new_env = process_valid_export(str[i], new_env);
+			// if (tmp != new_env)
+			// 	free_matrix(tmp);
+		}
 		else
 			*es = 1;
 		i++;
 	}
 	return (new_env);
 }
+

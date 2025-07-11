@@ -6,7 +6,7 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/20 07:47:00 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/07/11 19:38:36 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/07/11 22:53:32 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,6 +120,7 @@ int		mult_redir(char *input);
 
 int		init_heredoc(t_shell *shell, t_hd *hd, const char *delimiter, int *es);
 
+int		is_special_special(char c);
 int		cleanup_heredoc_resources(t_hd *hd, char *line);
 
 char	*find_env(char **envp, const char *var);
@@ -186,7 +187,7 @@ void	close_pipe(int pipe_fd[2]);
 
 void	close_fd(void);
 int		count_pipe(t_shell *shell);
-int		pipex(t_shell *shell, char **envp);
+int		pipex(t_shell *shell, char **envp, int n);
 
 int		exec_external(t_shell *shell, char **args, char **envp, t_fd *t);
 
@@ -199,7 +200,7 @@ char	**export(char **env, char **str, int *es);
 
 char	**add_exp(char **str, char **envp, int *es);
 char	**dup_env(char **envp);
-char	**execute(t_shell *shell, char **cmd, char *envp[]);
+char	**execute(t_shell *shell, char **cmd, char *envp[], t_cmd *tmp);
 char	*ft_rmchar(char *str, char c);
 
 void	start_signals(void);
@@ -211,5 +212,6 @@ void	free_matrix(char **matrix);
 int		matrix_len(char **matrix);
 char	**order_env(char **envp);
 char	**matrix_dup(char **old_mtx);
-
+void	signla_status(t_shell *shell, int *ok, int n);
+void	pipex_exit(t_shell *shell, int ok);
 #endif

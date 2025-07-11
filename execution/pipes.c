@@ -6,16 +6,33 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 10:47:51 by kbossio           #+#    #+#             */
-/*   Updated: 2025/07/11 18:44:20 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/07/11 22:51:18 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
-static int	connect(t_shell *shell, char **envp, int pipe_fd[2], t_cmd *tmp)
+static void	connect_h(t_shell *shell, int pipe_fd[2], int *prev_fd)
 {
-	static int	prev_fd = STDIN_FILENO;
+	if (shell->cmds->next)
+	{
+		if (pipe_fd[1] != -1)
+			close(pipe_fd[1]);
+		if (*prev_fd != STDIN_FILENO)
+			close(*prev_fd);
+		*prev_fd = pipe_fd[0];
+	}
+	else
+	{
+		close_pipe(pipe_fd);
+		if (*prev_fd != STDIN_FILENO)
+			close(*prev_fd);
+		*prev_fd = STDIN_FILENO;
+	}
+}
 
+static int	fork_checks(t_shell *shell)
+{
 	shell->i = shell->i + 1;
 	shell->pids[shell->i] = fork();
 	if (shell->pids[shell->i] == -1)
@@ -25,6 +42,15 @@ static int	connect(t_shell *shell, char **envp, int pipe_fd[2], t_cmd *tmp)
 		signal(SIGINT, SIG_IGN);
 		signal(SIGQUIT, SIG_IGN);
 	}
+	return (1);
+}
+
+static int	connect(t_shell *shell, char **envp, int pipe_fd[2], t_cmd *tmp)
+{
+	static int	prev_fd = STDIN_FILENO;
+
+	if (fork_checks(shell) == -1)
+		return (-1);
 	if (shell->pids[shell->i] == 0)
 	{
 		if (prev_fd != STDIN_FILENO)
@@ -36,45 +62,25 @@ static int	connect(t_shell *shell, char **envp, int pipe_fd[2], t_cmd *tmp)
 			dup2(pipe_fd[1], STDOUT_FILENO);
 		close_pipe(pipe_fd);
 		close_fd();
-		execute(shell, shell->cmds->argv, envp);
+		execute(shell, shell->cmds->argv, envp, tmp);
 		shell->cmds = tmp;
 		if (shell)
 			free_all(shell);
 		if (envp)
-			free_arr(envp, NULL);
+			free_matrix(envp);
 		exit(shell->es);
 	}
-	if (shell->cmds->next)
-	{
-		if (pipe_fd[1] != -1)
-			close(pipe_fd[1]);
-		if (prev_fd != STDIN_FILENO)
-			close(prev_fd);
-		prev_fd = pipe_fd[0];
-	}
-	else
-	{
-		close_pipe(pipe_fd);
-		if (prev_fd != STDIN_FILENO)
-			close(prev_fd);
-		prev_fd = STDIN_FILENO;
-	}
+	connect_h(shell, pipe_fd, &prev_fd);
 	return (0);
 }
 
-int	pipex(t_shell *shell, char **envp)
+int	pipex(t_shell *shell, char **envp, int n)
 {
-	int		n;
-	int		i;
 	int		pipe_fd[2];
 	t_cmd	*tmp;
 	int		ok;
-	int		status;
 
-	status = 0;
-	ok = 0;
 	tmp = shell->cmds;
-	n = 0;
 	shell->i = -1;
 	while (shell->cmds)
 	{
@@ -90,21 +96,15 @@ int	pipex(t_shell *shell, char **envp)
 		shell->cmds = shell->cmds->next;
 		n++;
 	}
-	i = 0;
-	while (i < n)
-	{
-		waitpid(shell->pids[i], &status, 0);
-		if (WIFSIGNALED(status) && WTERMSIG(status) == 130)
-			ok = 130;
-		else if (WIFSIGNALED(status) && WTERMSIG(status) == 131)
-			ok = 131;
-		if (WIFEXITED(status))
-			shell->es = WEXITSTATUS(status);
-		i++;
-	}
+	signla_status(shell, &ok, n);
 	signal(SIGINT, signal_handler);
 	signal(SIGQUIT, SIG_IGN);
 	shell->cmds = tmp;
+	return (pipex_exit(shell, ok), 0);
+}
+
+void	pipex_exit(t_shell *shell, int ok)
+{
 	if (ok == 130)
 	{
 		write(1, "\n", 1);
@@ -114,5 +114,25 @@ int	pipex(t_shell *shell, char **envp)
 		shell->status = 131;
 	else if (ft_strcmp(shell->cmds->argv[0], "exit") != 0)
 		shell->status = 0;
-	return (0);
+}
+
+void	signla_status(t_shell *shell, int *ok, int n)
+{
+	int	i;
+	int	status;
+
+	status = 0;
+	*(ok) = 0;
+	i = 0;
+	while (i < n)
+	{
+		waitpid(shell->pids[i], &status, 0);
+		if (WIFSIGNALED(status) && WTERMSIG(status) == 130)
+			*(ok) = 130;
+		else if (WIFSIGNALED(status) && WTERMSIG(status) == 131)
+			*(ok) = 131;
+		if (WIFEXITED(status))
+			shell->es = WEXITSTATUS(status);
+		i++;
+	}
 }

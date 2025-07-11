@@ -6,7 +6,7 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/20 07:47:10 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/07/11 19:16:12 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/07/11 20:18:09 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ static char	**ft_minishell(t_shell *shell, char **str)
 	else
 	{
 		if (shell->cmds && shell->cmds->argv && shell->cmds->next)
-			pipex(shell, str);
+			pipex(shell, str, 0);
 		else
 			str = execute(shell, shell->cmds->argv, str);
 		free_all(shell);

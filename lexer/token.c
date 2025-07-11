@@ -6,7 +6,7 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/25 10:15:24 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/07/11 19:29:44 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/07/11 21:13:14 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,12 +30,17 @@ char	**add_word(char **argv, char *word)
 		return (NULL);
 	while (j < i)
 	{
-		av[j] = argv[j];
+		av[j] = ft_strdup(argv[j]);
 		j++;
 	}
 	av[i] = ft_strdup(word);
 	av[i + 1] = NULL;
-	free(argv);
+	if (argv)
+	{
+		for (int k = 0; k < i; k++)
+			free(argv[k]);
+		free(argv);
+	}
 	return (av);
 }
 
