@@ -6,7 +6,7 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 10:47:51 by kbossio           #+#    #+#             */
-/*   Updated: 2025/07/11 22:51:18 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/07/11 23:17:35 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ static int	connect(t_shell *shell, char **envp, int pipe_fd[2], t_cmd *tmp)
 			dup2(pipe_fd[1], STDOUT_FILENO);
 		close_pipe(pipe_fd);
 		close_fd();
-		execute(shell, shell->cmds->argv, envp, tmp);
+		envp = execute(shell, shell->cmds->argv, envp, tmp);
 		shell->cmds = tmp;
 		if (shell)
 			free_all(shell);

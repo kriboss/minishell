@@ -6,7 +6,7 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/09 11:17:27 by kbossio           #+#    #+#             */
-/*   Updated: 2025/07/11 22:49:15 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/07/11 23:16:54 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,6 @@ char	**ins_exp(char *str, char **envp)
 {
 	int		i;
 	char	**new;
-	int j;
 
 	i = 0;
 	while (envp[i])
@@ -51,14 +50,14 @@ char	**ins_exp(char *str, char **envp)
 	new = malloc(sizeof(char *) * (i + 2));
 	if (!new)
 		return (NULL);
-	j = 0;
-	while (i < j)
+	i = 0;
+	while (envp[i] != NULL)
 	{
-		new[j] = ft_strdup(envp[j]);
-		j++;
+		new[i] = ft_strdup(envp[i]);
+		i++;
 	}
-	new[j + i] = ft_strdup(str);
-	new[j+ i + 1] = NULL;
+	new[i] = ft_strdup(str);
+	new[i + 1] = NULL;
 	return (new);
 }
 
