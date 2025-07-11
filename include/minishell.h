@@ -6,7 +6,7 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/20 07:47:00 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/07/11 12:52:57 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/07/11 16:08:23 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,6 +81,12 @@ typedef struct s_expand
 	int			*i;
 }	t_expand;
 
+typedef struct s_fd
+{
+	int	input;
+	int	output;
+}	t_fd;
+
 typedef struct s_shell
 {
 	char	*input;
@@ -92,18 +98,26 @@ typedef struct s_shell
 	pid_t	pids[4000];
 }	t_shell;
 
-typedef struct s_fd
+typedef struct s_hd
 {
-	int	input;
-	int	output;
-}	t_fd;
+	const char	*delimiter;
+	char		**envp;
+	int			*es;
+	int			pipefd[2];
+	int			stdin_backup;
+}	t_hd;
 
+void	heredoc_sig(int sig);
 char	*process_quotes(char *word);
 int		in_quotes(char *input, int pos);
 int		is_word(char c);
 int		is_space(char c);
 int		is_special(char c);
 int		mult_redir(char *input);
+
+int		init_heredoc(t_hd *hd, const char *delimiter, char **envp, int *es);
+
+int		cleanup_heredoc_resources(t_hd *hd, char *line);
 
 char	*find_env(char **envp, const char *var);
 int		validate_quote(char *str);
