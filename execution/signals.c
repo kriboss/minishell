@@ -6,7 +6,7 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:25:53 by kbossio           #+#    #+#             */
-/*   Updated: 2025/07/12 00:08:25 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/07/12 13:01:15 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ void	start_signals(void)
 	signal(SIGQUIT, SIG_IGN);
 }
 
-static char	**get_path_dirs(char *envp[])
+char	**get_path_dirs(char *envp[])
 {
 	char	**dirs;
 
@@ -49,11 +49,10 @@ static char	**get_path_dirs(char *envp[])
 	return (dirs);
 }
 
-static char	*find_executable(char *cmd, char *envp[])
+char	*find_executable(char *cmd, char *envp[])
 {
 	char	**dirs;
 	char	*full_path;
-	char	*tmp;
 	int		i;
 
 	if (!cmd || !*cmd)
@@ -70,23 +69,7 @@ static char	*find_executable(char *cmd, char *envp[])
 		return (NULL);
 	full_path = NULL;
 	i = 0;
-	while (dirs[i])
-	{
-		tmp = ft_strjoin(dirs[i], "/");
-		full_path = ft_strjoin(tmp, cmd);
-		free(tmp);
-		if (access(full_path, F_OK) == 0)
-		{
-			if (access(full_path, X_OK) == 0)
-				break ;
-			free(full_path);
-			full_path = NULL;
-			break ;
-		}
-		free(full_path);
-		full_path = NULL;
-		i++;
-	}
+	do_access(&full_path, cmd, dirs);
 	i = 0;
 	while (dirs[i])
 		free(dirs[i++]);
@@ -94,90 +77,27 @@ static char	*find_executable(char *cmd, char *envp[])
 	return (full_path);
 }
 
-int	exec_external(t_shell *shell, char **args, char **envp, t_fd *t)
+void	do_access(char **full_path, char *cmd, char **dirs)
 {
-	int		pid;
-	int		fd;
-	int		status;
-	char	*exe_path;
+	int		i;
+	char	*tmp;
 
-	if (!args[0] || args[0][0] == '\0')
+	i = 0;
+	while (dirs[i])
 	{
-		ft_putendl_fd("bash: : command not found", STDERR_FILENO);
-		return (127);
-	}
-	fd = open(args[0], __O_DIRECTORY);
-	if (fd >= 0)
-	{
-		ft_putstr_fd("bash: ", STDERR_FILENO);
-		ft_putstr_fd(args[0], STDERR_FILENO);
-		ft_putendl_fd(": is a directory", STDERR_FILENO);
-		close(fd);
-		return (126);
-	}
-	exe_path = find_executable(args[0], envp);
-	if (!exe_path)
-	{
-		if (ft_strchr(args[0], '/'))
+		tmp = ft_strjoin(dirs[i], "/");
+		full_path[0] = ft_strjoin(tmp, cmd);
+		free(tmp);
+		if (access(full_path[0], F_OK) == 0)
 		{
-			ft_putstr_fd("bash: ", STDERR_FILENO);
-			ft_putstr_fd(args[0], STDERR_FILENO);
-			ft_putendl_fd(": No such file or directory", STDERR_FILENO);
+			if (access(full_path[0], X_OK) == 0)
+				break ;
+			free(full_path[0]);
+			full_path[0] = NULL;
+			break ;
 		}
-		else
-		{
-			ft_putstr_fd("bash: ", STDERR_FILENO);
-			ft_putstr_fd(args[0], STDERR_FILENO);
-			ft_putendl_fd(": command not found", STDERR_FILENO);
-		}
-		free(exe_path);
-		return (127);
+		free(full_path[0]);
+		full_path[0] = NULL;
+		i++;
 	}
-	if (shell->pipe == 0)
-	{
-		pid = fork();
-		if (pid < 0)
-			return (perror("fork"), free(exe_path), 1);
-		if (pid == 0)
-		{
-			signal(SIGQUIT, SIG_DFL);
-			signal(SIGINT, SIG_DFL);
-			close(t->input);
-			close(t->output);
-			execve(exe_path, args, envp);
-			perror("execve");
-			free_all(shell);
-			exit(1);
-		}
-		else
-		{
-			signal(SIGINT, SIG_IGN);
-			signal(SIGQUIT, SIG_IGN);
-			while (waitpid(pid, &status, 0) == -1)
-				;
-			signal(SIGINT, signal_handler);
-			if (WIFEXITED(status))
-				shell->status = WEXITSTATUS(status);
-			else if (WIFSIGNALED(status))
-			{
-				if (WTERMSIG(status) == SIGINT)
-					write(1, "\n", 1);
-				else if (WTERMSIG(status) == SIGQUIT)
-					write(1, "Quit (core dumped)\n", 19);
-				shell->status = 128 + WTERMSIG(status);
-			}
-		}
-	}
-	else
-	{
-		signal(SIGQUIT, signal_handler);
-		execve(exe_path, args, envp);
-		perror("execve");
-		close(t->input);
-		close(t->output);
-		free_all(shell);
-		exit(1);
-	}
-	free(exe_path);
-	return (0);
 }

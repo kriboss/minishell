@@ -6,7 +6,7 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/10 10:43:02 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/07/11 18:20:55 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/07/12 12:44:58 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ char	*process_quotes(char *word)
 	int		j;
 	char	quote;
 
-	result = malloc(strlen(word) + 1);
+	result = malloc(ft_strlen(word) + 1);
 	if (!result)
 		return (NULL);
 	i = 0;

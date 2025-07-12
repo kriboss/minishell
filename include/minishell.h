@@ -6,7 +6,7 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/20 07:47:00 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/07/11 23:54:38 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/07/12 13:16:59 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,6 @@ typedef struct s_shell
 	int		pipe;
 	pid_t	pids[4000];
 	int		status;
-
 	char	**envp;
 }	t_shell;
 
@@ -109,6 +108,13 @@ typedef struct s_hd
 }	t_hd;
 
 void	update_status_code(t_shell *shell);
+char	**get_path_dirs(char *envp[]);
+void	do_access(char **full_path, char *cmd, char **dirs);
+int		check_before_exe(char **args);
+char	*check_exe(char **args, char **envp);
+void	exec_parent(t_shell *shell, int pid);
+int		exec_child(t_shell *shell, char *exe_path, t_fd *t);
+void	exec_pipe(t_shell *shell, char *exe_path, char **envp, t_fd *t);
 
 void	heredoc_sig(int sig);
 char	*process_quotes(char *word);
@@ -206,6 +212,7 @@ char	*ft_rmchar(char *str, char c);
 void	start_signals(void);
 void	signal_handler(int sig);
 
+char	*find_executable(char *cmd, char *envp[]);
 void	restore_fds(int in, int out);
 
 void	free_matrix(char **matrix);

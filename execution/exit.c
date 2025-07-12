@@ -6,11 +6,32 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 00:45:31 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/07/12 00:08:42 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/07/12 13:19:00 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
+
+int	check_before_exe(char **args)
+{
+	int	fd;
+
+	if (!args[0] || args[0][0] == '\0')
+	{
+		ft_putendl_fd("bash: : command not found", STDERR_FILENO);
+		return (127);
+	}
+	fd = open(args[0], __O_DIRECTORY);
+	if (fd >= 0)
+	{
+		ft_putstr_fd("bash: ", STDERR_FILENO);
+		ft_putstr_fd(args[0], STDERR_FILENO);
+		ft_putendl_fd(": is a directory", STDERR_FILENO);
+		close(fd);
+		return (126);
+	}
+	return (0);
+}
 
 int	check_overflow(char *str, long long *result)
 {
@@ -32,7 +53,8 @@ int	check_overflow(char *str, long long *result)
 		if (str[i] < '0' || str[i] > '9')
 			return (0);
 		num = num * 10 + (str[i] - '0');
-		if ((num > LLONG_MAX && sign == 1) || (num > LLONG_MIN && sign == -1))
+		if (((long long)num > LLONG_MAX && sign == 1)
+			|| ((long long)num > LLONG_MIN && sign == -1))
 			return (0);
 		i++;
 	}

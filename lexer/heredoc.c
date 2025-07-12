@@ -6,27 +6,11 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/09 22:13:11 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/07/11 23:59:15 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/07/12 12:59:38 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
-
-int	init_heredoc(t_shell *shell, t_hd *hd, const char *delimiter, int *es)
-{
-	hd->delimiter = delimiter;
-	hd->envp = shell->envp;
-	hd->es = es;
-	if (pipe(hd->pipefd) == -1)
-	{
-		perror("pipe");
-		return (-1);
-	}
-	hd->stdin_backup = dup(STDIN_FILENO);
-	shell->status = 0;
-	signal(SIGINT, heredoc_sig);
-	return (0);
-}
 
 int	cleanup_heredoc_resources(t_hd *hd, char *line)
 {
@@ -49,6 +33,14 @@ static int	finalize_heredoc_pipe(t_hd *hd)
 	signal(SIGINT, signal_handler);
 	rl_done = 0;
 	return (hd->pipefd[0]);
+}
+
+void	print_erro(t_hd *hd)
+{
+	write(2, "Minishell: warning: here-document ", 34);
+	write(2, "delimited by end-of-file (wanted ", 33);
+	write(2, hd->delimiter, ft_strlen(hd->delimiter));
+	write(2, ")\n", 2);
 }
 
 static int	process_heredoc_line(t_shell *shell, char *line, t_hd *hd)
