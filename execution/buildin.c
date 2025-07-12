@@ -6,7 +6,7 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/10 15:29:31 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/07/12 14:37:36 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/07/12 18:17:07 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,15 +67,12 @@ int	ft_echo(char **str)
 		printf("\n");
 		return (0);
 	}
-	if (is_n_flag(str[0]))
-	{
-		n_flag = 1;
-		i = 1;
-	}
+	i = is_n_flag(str);
+	n_flag = i;
 	while (str[i])
 	{
 		printf("%s", str[i]);
-		if (str[i + 1])
+		if (str[i + 1] && str[i][0])
 			printf(" ");
 		i++;
 	}

@@ -6,7 +6,7 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 00:45:31 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/07/12 14:38:00 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/07/12 18:24:52 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,18 +105,22 @@ int	exitt(t_shell *shell, char **envp, char **str)
 	return (0);
 }
 
-int	is_n_flag(char *str)
+int	is_n_flag(char **str)
 {
 	int	i;
+	int	j;
 
-	if (!str || str[0] != '-' || str[1] != 'n')
-		return (0);
-	i = 2;
+	i = 0;
 	while (str[i])
 	{
-		if (str[i] != 'n')
-			return (0);
+		if (!str[i][0] || str[i][0] != '-')
+			break ;
+		j = 1;
+		while (str[i][j] && str[i][j] == 'n')
+			j++;
+		if (str[i][j] || j == 1)
+			break ;
 		i++;
 	}
-	return (1);
+	return (i);
 }

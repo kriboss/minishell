@@ -6,7 +6,7 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/20 07:47:10 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/07/12 15:51:43 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/07/12 18:27:12 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,56 +29,6 @@ void	print_header(void)
 	printf(RESET);
 }
 
-void	print_token_type(int type)
-{
-	if (type == 1)
-		printf("WORD");
-	else if (type == 2)
-		printf("EOF");
-	else if (type == 3)
-		printf("REDIRECT");
-	else if (type == 4)
-		printf("PIPE");
-	else if (type == 5)
-		printf("HEREDOC");
-	else if (type == 9)
-		printf("VAR");
-	else if (type == 10)
-		printf("INFILE");
-	else if (type == 11)
-		printf("OUTFILE");
-	else if (type == 12)
-		printf("APPEND");
-	else
-		printf("UNKNOWN(%d)", type);
-}
-
-void	debug_tokens(t_shell *shell)
-{
-	t_token	*current;
-	int		count;
-
-	printf("\n=== TOKEN DEBUG ===\n");
-	printf("Input: \"%s\"\n", shell->input);
-	printf("Tokens found:\n");
-	
-	current = shell->tokens;
-	count = 0;
-	while (current)
-	{
-		printf("[%d] Type: ", count);
-		print_token_type(current->type);
-		printf(" | Value: \"%s\"", current->value);
-		if (current->quote)
-			printf(" | Quote: '%c'", current->quote);
-		printf("\n");
-		current = current->next;
-		count++;
-	}
-	printf("Total tokens: %d\n", count);
-	printf("==================\n\n");
-}
-
 void	parsing(t_shell *shell)
 {
 	if (validate_input(shell->input))
@@ -87,7 +37,6 @@ void	parsing(t_shell *shell)
 		return ;
 	}
 	tokenize(shell);
-	debug_tokens(shell);  // Add this line for debugging
 	tok_cmd(shell);
 }
 

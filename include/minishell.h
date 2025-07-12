@@ -6,7 +6,7 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/20 07:47:00 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/07/12 14:38:44 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/07/12 18:16:38 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,7 +116,7 @@ void	exec_parent(t_shell *shell, int pid);
 int		exec_child(t_shell *shell, char *exe_path, t_fd *t);
 void	exec_pipe(t_shell *shell, char *exe_path, char **envp, t_fd *t);
 
-int		is_n_flag(char *str);
+int		is_n_flag(char **str);
 void	heredoc_sig(int sig);
 char	*process_quotes(char *word);
 int		in_quotes(char *input, int pos);
