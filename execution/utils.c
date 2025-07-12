@@ -6,7 +6,7 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/03 11:38:14 by kbossio           #+#    #+#             */
-/*   Updated: 2025/07/11 23:00:57 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/07/12 14:22:57 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,26 +89,27 @@ char	*ft_rmchar(char *str, char c)
 {
 	int		i;
 	int		j;
+	int		len;
 	char	*new;
 
 	i = 0;
 	j = 0;
-	while (str[j] != '\0')
-	{
-		if (str[j] != c)
-			i++;
-		j++;
-	}
-	new = malloc(sizeof(char) * (i + 1));
+	len = 0;
+	while (str[len])
+		len++;
+	new = malloc(sizeof(char) * (len + 1));
 	if (!new)
 		return (NULL);
 	i = 0;
 	j = 0;
-	while (str[i] != '\0')
+	while (str[i] && str[i] != '=')
 	{
 		if (str[i] != c)
 			new[j++] = str[i];
 		i++;
 	}
-	return (new[j] = '\0', new);
+	while (str[i])
+		new[j++] = str[i++];
+	new[j] = '\0';
+	return (new);
 }

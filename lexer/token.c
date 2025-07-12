@@ -6,7 +6,7 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/25 10:15:24 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/07/11 23:46:37 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/07/12 16:19:49 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,9 +87,9 @@ void	tokenize(t_shell *shell)
 		i++;
 	while (input[i])
 	{
-		if (is_special_special(input[i]))
+		if (input[i] == '$' || is_special(input[i]))
 			handle_special(shell, input, &i);
-		else if (is_word(input[i]))
+		else if (is_word(input[i]) || input[i] == '"' || input[i] == '\'')
 			handle_word_token(shell, input, &i);
 		while (input[i] && is_space(input[i]))
 			i++;

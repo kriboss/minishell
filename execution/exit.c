@@ -6,7 +6,7 @@
 /*   By: sel-khao <sel-khao@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 00:45:31 by sel-khao          #+#    #+#             */
-/*   Updated: 2025/07/12 13:19:00 by sel-khao         ###   ########.fr       */
+/*   Updated: 2025/07/12 14:38:00 by sel-khao         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ int	check_overflow(char *str, long long *result)
 			return (0);
 		num = num * 10 + (str[i] - '0');
 		if (((long long)num > LLONG_MAX && sign == 1)
-			|| ((long long)num > LLONG_MIN && sign == -1))
+			|| ((long long)num < LLONG_MIN && sign == -1))
 			return (0);
 		i++;
 	}
@@ -103,4 +103,20 @@ int	exitt(t_shell *shell, char **envp, char **str)
 	}
 	cleanup_and_exit(shell, envp, status_code);
 	return (0);
+}
+
+int	is_n_flag(char *str)
+{
+	int	i;
+
+	if (!str || str[0] != '-' || str[1] != 'n')
+		return (0);
+	i = 2;
+	while (str[i])
+	{
+		if (str[i] != 'n')
+			return (0);
+		i++;
+	}
+	return (1);
 }
